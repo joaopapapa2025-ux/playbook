@@ -1,94 +1,103 @@
 import streamlit as st
 import pandas as pd
 
-# Configuração da Página
-st.set_page_config(page_title="Hub Inside Sales | Papapá", layout="wide")
+# 1. CONFIGURAÇÃO DA PÁGINA
+st.set_page_config(page_title="Dashboard Inside Sales | Papapá", layout="wide")
 
-# --- DATABASE INTEGRADA ---
-equipe = {
-    "Ana Christina Rodrigues": "Analista Pleno - Key Accounts",
-    "Pedro Henrique Born": "Analista Pleno",
-    "Joao Paulo Ferreira Alves": "Analista Junior",
-    "Thiago Martins Cabral": "Estagiário - Operação",
-    "Bernardo Oliveira Dallegrave": "Estagiário - Operação"
-}
-
-produtos = [
-    {"Linha": "Papinhas de Carne", "Validade": "12 meses", "Un/Cx": 12, "Gramas": "120g"},
-    {"Linha": "Papinhas de Fruta", "Validade": "16 meses", "Un/Cx": 12, "Gramas": "100g"},
-    {"Linha": "Yoguzinho", "Validade": "15 meses", "Un/Cx": 16, "Gramas": "100g"},
-    {"Linha": "Dentição (Biscoito de Arroz)", "Validade": "15 meses", "Un/Cx": 12, "Gramas": "-"},
-    {"Linha": "Biscotti", "Validade": "10 meses", "Un/Cx": 12, "Gramas": "60g"},
-    {"Linha": "La Chef / Sopinhas", "Validade": "16 meses/12 meses", "Un/Cx": 6, "Gramas": "240g (2x120g)"},
-    {"Linha": "Macarrão Infantil", "Validade": "14 meses", "Un/Cx": 12, "Gramas": "200g"},
-    {"Linha": "Cereal Infantil", "Validade": "12 meses", "Un/Cx": 12, "Gramas": "170g"},
-    {"Linha": "Palitinhos de Vegetais", "Validade": "9 meses", "Un/Cx": 16, "Gramas": "45g"},
+# --- BANCO DE DADOS INTERNO (EXTRAÍDO DOS SEUS DOCUMENTOS) ---
+produtos_lista = [
+    {"Linha": "Papinhas de Carne", "Validade": "12 meses", "Un/Cx": 12, "Peso": "120g", "Sabores": "Carne, Arroz e Legumes / Frango, Mandioquinha e Legumes"},
+    {"Linha": "Yoguzinho", "Validade": "15 meses", "Un/Cx": 16, "Peso": "100g", "Sabores": "Maçã e Banana / Morango e Banana"},
+    {"Linha": "Papinhas de Fruta", "Validade": "16 meses", "Un/Cx": 12, "Peso": "100g", "Sabores": "Maçã, Manga, Pêra, Ameixa, Banana"},
+    {"Linha": "Dentição (Biscoito Arroz)", "Validade": "15 meses", "Un/Cx": 12, "Peso": "30g", "Sabores": "Maçã e Canela / Morango e Banana"},
+    {"Linha": "Biscotti", "Validade": "10 meses", "Un/Cx": 12, "Peso": "60g", "Sabores": "Maçã / Banana"},
+    {"Linha": "La Chef", "Validade": "16 meses", "Un/Cx": 6, "Peso": "240g", "Sabores": "Risotinho de Carne / Galinhada"},
+    {"Linha": "Sopinhas", "Validade": "12 meses", "Un/Cx": 6, "Peso": "240g", "Sabores": "Feijão, Carne e Legumes / Canja de Galinha"},
+    {"Linha": "Macarrão", "Validade": "14 meses", "Un/Cx": 12, "Peso": "200g", "Sabores": "Letrinhas / Estrelinhas"},
+    {"Linha": "Cereal Infantil", "Validade": "12 meses", "Un/Cx": 12, "Peso": "170g", "Sabores": "Multicereais / Aveia e Morango"},
+    {"Linha": "Palitinhos", "Validade": "9 meses", "Un/Cx": 16, "Peso": "45g", "Sabores": "Milho / Cenoura"},
 ]
 
-# --- SIDEBAR ---
+# 2. SIDEBAR
 st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=120)
-st.sidebar.title("Navegação")
-menu = st.sidebar.radio("Selecione a área:", 
-    ["💰 Metas e Comissionamento", "📦 Catálogo e SKUs", "🚚 Logística e Recebimento", "📝 Templates de Atendimento"])
+menu = st.sidebar.radio("Navegação:", ["💰 Comissão", "📦 Produtos", "🚚 Logística", "📝 Templates"])
 
-# --- MÓDULO 1: COMISSIONAMENTO (SEM SALÁRIOS) ---
-if menu == "💰 Metas e Comissionamento":
-    st.title("📊 Painel de Premiação Mensal")
-    st.info("O cálculo abaixo refere-se ao percentual de bônus sobre o salário fixo individual.")
-
+# --- MÓDULO 1: COMISSÃO ---
+if menu == "💰 Comissão":
+    st.title("📊 Calculadora de Premiação (Modelo 2026)")
+    
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("Simulador de Performance")
-        analista = st.selectbox("Analista:", list(equipe.keys()))
-        atingimento = st.number_input("Atingimento da Meta Individual (%)", min_value=0.0, value=100.0, step=1.0)
+        st.subheader("Simulador de Meta")
+        atingimento = st.number_input("Atingimento Individual (%)", min_value=0.0, value=100.0)
+        fat_global = st.number_input("Faturamento Global Time (R$)", value=1000000.0)
+        destaque = st.checkbox("Ganhou prêmio de destaque?")
         
-        st.write("---")
-        st.subheader("Campanhas de Aceleração")
-        faturamento_time = st.number_input("Faturamento Global do Time (R$)", value=1000000.0)
-        venceu_destaque = st.checkbox("Destaque em Linha Específica (Mês)")
-
     with col2:
-        st.subheader("Resultado da Apuração")
-        
-        # Lógica de Bônus Fixo
+        st.subheader("Resultado do Bônus")
         if atingimento >= 110:
-            status_bonus = "30% de Bônus"
-            cor_metric = "normal"
+            status = "30% de Bônus"
         elif atingimento >= 90:
-            status_bonus = "20% de Bônus"
-            cor_metric = "normal"
+            status = "20% de Bônus"
         else:
-            status_bonus = "Sem bonificação"
-            cor_metric = "inverse"
-
-        # Lógica de Aceleração
-        extra_fat = 0
-        if faturamento_time >= 1200000: extra_fat = 300
-        elif faturamento_time >= 1000000: extra_fat = 100
+            status = "0% (Abaixo de 90%)"
+            
+        st.metric("Bônus sobre Salário", status)
         
-        extra_destaque = 200 if venceu_destaque else 0
-
-        st.metric("Status Bônus Fixo", status_bonus, delta=f"{atingimento}% da meta", delta_color=cor_metric)
+        # Aceleração Cash
+        acel = 300 if fat_global >= 1200000 else (100 if fat_global >= 1000000 else 0)
+        premio = 200 if destaque else 0
         
-        st.write("**Bônus Adicionais em Dinheiro:**")
-        c1, c2 = st.columns(2)
-        c1.metric("Aceleração Global", f"R$ {extra_fat},00")
-        c2.metric("Prêmio Destaque", f"R$ {extra_destaque},00")
+        st.write(f"**+ Adicional em Dinheiro:** R$ {acel + premio},00")
+
+# --- MÓDULO 2: PRODUTOS ---
+elif menu == "📦 Produtos":
+    st.title("📦 Tabela Técnica de SKUs")
+    st.dataframe(pd.DataFrame(produtos_lista), use_container_width=True, hide_index=True)
+    st.info("💡 Todos os itens são Shelf Life (não precisam de geladeira).")
+
+# --- MÓDULO 3: LOGÍSTICA (PREENCHIDO) ---
+elif menu == "🚚 Logística":
+    st.title("🚚 Protocolo de Recebimento e Logística")
+    
+    st.error("⚠️ REGRA OURO: SEM RESSALVA NA NF = SEM REPOSIÇÃO")
+    
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("""
+        ### Fluxo de Prazos
+        1. **Separação:** 3 dias úteis.
+        2. **Faturamento:** +2 dias úteis.
+        3. **Coleta:** Após o 5º dia útil.
+        *Frete CIF para todo o Brasil.*
+        """)
+    with col_b:
+        st.markdown("""
+        ### Como agir na Avaria:
+        - Conferir antes de liberar o motorista.
+        - Escrever o problema no verso da NF.
+        - Se for parcial: Aceita o bom e emite **NFD** do ruim.
+        - Se for total: Recusa a carga inteira.
+        """)
+
+# --- MÓDULO 4: TEMPLATES (PREENCHIDO) ---
+elif menu == "📝 Templates":
+    st.title("📝 Templates e Regras Financeiras")
+    
+    with st.expander("💳 Prazos de Boleto por Região"):
+        st.markdown("**Sul e Sudeste:**")
+        st.code("Até R$1k: 30d | R$1k-2k: 30/45d | > R$2k: 30/45/60d")
+        st.markdown("**Norte, Nordeste, Centro-Oeste, MG e ES:**")
+        st.code("Até R$1k: 45d | R$1k-2k: 45/60d | > R$2k: 40/50/60d")
         
-        st.success(f"**Total Extra em Dinheiro:** R$ {extra_fat + extra_destaque},00 + {status_bonus} sobre o salário.")
-
-# --- MÓDULO 2: CATÁLOGO E SKUS ---
-elif menu == "📦 Catálogo e SKUs":
-    st.title("📋 Portfólio de Produtos Papapá")
-    st.write("Consulte as informações técnicas para montagem de pedidos.")
-    
-    search = st.text_input("Filtrar linha de produto:")
-    df_prod = pd.DataFrame(produtos)
-    
-    if search:
-        df_prod = df_prod[df_prod['Linha'].str.contains(search, case=False)]
-    
-    st.table(df_prod)
-    st.info("💡 Lembrete: Nossos produtos não precisam de refrigeração.")
-
-# --- MÓDULO 3:
+    with st.expander("📧 Template: Resumo Comercial"):
+        texto = """Olá! Seguem condições Papapá:
+- Pedido Mínimo: R$ 800,00
+- Frete: Grátis (CIF)
+- Pagamento: Boleto ou PIX
+- Validade: 12 a 16 meses"""
+        st.text_area("Copiar:", value=texto, height=120)
+        
+    with st.expander("🔄 Trocas e Cadastro"):
+        st.write("**Trocas:** Avisar com 60 dias de antecedência ao vencimento.")
+        st.write("**Cadastro:** Enviar CNPJ, IE, E-mail e Telefone Financeiro para contasareceber2@papapa.com.br")
