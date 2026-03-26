@@ -1,145 +1,220 @@
 import streamlit as st
 import pandas as pd
 import base64
+from pathlib import Path
 
-# --- CONFIGURAÇÕES DE ESTILO ---
-st.set_page_config(page_title="Papapá | Sales OS", layout="wide", page_icon="💙")
+# --- CONFIGURAÇÕES DE ESTILO E PÁGINA ---
+st.set_page_config(page_title="Papapá | Sales Hub", layout="wide", page_icon="💙")
 
-# CSS para identidade visual
-st.markdown("""
+# Função para carregar imagem e converter para base64 (necessário para HTML/CSS)
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Configuração de imagem padrão (Papapa-azul..png)
+# Certifique-se de que este arquivo está na mesma pasta que o script.
+img_filename = "Papapa-azul..png"
+if Path(img_filename).exists():
+    img_base64 = get_base64_of_bin_file(img_filename)
+    img_avatar_html = f"data:image/png;base64,{img_base64}"
+else:
+    # Imagem fallback caso o arquivo não seja encontrado (exemplo online)
+    img_avatar_html = "https://www.w3schools.com/howto/img_avatar.png" 
+
+# CSS Customizado para cards redondos (estilo LinkedIn) e Layout
+st.markdown(f"""
     <style>
-    .main { background-color: #f5f7f9; }
-    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; border: 1px solid #e0e0e0; }
+    /* Estilo da Página */
+    .reportview-container {{
+        background: #f0f2f6;
+    }}
+    
+    /* Título Principal */
+    h1 {{
+        color: #004a99;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }}
+
+    /* Estilo do Card da Equipe */
+    .team-card {{
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        text-align: center;
+        margin-bottom: 20px;
+        border: 1px solid #eaeaea;
+    }}
+    
+    /* Imagem Redonda (Estilo LinkedIn) */
+    .avatar-round {{
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #007bff;
+        margin-bottom: 15px;
+    }}
+
+    /* Nome Completo */
+    .team-name {{
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #333;
+        margin-bottom: 5px;
+    }}
+
+    /* Cargo */
+    .team-role {{
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNÇÕES DE SUPORTE ---
-def download_link(file_path, label):
-    try:
-        with open(file_path, "rb") as f:
-            data = f.read()
-        b64 = base64.b64encode(data).decode()
-        return f'<a href="data:application/octet-stream;base64,{b64}" download="{file_path}" style="color: #007bff; font-weight: bold; text-decoration: none;">⬇️ {label}</a>'
-    except FileNotFoundError:
-        return f'<span style="color: red;">❌ Arquivo {file_path} não encontrado</span>'
+# --- DADOS DA EQUIPE ---
+equipe = [
+    {
+        "nome": "Ana Christina Rodrigues",
+        "cargo": "Analista Pleno (Key Accounts)",
+        "foto_html": img_avatar_html
+    },
+    {
+        "nome": "Pedro Henrique Born",
+        "cargo": "Analista Pleno (Key Accounts)",
+        "foto_html": img_avatar_html
+    },
+    {
+        "nome": "Joao Paulo Ferreira Alves",
+        "cargo": "Analista Júnior (Tier 1 & 2)",
+        "foto_html": img_avatar_html
+    },
+    {
+        "nome": "Thiago Martins Cabral",
+        "cargo": "Estagiário - Operação (Vekta/Reativação)",
+        "foto_html": img_avatar_html
+    },
+    {
+        "nome": "Bernardo Oliveira Dallegrave",
+        "cargo": "Estagiário - Operação (Vekta/Reativação)",
+        "foto_html": img_avatar_html
+    }
+]
 
-# --- SIDEBAR NAVEGAÇÃO ---
-st.sidebar.title("🚀 Papapá Sales OS")
-aba = st.sidebar.radio("Navegação:", [
-    "📊 Dashboard Performance", 
-    "💰 Tabela de Preços", 
-    "📄 Biblioteca de Arquivos", 
-    "🚚 Logística e SAC",
-    "✍️ Scripts de Vendas"
-])
+# --- CABEÇALHO E NAVEGAÇÃO SUPERIOR ---
+st.title("Hub Inside Sales | Papapá")
+st.markdown("---")
 
-# --- 1. DASHBOARD DE PERFORMANCE ---
-if aba == "📊 Dashboard Performance":
-    st.title("📊 Performance Inside Sales")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Pedido Mínimo", "R$ 800,00", "Fixo")
-    c2.metric("Time Ativo", "5 Analistas", "Capacidade Máxima")
-    c3.metric("Prazo Médio", "30/45/60", "Boleto")
-    c4.metric("Frete", "CIF", "Brasil")
+# Menu de Navegação Superior (Mais moderno que sidebar)
+aba_selecionada = st.radio(
+    "Navegação:",
+    ["🏠 Home (Equipe)", "💰 Simulador de Comissão", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts"],
+    horizontal=True
+)
 
-    st.divider()
+st.markdown("---")
+
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
+if aba_selecionada == "🏠 Home (Equipe)":
+    st.header("👥 Nossa Equipe")
+    st.write("Foco, dedicação e nutrição infantil. Conheça o time Inside Sales da Papapá.")
     
-    col_time, col_metas = st.columns([1, 2])
+    # Criação de colunas para os cards (máximo 3 por linha)
+    for i in range(0, len(equipe), 3):
+        cols = st.columns(3)
+        for j in range(3):
+            if i + j < len(equipe):
+                membro = equipe[i + j]
+                with cols[j]:
+                    st.markdown(f"""
+                        <div class="team-card">
+                            <img src="{membro['foto_html']}" class="avatar-round" alt="{membro['nome']}">
+                            <div class="team-name">{membro['nome']}</div>
+                            <div class="team-role">{membro['cargo']}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+# --- MÓDULO 2: SIMULADOR DE COMISSÃO (COM LÓGICA INTEGRADA) ---
+elif aba_selecionada == "💰 Simulador de Comissão":
+    st.title("💰 Simulador de Comissionamento Individual")
+    st.write("Calcule a projeção do seu bônus com base no atingimento da meta.")
     
-    with col_time:
-        st.subheader("👥 Divisão do Time")
-        st.info("""
-        **Key Accounts:** Ana Christina & Pedro Born
-        **Tier 1 & 2:** Joao Paulo
-        **Reativação/Vekta:** Thiago & Bernardo
-        """)
+    col_input, col_result = st.columns([1, 1.5])
+    
+    with col_input:
+        st.subheader("Entrada de Dados")
+        salario_base = st.number_input("Seu Salário Fixo Base (R$)", min_value=0.0, value=3000.0, step=100.0)
+        meta_mes = st.number_input("Valor da Meta do Mês (R$)", min_value=0.0, value=150000.0, step=1000.0)
+        resultado_atual = st.number_input("Seu Resultado Atual Batido (R$)", min_value=0.0, value=135000.0, step=1000.0)
         
-    with col_metas:
-        st.subheader("🎯 Simulador de Comissionamento")
-        meta_val = st.slider("Simular atingimento da meta (%)", 80, 120, 100)
+    with col_result:
+        st.subheader("Resultado")
         
-        if meta_val >= 110:
-            st.balloons()
-            st.success(f"**Status:** Superação ({meta_val}%) | **Bônus:** 30% Salário + Acelerador")
-        elif meta_val >= 100:
-            st.success(f"**Status:** Meta Batida | **Bônus:** 25% Salário")
-        elif meta_val >= 90:
-            st.warning(f"**Status:** Piso de Entrega | **Bônus:** 20% Salário")
+        # Cálculo de Atingimento
+        if meta_mes > 0:
+            atingimento = (resultado_atual / meta_mes) * 100
         else:
-            st.error("**Status:** Abaixo do Piso. Foco total em Reativação!")
-
-# --- 2. TABELA DE PREÇOS ---
-elif aba == "💰 Tabela de Preços":
-    st.title("💰 Consulta por Estado")
-    
-    nome_arquivo_precos = "Tabela de preços Papapá 0226 v2.xlsx - PREÇOS.csv"
-    
-    try:
-        df = pd.read_csv(nome_arquivo_precos, skiprows=1)
-        # Limpando nomes de colunas que podem vir com espaços
-        df.columns = df.columns.str.strip()
+            atingimento = 0.0
+            
+        # Lógica de Bonificação (Piso de 90%)
+        # > 110% -> 30%
+        # 90% a 109% -> 20%
+        # < 90% -> 0%
         
-        if 'Estado' in df.columns:
-            estado_sel = st.selectbox("Selecione o Estado:", df['Estado'].unique())
-            dados_busca = df[df['Estado'] == estado_sel].T
-            dados_busca.columns = ["Preço Unitário (R$)"]
-            st.table(dados_busca)
+        if atingimento >= 110.0:
+            perc_bonus = 0.30
+            cor_metric = "normal"
+            status_meta = " Superação (110%+)!"
+        elif atingimento >= 90.0:
+            perc_bonus = 0.20
+            cor_metric = "normal"
+            status_meta = " Dentro do Piso (90-109%)"
         else:
-            st.warning("Coluna 'Estado' não encontrada no CSV.")
-            st.write("Colunas detectadas:", list(df.columns))
-    except Exception as e:
-        st.error(f"Erro ao carregar a tabela: {e}")
-        st.info("Certifique-se de que o arquivo CSV da tabela de preços está na mesma pasta do código.")
+            perc_bonus = 0.0
+            cor_metric = "inverse" # Vermelho
+            status_meta = " Abaixo do Piso (<90%)"
+            
+        valor_bonus = salario_base * perc_bonus
+        total_estimado = salario_base + valor_bonus
+        
+        # Visualização de Métricas Coloridas
+        st.metric(
+            label="Atingimento da Meta",
+            value=f"{atingimento:.1f}%",
+            delta=status_meta,
+            delta_color=cor_metric
+        )
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric(
+                label="Valor do Bônus",
+                value=f"R$ {valor_bonus:,.2f}",
+                delta=f"{perc_bonus*100:.0f}% sobre o fixo",
+                delta_color=cor_metric
+            )
+        with c2:
+            st.metric(
+                label="Total (Fixo + Bônus)",
+                value=f"R$ {total_estimado:,.2f}"
+            )
+            
+        if perc_bonus == 0.0:
+            st.error("A meta ainda não atingiu o piso de 90% para bonificação. Foco total em Reativação!")
+        else:
+            st.success(f"Bônus de {perc_bonus*100:.0f}% garantido sobre o salário base.")
 
-# --- 3. BIBLIOTECA DE ARQUIVOS ---
-elif aba == "📄 Biblioteca de Arquivos":
-    st.title("📄 Documentos e Catálogos")
-    
-    col_a, col_b = st.columns(2)
-    
-    with col_a:
-        st.subheader("📁 Comercial")
-        st.markdown(download_link("catalogo-papapa-digital.pdf", "Catálogo Digital 2026"), unsafe_allow_html=True)
-        st.markdown(download_link("Informações todos os produtos Papapá.pdf", "Fichas Técnicas"), unsafe_allow_html=True)
-        st.markdown(download_link("Estrutura de Operação e Metas - Inside Sales.pdf", "Manual de Metas"), unsafe_allow_html=True)
+# --- MÓDULO 3, 4, 5: PLACEHOLDERS (Para desenvolvimento futuro) ---
+elif aba_selecionada == "📄 Biblioteca de Arquivos":
+    st.title("📄 Biblioteca de Arquivos (Em Breve)")
+    st.info("Esta aba será preenchida com os catálogos e tabelas de preços.")
 
-    with col_b:
-        st.subheader("📁 Operacional")
-        # CORREÇÃO DO ERRO DE SYNTAX: Linha única para evitar interrupção da string
-        st.markdown(download_link("GUIA DE RECEBIMENTO DE MERCADORIAS.pdf", "Guia de Avarias"), unsafe_allow_html=True)
-        st.markdown(download_link("Templates IS 2026.docx (2).pdf", "Playbook de Atendimento"), unsafe_allow_html=True)
+elif aba_selecionada == "🚚 Logística & SAC":
+    st.title("🚚 Logística & SAC (Em Breve)")
+    st.info("Esta aba será preenchida com as regras de recebimento e avarias.")
 
-# --- 4. LOGÍSTICA E SAC ---
-elif aba == "🚚 Logística e SAC":
-    st.title("🚚 Prazos e Ocorrências")
-    
-    st.warning("🚨 **REGRA DE OURO:** Ressalva na NF é obrigatória para qualquer avaria!")
-    
-    c1, c2 = st.columns(2)
-    with c1:
-        st.write("### Fluxo de Pedido")
-        st.write("- **Separação:** Até 3 dias úteis")
-        st.write("- **Faturamento:** Até 2 dias úteis")
-        st.write("- **Coleta:** D+1 após faturamento")
-    with c2:
-        st.info("Dúvidas financeiras? Enviar e-mail para: **contasareceber2@papapa.com.br**")
-
-# --- 5. SCRIPTS DE VENDAS ---
-elif aba == "✍️ Scripts de Vendas":
-    st.title("✍️ Templates de Mensagens")
-    
-    tema = st.selectbox("Tipo de contato:", ["Novo Cadastro", "Reativação", "Cobrança Amigável"])
-    
-    if tema == "Novo Cadastro":
-        txt = "Olá! Para o cadastro na Papapá, preciso de: CNPJ, IE, E-mail Financeiro e Telefones de contato."
-    elif tema == "Reativação":
-        txt = "Sentimos sua falta! Temos novidades na linha de Papinhas e Frutas. Vamos repor seu estoque?"
-    else:
-        txt = "Identificamos um boleto pendente. Posso ajudar com a 2ª via ou comprovante?"
-
-    st.text_area("Copie o texto abaixo:", value=txt, height=100)
-
-# --- RODAPÉ ---
-st.sidebar.divider()
-st.sidebar.caption("v1.0.2 | Papapá Inside Sales 2026")
+elif aba_selecionada == "✍️ Templates & Scripts":
+    st.title("✍️ Templates & Scripts (Em Breve)")
+    st.info("Esta aba será preenchida com os scripts de WhatsApp/Email.")
