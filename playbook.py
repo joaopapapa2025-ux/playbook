@@ -110,7 +110,7 @@ st.markdown("---")
 # Menu de Navegação Superior (Mais moderno que sidebar)
 aba_selecionada = st.radio(
     "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Comissão", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts"],
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts"],
     horizontal=True
 )
 
