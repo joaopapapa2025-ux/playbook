@@ -1,116 +1,142 @@
 import streamlit as st
 import pandas as pd
 
-# Configuração da Página
-st.set_page_config(page_title="Dashboard Inside Sales - Papapá", layout="wide")
+# Configurações iniciais
+st.set_page_config(page_title="Papapá | Portal Inside Sales", layout="wide", initial_sidebar_state="expanded")
 
-# --- DADOS INTEGRADOS DOS DOCUMENTOS ---
-equipe = {
-    "Ana Christina Rodrigues": {"cargo": "Analista Pleno - Key Accounts", "salario": 5000.0, "meta": 400000.0},
-    "Pedro Henrique Born": {"cargo": "Analista Pleno", "salario": 4000.0, "meta": 250000.0},
-    "Joao Paulo Ferreira": {"cargo": "Analista Junior", "salario": 3000.0, "meta": 150000.0},
-    "Thiago Martins Cabral": {"cargo": "Estagiário - Operação", "salario": 1500.0, "meta": 50000.0},
-    "Bernardo Oliveira": {"cargo": "Estagiário - Operação", "salario": 1500.0, "meta": 50000.0}
+# --- BANCO DE DADOS INTEGRADO (EXTRAÍDO DOS DOCUMENTOS) ---
+equipe_data = {
+    "Ana Christina Rodrigues": {"cargo": "Analista Pleno - Key Accounts", "foco": "Grandes Contas (Tier VIP)", "metas": "Faturamento (~40% total), Expansão de Mix"},
+    "Pedro Henrique Born": {"cargo": "Analista Pleno", "foco": "Ativação e Gestão de Carteira", "metas": "Faturamento de Ativação, Ticket Médio"},
+    "Joao Paulo Ferreira Alves": {"cargo": "Analista Junior", "foco": "Suporte e Conversão da Base", "metas": "Conversão, Faturamento de Ativação"},
+    "Thiago Martins Cabral": {"cargo": "Estagiário - Operação", "foco": "Reativação e Pós-Venda", "metas": "Receita de Reativação, Conversão Vekta, Churn"},
+    "Bernardo Oliveira Dallegrave": {"cargo": "Estagiário - Operação", "foco": "Reativação e Pós-Venda", "metas": "Receita de Reativação, Conversão Vekta, Churn"}
 }
 
-produtos = [
-    {"Linha": "Papinhas de Carne", "Validade": "12 meses", "Unidades/Cx": 12},
-    {"Linha": "Yoguzinho", "Validade": "15 meses", "Unidades/Cx": 16},
-    {"Linha": "Papinhas de Fruta", "Validade": "16 meses", "Unidades/Cx": 12},
-    {"Linha": "Palitinhos", "Validade": "9 meses", "Unidades/Cx": 16},
-    {"Linha": "Sopinhas/La Chef", "Validade": "12 meses", "Unidades/Cx": 6},
+produtos_data = [
+    {"Linha": "Papinhas de Carne", "Validade": "12 meses", "Qtd/Cx": 12, "Destaque": "Ingredientes Naturais"},
+    {"Linha": "Yoguzinho", "Validade": "15 meses", "Qtd/Cx": 16, "Destaque": "Sem refrigeração"},
+    {"Linha": "Papinhas de Fruta", "Validade": "16 meses", "Qtd/Cx": 12, "Destaque": "Pouch prático"},
+    {"Linha": "Dentição / Palitinhos", "Validade": "15 meses", "Qtd/Cx": 16, "Destaque": "Alimentação guiada"},
+    {"Linha": "Biscotti", "Validade": "10 meses", "Qtd/Cx": 12, "Destaque": "Textura suave"},
+    {"Linha": "La Chef / Sopinhas", "Validade": "16 meses", "Qtd/Cx": 6, "Destaque": "2 porções de 120g"},
+    {"Linha": "Macarrão", "Validade": "14 meses", "Qtd/Cx": 12, "Destaque": "Cozimento rápido"},
+    {"Linha": "Cereal Infantil", "Validade": "12 meses", "Qtd/Cx": 12, "Destaque": "Enriquecido com ferro"}
 ]
 
-# --- SIDEBAR - NAVEGAÇÃO ---
-st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=150)
-menu = st.sidebar.selectbox("Ir para:", ["Comissionamento & Metas", "Catálogo & Validades", "Logística & Avarias", "Templates de Venda"])
+# --- SIDEBAR ---
+st.sidebar.title("🛠️ Gestão Papapá")
+aba = st.sidebar.radio("Selecione o Painel:", 
+    ["📊 Performance & Bônus", "📦 Portfólio de Produtos", "🚚 Logística & Qualidade", "📝 Templates & Cadastro"])
 
-# --- MÓDULO 1: COMISSIONAMENTO & METAS ---
-if menu == "Comissionamento & Metas":
-    st.title("🚀 Performance e Comissionamento")
+st.sidebar.markdown("---")
+st.sidebar.info("**Lembrete:** Pedido Mínimo R$ 800,00.")
+
+# --- ABA 1: PERFORMANCE & BÔNUS (NOVO MODELO) ---
+if aba == "📊 Performance & Bônus":
+    st.title("🚀 Painel de Performance e Metas")
     
-    col1, col2 = st.columns([1, 2])
+    col_sel, col_calc = st.columns([1, 2])
     
-    with col1:
+    with col_sel:
         st.subheader("Simulador Individual")
-        analista_ref = st.selectbox("Selecione o Analista", list(equipe.keys()))
-        atingimento = st.slider("Atingimento da Meta (%)", 0, 150, 100)
-        faturamento_total = st.number_input("Faturamento Global do Time (R$)", value=1100000.0)
-        destaque_mes = st.checkbox("Ganhou 'Destaque de Linha'?")
-
-    # Lógica de Cálculo (Baseada no Novo Modelo)
-    salario_base = equipe[analista_ref]["salario"]
-    bonus_percent = 0
-    if atingimento >= 110:
-        bonus_percent = 0.30
-    elif atingimento >= 90:
-        bonus_percent = 0.20
-    
-    comissao_fixa = salario_base * bonus_percent
-    
-    # Campanhas de Aceleração
-    extra_faturamento = 0
-    if faturamento_total >= 1200000:
-        extra_faturamento = 300.0
-    elif faturamento_total >= 1000000:
-        extra_faturamento = 100.0
+        nome = st.selectbox("Analista:", list(equipe_data.keys()))
+        atingimento = st.number_input("Atingimento da Meta Individual (%)", min_value=0.0, max_value=200.0, value=100.0)
+        salario = st.number_input("Salário Base (R$)", min_value=0.0, value=3000.0)
         
-    extra_destaque = 200.0 if destaque_mes else 0.0
-    total_receber = comissao_fixa + extra_faturamento + extra_destaque
+        st.write("---")
+        st.subheader("Campanhas Globais")
+        fat_global = st.number_input("Faturamento Mensal Time (R$)", value=1000000.0)
+        destaque = st.checkbox("Destaque do Mês (Linha estratégica)")
 
-    with col2:
-        st.subheader(f"Resultado: {analista_ref}")
+    with col_calc:
+        st.subheader(f"Projeção para: {nome}")
+        st.caption(f"Foco: {equipe_data[nome]['foco']}")
+        
+        # Lógica de Comissionamento Fixa
+        if atingimento < 90:
+            perc_bonus = 0
+            cor = "inverse"
+        elif atingimento <= 109.9:
+            perc_bonus = 0.20
+            cor = "normal"
+        else:
+            perc_bonus = 0.30
+            cor = "normal"
+            
+        valor_fixo = salario * perc_bonus
+        
+        # Campanhas de Aceleração
+        bonus_global = 300.0 if fat_global >= 1200000 else (100.0 if fat_global >= 1000000 else 0)
+        bonus_destaque = 200.0 if destaque else 0
+        total = valor_fixo + bonus_global + bonus_destaque
+        
         c1, c2, c3 = st.columns(3)
-        c1.metric("Bónus Modelo Fixo", f"R$ {comissao_fixa:,.2f}")
-        c2.metric("Campanha Faturamento", f"R$ {extra_faturamento:,.2f}")
-        c3.metric("Bónus Destaque", f"R$ {extra_destaque:,.2f}")
+        c1.metric("Bônus Fixo", f"R$ {valor_fixo:,.2f}", delta=f"{perc_bonus*100:.0f}%")
+        c2.metric("Aceleração Global", f"R$ {bonus_global:,.2f}")
+        c3.metric("Bônus Destaque", f"R$ {bonus_destaque:,.2f}")
         
-        st.success(f"**Total de Premiação Estimada: R$ {total_receber:,.2f}**")
-        st.info(f"Cargo: {equipe[analista_ref]['cargo']} | Salário Base: R$ {salario_base:,.2f}")
+        st.divider()
+        st.subheader(f"Total Estimado: R$ {total:,.2f}")
+        st.warning(f"**Métricas de Avaliação:** {equipe_data[nome]['metas']}")
 
-# --- MÓDULO 2: CATÁLOGO & VALIDADES ---
-elif menu == "Catálogo & Validades":
-    st.title("📦 Informações de Portfólio")
-    st.write("Dados extraídos do Catálogo Digital e Tabela de Validades.")
+# --- ABA 2: PORTFÓLIO DE PRODUTOS ---
+elif aba == "📦 Portfólio de Produtos":
+    st.title("📚 Catálogo e Especificações Técnicas")
     
-    df_prod = pd.DataFrame(produtos)
-    st.table(df_prod)
+    st.write("Consulte as validades e o padrão de encaxotamento para pedidos.")
     
-    st.warning("**Atenção:** Pedido mínimo para faturamento é de **R$ 800,00**.")
+    df_prod = pd.DataFrame(produtos_data)
+    st.dataframe(df_prod, use_container_width=True, hide_index=True)
+    
+    st.info("💡 **Dica Comercial:** Todas as linhas dispensam refrigeração devido ao processo de envase.")
 
-# --- MÓDULO 3: LOGÍSTICA & AVARIAS ---
-elif menu == "Logística & Avarias":
-    st.title("🚚 Guia de Recebimento e Prazos")
+# --- ABA 3: LOGÍSTICA & QUALIDADE ---
+elif aba == "🚚 Logística & Qualidade":
+    st.title("🚛 Operação e Protocolo de Recebimento")
     
-    tab1, tab2 = st.tabs(["Prazos de Pedido", "Protocolo de Avarias"])
+    col_log, col_ava = st.columns(2)
     
-    with tab1:
+    with col_log:
+        st.subheader("Prazos de Entrega (CIF)")
         st.markdown("""
-        1. **Separação:** Até 3 dias úteis.
-        2. **Faturamento:** + 2 dias úteis.
-        3. **Coleta:** Após os 5 dias totais de processamento interno.
+        * **Separação:** 3 dias úteis (CD).
+        * **Faturamento (NF):** +2 dias úteis.
+        * **Coleta:** Após os 5 dias totais de processamento.
+        * **Transporte:** Variável conforme região.
         """)
-    
-    with tab2:
-        st.error("⚠️ REGRA OURO: Sem ressalva na NF, não há reposição!")
+        
+    with col_ava:
+        st.subheader("⚠️ Regras de Avaria")
+        st.error("**SEM RESSALVA = SEM REPOSIÇÃO**")
         st.markdown("""
-        - **Conferência:** No ato da entrega.
-        - **Divergência:** Registrar ressalva detalhada no verso da NF.
-        - **Recusa Parcial:** Cliente aceita o que está ok e emite **NFD** (Nota de Devolução) do que está avariado.
+        1. **Conferência:** Sempre no ato da entrega.
+        2. **Ressalva:** Registrar no verso da NF qualquer dano visível.
+        3. **Recusa Parcial:** Cliente aceita o que está bom e emite **NFD** (Nota de Devolução) do que está ruim.
+        4. **Avaria Interna:** Não coberta se não houver ressalva na NF.
         """)
 
-# --- MÓDULO 4: TEMPLATES DE VENDA ---
-elif menu == "Templates de Venda":
-    st.title("📝 Templates Rápidos")
+# --- ABA 4: TEMPLATES & CADASTRO ---
+elif aba == "📝 Templates & Cadastro":
+    st.title("📋 Suporte ao Fechamento")
     
-    st.subheader("Dados Necessários para Cadastro")
-    cadastro_text = """CNPJ:
+    tab_cad, tab_temp = st.tabs(["Dados de Cadastro", "Templates de Texto"])
+    
+    with tab_cad:
+        st.subheader("Informações Obrigatórias")
+        st.code("""
+CNPJ:
 Inscrição Estadual (IE):
-Telefone Financeiro/Compras:
 E-mail Financeiro/Compras:
-Dados Bancários (PIX):"""
-    st.code(cadastro_text, language=None)
-    
-    st.subheader("Condições Comerciais (Frete CIF)")
-    st.info("Utilize este texto para enviar propostas rápidas via WhatsApp ou E-mail.")
-    st.text_area("Template:", value="Olá! Nossos produtos são vendidos em caixas fechadas. Frete CIF para todo o Brasil. Pedido mínimo R$ 800,00. Pagamento via Boleto ou PIX.", height=100)
+Telefone Comercial:
+Dados Bancários (Chave PIX):
+        """, language=None)
+        
+    with tab_temp:
+        st.subheader("Argumento Comercial Rápido")
+        template = """Olá! Nossos produtos são naturais, sem conservantes e ideais para a introdução alimentar.
+        - Pedido Mínimo: R$ 800,00
+        - Frete: Grátis (CIF)
+        - Pagamento: Boleto ou PIX
+        - Validade média: 12 a 16 meses"""
+        st.text_area("Copie o texto abaixo:", value=template, height=150)
