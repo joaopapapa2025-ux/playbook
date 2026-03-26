@@ -83,12 +83,12 @@ equipe = [
     },
     {
         "nome": "Pedro Henrique Born",
-        "cargo": "Analista Pleno (Key Accounts)",
+        "cargo": "Analista Pleno (Crescimento)",
         "foto_html": img_avatar_html
     },
     {
         "nome": "Joao Paulo Ferreira Alves",
-        "cargo": "Analista Júnior (Tier 1 & 2)",
+        "cargo": "Analista Júnior (Desenvolvimento)",
         "foto_html": img_avatar_html
     },
     {
