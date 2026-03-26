@@ -1,103 +1,135 @@
 import streamlit as st
 import pandas as pd
+import base64
 
 # 1. CONFIGURAÇÃO DA PÁGINA
-st.set_page_config(page_title="Dashboard Inside Sales | Papapá", layout="wide")
+st.set_page_config(page_title="Central Inside Sales | Papapá", layout="wide", page_icon="💙")
 
-# --- BANCO DE DADOS INTERNO (EXTRAÍDO DOS SEUS DOCUMENTOS) ---
-produtos_lista = [
-    {"Linha": "Papinhas de Carne", "Validade": "12 meses", "Un/Cx": 12, "Peso": "120g", "Sabores": "Carne, Arroz e Legumes / Frango, Mandioquinha e Legumes"},
-    {"Linha": "Yoguzinho", "Validade": "15 meses", "Un/Cx": 16, "Peso": "100g", "Sabores": "Maçã e Banana / Morango e Banana"},
-    {"Linha": "Papinhas de Fruta", "Validade": "16 meses", "Un/Cx": 12, "Peso": "100g", "Sabores": "Maçã, Manga, Pêra, Ameixa, Banana"},
-    {"Linha": "Dentição (Biscoito Arroz)", "Validade": "15 meses", "Un/Cx": 12, "Peso": "30g", "Sabores": "Maçã e Canela / Morango e Banana"},
-    {"Linha": "Biscotti", "Validade": "10 meses", "Un/Cx": 12, "Peso": "60g", "Sabores": "Maçã / Banana"},
-    {"Linha": "La Chef", "Validade": "16 meses", "Un/Cx": 6, "Peso": "240g", "Sabores": "Risotinho de Carne / Galinhada"},
-    {"Linha": "Sopinhas", "Validade": "12 meses", "Un/Cx": 6, "Peso": "240g", "Sabores": "Feijão, Carne e Legumes / Canja de Galinha"},
-    {"Linha": "Macarrão", "Validade": "14 meses", "Un/Cx": 12, "Peso": "200g", "Sabores": "Letrinhas / Estrelinhas"},
-    {"Linha": "Cereal Infantil", "Validade": "12 meses", "Un/Cx": 12, "Peso": "170g", "Sabores": "Multicereais / Aveia e Morango"},
-    {"Linha": "Palitinhos", "Validade": "9 meses", "Un/Cx": 16, "Peso": "45g", "Sabores": "Milho / Cenoura"},
-]
+# --- FUNÇÃO PARA DOWNLOAD DE ARQUIVOS ---
+def get_binary_file_downloader_html(bin_file, file_label='Arquivo'):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    bin_str = base64.b64encode(data).decode()
+    href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{bin_file}" style="text-decoration: none; color: white; background-color: #007bff; padding: 8px 16px; border-radius: 5px;">📥 Baixar {file_label}</a>'
+    return href
 
-# 2. SIDEBAR
-st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=120)
-menu = st.sidebar.radio("Navegação:", ["💰 Comissão", "📦 Produtos", "🚚 Logística", "📝 Templates"])
+# 2. SIDEBAR E NAVEGAÇÃO
+st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=150)
+st.sidebar.title("Menu de Navegação")
+menu = st.sidebar.selectbox("Selecione a Área:", 
+    ["🏠 Home", "📊 Metas e Operação", "💰 Calculadora de Comissão", "📦 Portfólio e Preços", "🚚 Logística e Recebimento", "📝 Templates de Atendimento"])
 
-# --- MÓDULO 1: COMISSÃO ---
-if menu == "💰 Comissão":
-    st.title("📊 Calculadora de Premiação (Modelo 2026)")
+# --- ÁREA 1: HOME ---
+if menu == "🏠 Home":
+    st.title("Bem-vindo ao Portal Inside Sales 2026")
+    st.markdown("""
+    Esta central reúne todos os documentos oficiais da **Papapá**. 
+    Use o menu lateral para navegar entre regras de negócio, tabelas de preços e materiais de apoio.
+    """)
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        st.subheader("Simulador de Meta")
-        atingimento = st.number_input("Atingimento Individual (%)", min_value=0.0, value=100.0)
-        fat_global = st.number_input("Faturamento Global Time (R$)", value=1000000.0)
-        destaque = st.checkbox("Ganhou prêmio de destaque?")
-        
+        st.info("**Time:** 5 Analistas")
     with col2:
-        st.subheader("Resultado do Bônus")
-        if atingimento >= 110:
-            status = "30% de Bônus"
-        elif atingimento >= 90:
-            status = "20% de Bônus"
-        else:
-            status = "0% (Abaixo de 90%)"
-            
-        st.metric("Bônus sobre Salário", status)
-        
-        # Aceleração Cash
-        acel = 300 if fat_global >= 1200000 else (100 if fat_global >= 1000000 else 0)
-        premio = 200 if destaque else 0
-        
-        st.write(f"**+ Adicional em Dinheiro:** R$ {acel + premio},00")
+        st.success("**Meta Global:** Monitorada via RD CRM")
+    with col3:
+        st.warning("**Pedido Mínimo:** R$ 800,00")
 
-# --- MÓDULO 2: PRODUTOS ---
-elif menu == "📦 Produtos":
-    st.title("📦 Tabela Técnica de SKUs")
-    st.dataframe(pd.DataFrame(produtos_lista), use_container_width=True, hide_index=True)
-    st.info("💡 Todos os itens são Shelf Life (não precisam de geladeira).")
-
-# --- MÓDULO 3: LOGÍSTICA (PREENCHIDO) ---
-elif menu == "🚚 Logística":
-    st.title("🚚 Protocolo de Recebimento e Logística")
+# --- ÁREA 2: METAS E OPERAÇÃO ---
+elif menu == "📊 Metas e Operação":
+    st.title("📊 Estrutura de Operação e Metas")
     
-    st.error("⚠️ REGRA OURO: SEM RESSALVA NA NF = SEM REPOSIÇÃO")
+    tab1, tab2 = st.tabs(["Divisão de Funções", "Arquivos Oficiais"])
     
-    col_a, col_b = st.columns(2)
-    with col_a:
+    with tab1:
         st.markdown("""
-        ### Fluxo de Prazos
-        1. **Separação:** 3 dias úteis.
-        2. **Faturamento:** +2 dias úteis.
-        3. **Coleta:** Após o 5º dia útil.
-        *Frete CIF para todo o Brasil.*
+        - **Analistas Plenos (Ana e Pedro):** Foco em Key Accounts (Tier VIP).
+        - **Analista Júnior (João Paulo):** Foco em Contas Tier 1 e 2.
+        - **Estagiários (Thiago e Bernardo):** Reativação, Pós-venda e Vekta.
         """)
-    with col_b:
-        st.markdown("""
-        ### Como agir na Avaria:
-        - Conferir antes de liberar o motorista.
-        - Escrever o problema no verso da NF.
-        - Se for parcial: Aceita o bom e emite **NFD** do ruim.
-        - Se for total: Recusa a carga inteira.
-        """)
+        st.markdown(get_binary_file_downloader_html("Estrutura de Operação e Metas - Inside Sales.pdf", "Estrutura de Metas PDF"), unsafe_allow_html=True)
 
-# --- MÓDULO 4: TEMPLATES (PREENCHIDO) ---
-elif menu == "📝 Templates":
-    st.title("📝 Templates e Regras Financeiras")
+# --- ÁREA 3: COMISSÃO ---
+elif menu == "💰 Calculadora de Comissão":
+    st.title("💰 Simulador de Premiação")
+    # Baseado no modelo de tiers de atingimento (90%, 100%, 110%)
+    atingimento = st.slider("Atingimento da Meta Individual (%)", 0, 150, 100)
     
-    with st.expander("💳 Prazos de Boleto por Região"):
-        st.markdown("**Sul e Sudeste:**")
-        st.code("Até R$1k: 30d | R$1k-2k: 30/45d | > R$2k: 30/45/60d")
-        st.markdown("**Norte, Nordeste, Centro-Oeste, MG e ES:**")
-        st.code("Até R$1k: 45d | R$1k-2k: 45/60d | > R$2k: 40/50/60d")
+    if atingimento >= 110:
+        bonus = "30% do Salário"
+    elif atingimento >= 100:
+        bonus = "25% do Salário"
+    elif atingimento >= 90:
+        bonus = "20% do Salário"
+    else:
+        bonus = "R$ 0,00 (Abaixo do piso)"
         
-    with st.expander("📧 Template: Resumo Comercial"):
-        texto = """Olá! Seguem condições Papapá:
+    st.metric("Estimativa de Bônus", bonus)
+    st.caption("Campanhas de aceleração (Cash) são calculadas à parte conforme faturamento global.")
+
+# --- ÁREA 4: PORTFÓLIO E PREÇOS ---
+elif menu == "📦 Portfólio e Preços":
+    st.title("📦 Tabela de Preços e Catálogo")
+    
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        st.subheader("Catálogo Digital")
+        st.write("Consulte detalhes visuais e nutricionais.")
+        st.markdown(get_binary_file_downloader_html("catalogo-papapa-digital.pdf", "Catálogo 2026"), unsafe_allow_html=True)
+    
+    with c2:
+        st.subheader("Tabela de Preços")
+        st.write("Tabela atualizada (Março 2026).")
+        st.markdown(get_binary_file_downloader_html("Tabela de preços Papapá 0226 v2.xlsx - PREÇOS.csv", "Tabela de Preços (CSV)"), unsafe_allow_html=True)
+
+    st.divider()
+    st.subheader("Informações Técnicas por Linha")
+    # Lendo o arquivo de informações de produtos
+    st.markdown(get_binary_file_downloader_html("Informações todos os produtos Papapá.pdf", "Ficha Técnica Completa"), unsafe_allow_html=True)
+
+# --- ÁREA 5: LOGÍSTICA ---
+elif menu == "🚚 Logística e Recebimento":
+    st.title("🚚 Protocolos Logísticos")
+    
+    col_log, col_img = st.columns([2, 1])
+    
+    with col_log:
+        st.error("❗ REGRA OBRIGATÓRIA: Ressalva no verso da Nota Fiscal para qualquer avaria.")
+        st.markdown("""
+        **Prazos Operacionais:**
+        - Separação: 3 dias úteis.
+        - Faturamento: 2 dias úteis.
+        - Coleta: Após o 5º dia útil.
+        """)
+        st.markdown(get_binary_file_downloader_html("GUIA DE RECEBIMENTO DE MERCADORIAS.pdf", "Guia de Avarias PDF"), unsafe_allow_html=True)
+    
+    with col_img:
+        st.image("image_4f06e0.png", caption="Exemplo de Paletização/Produto", use_container_width=True)
+
+# --- ÁREA 6: TEMPLATES ---
+elif menu == "📝 Templates de Atendimento":
+    st.title("📝 Templates IS 2026")
+    
+    st.info("Utilize os padrões abaixo para manter a comunicação 'Intermediária' (nem formal, nem informal demais).")
+    
+    with st.expander("💳 Prazos de Pagamento (Boleto)"):
+        st.table({
+            "Região": ["Sul/Sudeste", "Norte/NE/CO/MG/ES"],
+            "Até R$ 1k": ["30 dias", "45 dias"],
+            "R$ 1k - 2k": ["30/45 dias", "45/60 dias"],
+            "Acima R$ 2k": ["30/45/60 dias", "40/50/60 dias"]
+        })
+        
+    st.subheader("Resumo para WhatsApp/E-mail")
+    template_venda = """Prezado [Nome], conforme conversamos, seguem as condições:
 - Pedido Mínimo: R$ 800,00
-- Frete: Grátis (CIF)
-- Pagamento: Boleto ou PIX
-- Validade: 12 a 16 meses"""
-        st.text_area("Copiar:", value=texto, height=120)
-        
-    with st.expander("🔄 Trocas e Cadastro"):
-        st.write("**Trocas:** Avisar com 60 dias de antecedência ao vencimento.")
-        st.write("**Cadastro:** Enviar CNPJ, IE, E-mail e Telefone Financeiro para contasareceber2@papapa.com.br")
+- Frete: CIF (Grátis)
+- Cadastro: Necessário CNPJ, IE e e-mail financeiro.
+- Boletos: Enviados via e-mail automático."""
+    st.text_area("Copiar Template:", value=template_venda, height=150)
+    
+    st.markdown(get_binary_file_downloader_html("Templates IS 2026.docx (2).pdf", "Templates Completos PDF"), unsafe_allow_html=True)
+
+# --- RODAPÉ ---
+st.sidebar.divider()
+st.sidebar.caption("v2.1 | Atualizado em: Março 2026")
