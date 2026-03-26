@@ -137,7 +137,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
                     """, unsafe_allow_html=True)
 
 # --- MÓDULO 2: SIMULADOR DE COMISSÃO (COM LÓGICA INTEGRADA) ---
-elif aba_selecionada == "💰 Simulador de Comissão":
+elif aba_selecionada == "💰 Simulador de Bonificação":
     st.title("💰 Simulador de Comissionamento Individual")
     st.write("Calcule a projeção do seu bônus com base no atingimento da meta.")
     
