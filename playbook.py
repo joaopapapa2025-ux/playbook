@@ -77,6 +77,11 @@ st.markdown(f"""
 # --- DADOS DA EQUIPE ---
 equipe = [
     {
+        "nome": "João Vitor Tadra",
+        "cargo": "Coordenador",
+        "foto_html": img_avatar_html
+    },
+    {
         "nome": "Ana Christina Rodrigues",
         "cargo": "Analista (Key Accounts)",
         "foto_html": img_avatar_html
