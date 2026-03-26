@@ -119,7 +119,7 @@ st.markdown("---")
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
-    st.write("Foco, dedicação e nutrição infantil. Conheça o time Inside Sales da Papapá.")
+    st.write("Conheça o time Inside Sales da Papapá.")
     
     # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
