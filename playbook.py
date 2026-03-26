@@ -78,17 +78,17 @@ st.markdown(f"""
 equipe = [
     {
         "nome": "Ana Christina Rodrigues",
-        "cargo": "Analista Pleno (Key Accounts)",
+        "cargo": "Analista (Key Accounts)",
         "foto_html": img_avatar_html
     },
     {
         "nome": "Pedro Henrique Born",
-        "cargo": "Analista Pleno (Crescimento)",
+        "cargo": "Analista (Crescimento)",
         "foto_html": img_avatar_html
     },
     {
         "nome": "Joao Paulo Ferreira Alves",
-        "cargo": "Analista Júnior (Desenvolvimento)",
+        "cargo": "Analista (Desenvolvimento)",
         "foto_html": img_avatar_html
     },
     {
