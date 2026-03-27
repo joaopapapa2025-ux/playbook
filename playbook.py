@@ -401,30 +401,7 @@ if menu == "📊 Políticas e Prazos":
         st.subheader("📂 Material de PDV e Catálogo")
         st.code("Link: https://papapacombr-my.sharepoint.com/... \nSenha: Papapa@2023", language=None)
 
-# --- 5. MÓDULO: POLÍTICAS E PRAZOS ---
-if menu == "📋 Políticas e Prazos":
-    st.title("📊 Políticas Comerciais Papapá")
-    
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.subheader("📅 Tabela de Validade (Shelf Life)")
-        validade_data = {
-            "Papinhas de Fruta": "16 meses", "Papinhas de Carne": "12 meses",
-            "Yoguzinho": "15 meses", "Dentição": "15 meses",
-            "Biscotti": "10 meses", "La Chef": "16 meses",
-            "Macarrão": "14 meses", "Cereal": "12 meses",
-            "Palitinhos": "9 meses", "Sopinhas": "12 meses"
-        }
-        st.table(validade_data)
 
-    with col_b:
-        st.subheader("💳 Prazos de Boleto")
-        st.markdown("**Sul e Sudeste:**")
-        st.code("Até 1k: 30d | 1k-2k: 30/45d | +2k: 30/45/60d", language=None)
-        st.markdown("**Demais Regiões (NO/NE/CO/MG/ES):**")
-        st.code("Até 1k: 45d | 1k-2k: 45/60d | +2k: 40/50/60d", language=None)
-        st.divider()
-        st.write("**Financeiro:** contasareceber2@papapa.com.br")
     
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
