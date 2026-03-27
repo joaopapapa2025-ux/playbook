@@ -95,19 +95,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 ################################################################################
-# --- 2. NAVEGAÇÃO SUPERIOR ---
-################################################################################
-st.title("Hub Inside Sales | Papapá")
-
-aba_selecionada = st.radio(
-    "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
-    horizontal=True
-)
-
-st.divider()
-
-################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
