@@ -479,12 +479,37 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
     with col_info1:
         st.subheader("📅 Shelf Life (Validades)")
-        validades = {
-            "Linha": ["Papinhas de Fruta", "La Chef", "Yoguzinho", "Dentição", "Macarrão", "Sopinhas", "Carne", "Cereal", "Biscotti", "Palitinhos"],
-            "Meses": [16, 16, 15, 15, 14, 12, 12, 12, 10, 9]
-        }
-        st.table(pd.DataFrame(validades))
+        
+        # CSS já está no bloco anterior, então usamos as mesmas classes
+        st.markdown("""
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">15 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">15 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">14 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">10 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
+        """, unsafe_allow_html=True)
         st.caption("❄️ Nenhuma linha necessita de refrigeração.")
+
+        st.write("") # Espaçador
+        
+        st.subheader("📦 Unidades por Caixa")
+        st.markdown("""
+            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">6 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">12 un.</span></div>
+        """, unsafe_allow_html=True)
 
         st.subheader("📦 Unidades por Caixa")
         
