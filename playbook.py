@@ -656,6 +656,9 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
 
+        # READICIONADO: Métrica de quantidade
+            st.metric("Ocorrências no período", len(notas_exibidas))
+
         if not notas_exibidas:
             st.caption("Nenhum registro encontrado.")
         else:
