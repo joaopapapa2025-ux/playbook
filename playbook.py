@@ -34,91 +34,84 @@ else:
     img_logo_src = fallback_avatar
 
 ################################################################################
+# --- 1. CONFIGURAÇÕES DE IMAGEM DO LOGO ---
+################################################################################
+# Nome do arquivo conforme seu repositório
+arquivo_logo = "Papapa-azul.png" 
+
+# Carrega o logo oficial
+img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
+
+if img_base64_oficial:
+    # Esta é a variável que o st.image vai usar
+    img_logo_html = f"data:image/png;base64,{img_base64_oficial}"
+else:
+    # Se o arquivo não for encontrado, usamos o fallback para não dar NameError
+    img_logo_html = "https://www.w3schools.com/howto/img_avatar.png" 
+
+################################################################################
 # --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO SUPERIOR REFORMULADA ---
 ################################################################################
-# Certifique-se de que a variável 'img_logo_html' (com o Base64 do logo oficial)
-# foi definida anteriormente. Caso contrário, a gente usa oFallback_avatar ou img_avatar_html.
 
-# NOVA LÓGICA DE CABEÇALHO CENTRALIZADO
-with st.container():
-    col_l, col_c, col_r = st.columns([1, 1, 1])
-    
-    with col_c:
-        # 1. EXIBIÇÃO DO LOGO NO TOPO (CENTRALIZADO)
-        # Usamos o st.image com a imagem que você já carregou
-        st.image(img_logo_html, width=280) 
-        
-        st.markdown("<br>", unsafe_allow_html=True) # Espaçamento
-        
-        # 2. TÍTULO ESTILIZADO (LEVE E INTEGRADO)
-        # O título fica mais clean, centralizado e com a cor da marca Papapá
-        st.markdown(f"""
-            <h2 style='text-align: center; color: #004a99; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 1.8em; margin-top: -10px;'>
-                Hub Inside Sales
-            </h2>
-        """, unsafe_allow_html=True)
-
-st.divider()
-
-# --- NOVA ESTRUTURA DE NAVEGAÇÃO: ABAS SUPERIORES ---
-
-# CSS Customizado avançado para esconder o rádio e criar abas de navegação
-# Esse CSS remove as bolinhas e faz com que o menu pareça botões centralizados.
+# CSS para deixar o menu bonito (sem bolinhas) e centralizar tudo
 st.markdown("""
     <style>
-    /* Centraliza a row do st.radio na tela */
+    [data-testid="stSidebar"] { display: none; } /* Garante que a sidebar suma */
+    
+    /* Estilo das abas de navegação */
     div.row-widget.stRadio > div {
         display: flex;
         flex-direction: row; 
-        gap: 15px; /* Espaço entre as abas */
-        justify-content: center; /* Centraliza as abas */
-        margin-top: -20px;
-        border-bottom: 2px solid #eaeaea; /* Borda inferior sutil */
-        padding-bottom: 10px;
+        gap: 12px; 
+        justify-content: center; 
+        margin-top: 5px;
     }
     
-    /* Remove as bolinhas de seleção padrão do Streamlit */
-    div.row-widget.stRadio div[role="radiogroup"] span {
-        display: none;
-    }
+    div.row-widget.stRadio div[role="radiogroup"] span { display: none; }
 
-    /* Estiliza cada item do rádio como uma aba/botão */
     div.row-widget.stRadio div[role="radiogroup"] label {
-        display: inline-block;
-        padding: 8px 18px;
-        background-color: transparent;
+        padding: 8px 16px;
         border-radius: 20px;
         border: 1px solid #007bff;
         color: #007bff;
-        font-weight: bold;
+        font-weight: 600;
+        font-size: 0.9em;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: 0.3s;
     }
 
-    /* Estilo de hover (quando o mouse passa por cima) */
-    div.row-widget.stRadio div[role="radiogroup"] label:hover {
-        background-color: #e0f0ff;
-    }
+    div.row-widget.stRadio div[role="radiogroup"] label:hover { background-color: #f0f7ff; }
 
-    /* Estilo do item selecionado: Muda de cor */
     div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {
         background-color: #007bff;
         color: white;
-        border-color: #007bff;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. NAVEGAÇÃO SUPERIOR (st.radio transformado em abas)
-# Passamos label_visibility="collapsed" para que o Streamlit não desenhe o rótulo "Navegação:".
-# Isso faz ele se comportar exatamente como abas no topo da tela.
+# Exibição do Cabeçalho
+with st.container():
+    # Centraliza o logo
+    c1, c2, c3 = st.columns([1, 1.2, 1])
+    with c2:
+        st.image(img_logo_html, width=280)
+    
+    # Título estilizado logo abaixo do logo
+    st.markdown("""
+        <h2 style='text-align: center; color: #004a99; font-family: sans-serif; margin-top: -10px; margin-bottom: 20px;'>
+            Hub Inside Sales
+        </h2>
+    """, unsafe_allow_html=True)
+
+# O Menu de Navegação (Rádio transformado em abas pelo CSS acima)
 aba_selecionada = st.radio(
-    "Navegação:", # Este rótulo agora será escondido pelo CSS
+    "Menu",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
+st.divider()
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
