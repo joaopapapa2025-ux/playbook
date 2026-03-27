@@ -4,23 +4,22 @@ import base64
 from pathlib import Path
 
 ################################################################################
-# --- 1. CONFIGURAÇÕES INICIAIS E ESTILO ---
+# --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
 ################################################################################
-
 st.set_page_config(
-    page_title="Papapá | Sales Hub 2026",
+    page_title="Papapá | Sales Hub 2026", 
+    layout="wide", 
     page_icon="💙",
-    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Função para converter imagem em base64
+# Função para carregar imagem e converter para base64
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
-# Tenta carregar o avatar da Papapá
+# Configuração da imagem do avatar
 img_filename = "Papapa-azul..png"
 if Path(img_filename).exists():
     img_base64 = get_base64_of_bin_file(img_filename)
@@ -28,30 +27,32 @@ if Path(img_filename).exists():
 else:
     img_avatar_html = "https://www.w3schools.com/howto/img_avatar.png" 
 
-# CSS Unificado
+# CSS Customizado (Cards, Cores e Esconder Sidebar)
 st.markdown(f"""
     <style>
-    [data-testid="stSidebar"] {{display: none;}}
-    div.row-widget.stRadio > div {{flex-direction: row; gap: 20px;}}
+    [data-testid="stSidebar"] {{ display: none; }} /* Remove menu lateral */
+    div.row-widget.stRadio > div {{ flex-direction: row; gap: 20px; }} /* Radio Horizontal */
+    
+    h1 {{ color: #004a99; font-family: 'Segoe UI', sans-serif; }}
+    
     .team-card {{
         background-color: white; padding: 20px; border-radius: 15px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
         margin-bottom: 20px; border: 1px solid #eaeaea;
     }}
     .avatar-round {{
-        width: 100px; height: 100px; border-radius: 50%;
-        object-fit: cover; border: 3px solid #004a99; margin-bottom: 10px;
+        width: 110px; height: 110px; border-radius: 50%;
+        object-fit: cover; border: 3px solid #007bff; margin-bottom: 15px;
     }}
-    .team-name {{ font-weight: bold; color: #333; }}
-    .team-role {{ color: #666; font-size: 0.85em; }}
+    .team-name {{ font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }}
+    .team-role {{ color: #666; font-size: 0.9em; margin-bottom: 15px; }}
     .stCode {{ background-color: #fcfcfc; border-radius: 10px; border: 1px solid #e0e0e0; }}
     </style>
     """, unsafe_allow_html=True)
 
 ################################################################################
-# --- 2. NAVEGAÇÃO PRINCIPAL ---
+# --- 2. NAVEGAÇÃO SUPERIOR ---
 ################################################################################
-
 st.title("Hub Inside Sales | Papapá")
 
 aba_selecionada = st.radio(
@@ -63,7 +64,7 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
@@ -81,13 +82,13 @@ if aba_selecionada == "🏠 Home (Equipe)":
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
-                m = equipe[i + j]
+                membro = equipe[i + j]
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
                             <img src="{img_avatar_html}" class="avatar-round">
-                            <div class="team-name">{m['nome']}</div>
-                            <div class="team-role">{m['cargo']}</div>
+                            <div class="team-name">{membro['nome']}</div>
+                            <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
 
@@ -99,77 +100,90 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
     
     col_input, col_result = st.columns([1, 1.5])
     with col_input:
-        salario_base = st.number_input("Salário Fixo (R$)", value=3000.0)
-        meta_mes = st.number_input("Meta do Mês (R$)", value=150000.0)
-        resultado_atual = st.number_input("Resultado Atual (R$)", value=135000.0)
+        salario_base = st.number_input("Seu Salário Fixo Base (R$)", min_value=0.0, value=3000.0)
+        meta_mes = st.number_input("Valor da Meta do Mês (R$)", min_value=0.0, value=150000.0)
+        resultado_atual = st.number_input("Seu Resultado Atual Batido (R$)", min_value=0.0, value=135000.0)
         
     with col_result:
         atingimento = (resultado_atual / meta_mes) * 100 if meta_mes > 0 else 0.0
+        
         if atingimento >= 110.0:
-            perc, status, cor = 0.30, "Superação (110%+)", "normal"
+            perc_bonus, status_meta, cor_metric = 0.30, " Superação (110%+)!", "normal"
         elif atingimento >= 90.0:
-            perc, status, cor = 0.20, "No Piso (90-109%)", "normal"
+            perc_bonus, status_meta, cor_metric = 0.20, " No Piso (90-109%)", "normal"
         else:
-            perc, status, cor = 0.0, "Abaixo do Piso", "inverse"
+            perc_bonus, status_meta, cor_metric = 0.0, " Abaixo do Piso (<90%)", "inverse"
             
-        valor_bonus = salario_base * perc
-        st.metric("Atingimento", f"{atingimento:.1f}%", delta=status, delta_color=cor)
-        st.metric("Bônus Estimado", f"R$ {valor_bonus:,.2f}", delta=f"{perc*100:.0f}%")
+        valor_bonus = salario_base * perc_bonus
+        total_estimado = salario_base + valor_bonus
+        
+        st.metric(label="Atingimento da Meta", value=f"{atingimento:.1f}%", delta=status_meta, delta_color=cor_metric)
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric(label="Valor do Bônus", value=f"R$ {valor_bonus:,.2f}", delta=f"{perc_bonus*100:.0f}% sobre o fixo")
+        with c2:
+            st.metric(label="Total Estimado", value=f"R$ {total_estimado:,.2f}")
 
 ################################################################################
 # --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
 ################################################################################
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
-    c1, c2 = st.columns(2)
+    col1, col2 = st.columns(2)
     
-    with c1:
+    with col1:
         st.subheader("📁 Materiais de Venda")
-        arquivos = {
-            "📖 Catálogo Digital": "catalogo-papapa-digital.pdf",
-            "💰 Tabela de Preços": "Tabela de preços Papapá 0226 v2.xlsx",
-            "ℹ️ Ficha Técnica": "Informações todos os produtos Papapá.pdf"
+        arquivos_venda = {
+            "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
+            "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
+            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
         }
-        for label, path in arquivos.items():
+        for label, path in arquivos_venda.items():
             try:
                 with open(path, "rb") as f:
                     st.download_button(label, f, file_name=path, use_container_width=True)
-            except: st.error(f"Falta: {path}")
+            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
-    with c2:
+    with col2:
         st.subheader("📋 Guias e Processos")
-        processos = {
+        arquivos_proc = {
             "🎯 Estrutura de Metas": "Estrutura de Operação e Metas - Inside Sales.pdf",
             "📦 Guia de Avarias": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
-            "📝 Templates PDF": "Templates IS 2026.docx (2).pdf"
+            "📝 Templates (PDF)": "Templates IS 2026.docx (2).pdf"
         }
-        for label, path in processos.items():
+        for label, path in arquivos_proc.items():
             try:
                 with open(path, "rb") as f:
                     st.download_button(label, f, file_name=path, use_container_width=True)
-            except: st.error(f"Falta: {path}")
+            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
 ################################################################################
 # --- MÓDULO 4: TEMPLATES & SCRIPTS ---
 ################################################################################
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.header("✍️ Templates & Scripts")
-    t = st.tabs(["🤝 Abordagem", "🚀 Curva A", "📝 Cadastro", "🚚 Logística"])
-    with t[0]:
-        st.write("**Abordagem Perfil (WhatsApp)**")
-        st.code("Olá, tudo bem? Aqui é o [Seu Nome], da Papapá...", language=None)
-    with t[1]:
-        st.write("**Sugestão Curva A** [cite: 242, 243]")
-        st.code("Recomendamos iniciar com: Papinhas de Fruta, Biscoito Dentição e Biscotti.", language=None)
+    tabs = st.tabs(["🤝 Abordagem", "🚀 Curva A", "📝 Cadastro", "🚚 Logística", "🛠️ Pós-Venda"])
+    
+    with tabs[0]:
+        st.write("**Abordagem Perfil**")
+        st.code("Olá, tudo bem? Aqui é o [Seu Nome], da Papapá...\nVi que você se cadastrou na nossa página...", language=None)
+    with tabs[1]:
+        st.write("**Sugestão Curva A**")
+        st.code("Hoje os produtos que mais giram são:\n• Papinhas de fruta\n• Biscoitinho Dentição\n• Biscotti", language=None)
 
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS & PRAZOS ---
 ################################################################################
 elif aba_selecionada == "📊 Políticas & Prazos":
-    st.header("📊 Políticas Comerciais")
-    st.info("**Pedido Mínimo:** R$ 800,00 [cite: 163]")
-    st.write("**Prazos de Entrega:** 3 dias separação + 2 dias faturamento [cite: 175, 176]")
-    st.write("**Validades:** Papinhas Fruta (16 meses), Yoguzinho (15 meses) [cite: 183, 184]")
+    st.header("📊 Políticas e Prazos")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.subheader("📅 Shelf Life")
+        st.table({"Papinhas Fruta": "16 meses", "Yoguzinho": "15 meses", "Biscotti": "10 meses"})
+    with col_b:
+        st.subheader("💳 Prazos de Pagamento")
+        st.write("**Sul/Sudeste:** 30d | 30/45d | 30/45/60d")
+        st.write("**Pedido Mínimo:** R$ 800,00")
 
 ################################################################################
 # --- MÓDULO 6: LINKS ÚTEIS ---
