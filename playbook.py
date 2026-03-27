@@ -61,6 +61,21 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 ################################################################################
+# --- CONFIGURAÇÕES DE IMAGEM ADICIONAIS ---
+################################################################################
+# Garanta que essa função get_base64_of_bin_file esteja definida antes desse bloco
+# Mudei o nome para bater com o print do seu repositório
+novo_logo_filename = "Papapa-azul.png" 
+
+# Carrega o logo oficial
+img_base64_oficial = get_base64_of_bin_file(novo_logo_filename)
+if img_base64_oficial:
+    img_logo_html = f"data:image/png;base64,{img_base64_oficial}"
+else:
+    # Fallback caso o arquivo não exista
+    img_logo_html = img_avatar_html
+
+################################################################################
 # --- 2. NAVEGAÇÃO SUPERIOR ---
 ################################################################################
 st.title("Hub Inside Sales | Papapá")
