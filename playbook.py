@@ -208,24 +208,25 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 
 import streamlit as st
 
-# --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
+# MÓDULO 3: BIBLIOTECA DE ARQUIVOS (SUA LÓGICA DE DOWNLOADS)
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
-    st.title("📄 Biblioteca de Arquivos")
+    st.header("📄 Biblioteca de Arquivos")
     st.write("Central de downloads para todos os materiais oficiais da Papapá.")
 
     col1, col2 = st.columns(2)
-    
     with col1:
         st.subheader("📁 Materiais de Venda")
-        # Lista de arquivos para download
         arquivos_venda = {
             "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
             "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
             "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
         }
         for label, path in arquivos_venda.items():
-            with open(path, "rb") as f:
-                st.download_button(label, f, file_name=path, use_container_width=True)
+            try:
+                with open(path, "rb") as f:
+                    st.download_button(label, f, file_name=path, use_container_width=True)
+            except FileNotFoundError:
+                st.error(f"Arquivo não encontrado: {path}")
 
     with col2:
         st.subheader("📋 Guias e Processos")
@@ -235,8 +236,11 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "📝 Templates de Mensagens (PDF)": "Templates IS 2026.docx (2).pdf"
         }
         for label, path in arquivos_processo.items():
-            with open(path, "rb") as f:
-                st.download_button(label, f, file_name=path, use_container_width=True)
+            try:
+                with open(path, "rb") as f:
+                    st.download_button(label, f, file_name=path, use_container_width=True)
+            except FileNotFoundError:
+                st.error(f"Arquivo não encontrado: {path}")
 
 import streamlit as st
 
