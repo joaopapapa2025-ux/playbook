@@ -556,66 +556,64 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     col_conteudo, col_notas = st.columns([1.5, 1])
 
     with col_conteudo:
-        # MANTENDO SEU CONTEÚDO ORIGINAL AQUI
         st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
         st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
 
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
         
-        # Inicializa o histórico na sessão se não existir
         if "historico_problemas" not in st.session_state:
             st.session_state.historico_problemas = []
+
+        # --- FUNÇÃO CALLBACK PARA SALVAR E LIMPAR ---
+        def salvar_nota_callback():
+            # Pegamos os valores que estão nos widgets
+            autor = st.session_state.get("nome_usuario_log")
+            texto = st.session_state.get("input_area_problemas", "").strip()
+            
+            if autor and texto:
+                from datetime import datetime
+                agora = datetime.now()
+                meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+                            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+                mes_atual = f"{meses_pt[agora.month - 1]}/2026"
+                
+                nova_nota = {
+                    "id_unico": agora.timestamp(),
+                    "autor": autor,
+                    "texto": texto,
+                    "data": agora.strftime("%d/%m/%Y %H:%M"),
+                    "mes_referencia": mes_atual
+                }
+                
+                st.session_state.historico_problemas.insert(0, nova_nota)
+                # AGORA SIM: Limpamos o campo dentro do callback (forma correta)
+                st.session_state["input_area_problemas"] = ""
+                st.toast("✅ Registro salvo!")
+            else:
+                st.error("Preencha o nome e o texto antes de salvar.")
 
         # 1. Cadastro de Nova Nota
         with st.expander("➕ Registrar Ocorrência", expanded=True):
             lista_pessoas = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
             
-            # Seletor começando em branco (index=None)
-            quem_comentou = st.selectbox(
+            st.selectbox(
                 "Quem está registrando?", 
                 lista_pessoas, 
                 index=None, 
-                placeholder="Selecione seu nome..."
+                placeholder="Selecione seu nome...",
+                key="nome_usuario_log" # Atribuímos uma key para pegar no callback
             )
 
-            # Área de texto vinculada ao session_state para limpeza automática
-            texto_nota = st.text_area(
+            st.text_area(
                 "Descreva a ocorrência:", 
-                placeholder="Ex: Cliente X reclamou de caixa amassada na NF 123...", 
+                placeholder="Ex: Cliente X reclamou de caixa amassada...", 
                 key="input_area_problemas",
                 height=100
             )
 
-            if st.button("Salvar Registro", use_container_width=True):
-                # Validação: precisa de nome e texto preenchido
-                if quem_comentou and st.session_state.input_area_problemas.strip():
-                    from datetime import datetime
-                    agora = datetime.now()
-                    
-                    meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
-                                "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-                    
-                    # Define o mês automático (considerando 2026 conforme seu projeto)
-                    mes_atual = f"{meses_pt[agora.month - 1]}/2026"
-                    
-                    nova_nota = {
-                        "id_unico": agora.timestamp(), # ID único para evitar erros de lixeira
-                        "autor": quem_comentou,
-                        "texto": st.session_state.input_area_problemas.strip(),
-                        "data": agora.strftime("%d/%m/%Y %H:%M"),
-                        "mes_referencia": mes_atual
-                    }
-                    
-                    st.session_state.historico_problemas.insert(0, nova_nota)
-                    
-                    # LIMPEZA: Reseta o campo de texto
-                    st.session_state.input_area_problemas = ""
-                    
-                    st.toast("✅ Registro salvo!")
-                    st.rerun()
-                else:
-                    st.warning("Por favor, selecione seu nome e descreva a ocorrência.")
+            # O botão agora chama a função acima (on_click)
+            st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
         st.divider()
 
@@ -628,12 +626,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         # 3. Listagem Filtrada
         st.markdown("---")
         
-        # Lógica de filtragem
         notas_exibidas = st.session_state.historico_problemas
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
 
-        # Contador visual
         st.metric("Ocorrências no período", len(notas_exibidas))
 
         if not notas_exibidas:
@@ -643,14 +639,12 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 with st.container():
                     c_txt, c_del = st.columns([0.85, 0.15])
                     with c_txt:
-                        # .get() protege contra erros de notas antigas no cache do navegador
                         data_exib = item.get('data', 'Data n/a')
                         mes_exib = item.get('mes_referencia', 'n/a')
                         st.caption(f"📅 {data_exib} | 📂 {mes_exib}")
                         st.write(f"**{item.get('autor', 'Usuário')}:** {item.get('texto', '')}")
                     
                     with c_del:
-                        # Gera uma chave segura para o botão de apagar
                         chave_btn = item.get('id_unico', f"fallback_{idx}")
                         if st.button("🗑️", key=f"del_{chave_btn}"):
                             st.session_state.historico_problemas.remove(item)
