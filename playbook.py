@@ -15,41 +15,25 @@ st.set_page_config(
 
 # --- FUNÇÕES AUXILIARES DE IMAGEM (Base64) ---
 
-# Função genérica para converter arquivo binário para base64
+# Função essencial para converter as fotos em algo que o HTML do card aceite
 def get_base64_of_bin_file(bin_file):
     try:
         with open(bin_file, 'rb') as f:
             data = f.read()
         return base64.b64encode(data).decode()
-    except FileNotFoundError:
+    except:
         return None
 
-# Configuração das imagens padrão e fallback
-logo_filename = "Papapa-azul..png" # Logo da empresa
-fallback_avatar = "https://www.w3schools.com/howto/img_avatar.png" # Link online se nada der certo
+# Configurações de Fallback (Caso a foto do membro não exista)
+logo_filename = "Papapa-azul..png" 
+fallback_avatar = "https://www.w3schools.com/howto/img_avatar.png"
 
-# Pré-carrega o logo da empresa para o título/fallback
-logo_base64 = get_base64_of_bin_file(logo_filename)
-if logo_base64:
-    img_logo_html = f"data:image/png;base64,{logo_base64}"
+# Deixa o logo padrão pronto para uso
+img_base64 = get_base64_of_bin_file(logo_filename)
+if img_base64:
+    img_avatar_html = f"data:image/png;base64,{img_base64}"
 else:
-    img_logo_html = fallback_avatar # Usa o avatar online como fallback do logo
-
-# Função para decidir qual foto usar para o membro
-def get_member_photo(nome_membro):
-    # 1. Tenta achar o arquivo específico (ex: João Vitor.jpeg)
-    filename_especifico = f"{nome_membro}.jpeg"
-    base64_especifico = get_base64_of_bin_file(filename_especifico)
-    
-    if base64_especifico:
-        return f"data:image/jpeg;base64,{base64_especifico}"
-    
-    # 2. Se não tiver específico, tenta usar o logo da empresa (Papapa-azul..png)
-    if logo_base64:
-        return f"data:image/png;base64,{logo_base64}"
-    
-    # 3. Fallback final (avatar online cinza)
-    return fallback_avatar
+    img_avatar_html = fallback_avatar
 
 
 # --- CSS Customizado (Cards, Cores e Esconder Sidebar) ---
@@ -90,36 +74,43 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE COM FOTOS ESPECÍFICAS) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
-    st.write("Conheça o time Inside Sales da Papapá.")
-
-    # --- DADOS DA EQUIPE ---
+    
+    # Lista da equipe com o nome exato do arquivo de imagem
+    # Se o arquivo não existir, o código usará o logo da Papapá automaticamente
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista (Crescimento)"},
-        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)", "foto": "Ana.jpeg"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista (Crescimento)", "foto": "Pedro.jpeg"},
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)", "foto": "Joao.jpeg"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
     ]
     
-    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
                 
-                # CHAMA A FUNÇÃO PARA DECIDIR A FOTO DESTE MEMBRO
-                foto_para_usar = get_member_photo(membro['nome'])
-                
+                # Lógica para carregar a foto específica ou o padrão
+                caminho_foto = membro['foto']
+                if Path(caminho_foto).exists():
+                    foto_base64 = get_base64_of_bin_file(caminho_foto)
+                    # Detecta se é jpeg ou png para o cabeçalho do base64
+                    ext = caminho_foto.split('.')[-1].lower()
+                    img_html = f"data:image/{ext};base64,{foto_base64}"
+                else:
+                    # Se não achar a foto da pessoa, usa o logo azul da Papapá
+                    img_html = img_avatar_html 
+
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
-                            <img src="{foto_para_usar}" class="avatar-round" alt="{membro['nome']}">
+                            <img src="{img_html}" class="avatar-round">
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
