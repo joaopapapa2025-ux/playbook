@@ -211,10 +211,84 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
         else:
             st.success(f"Bônus de {perc_bonus*100:.0f}% garantido sobre o salário base.")
 
-# --- MÓDULO 3, 4, 5: PLACEHOLDERS (Para desenvolvimento futuro) ---
+# --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
-    st.title("📄 Biblioteca de Arquivos (Em Breve)")
-    st.info("Esta aba será preenchida com os catálogos e tabelas de preços.")
+    st.title("📄 Biblioteca de Arquivos")
+    st.write("Baixe aqui os materiais atualizados para suporte às vendas.")
+
+    # Criando colunas para organizar os arquivos por categoria
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("📁 Materiais de Venda")
+        
+        # Arquivo: Catálogo Digital
+        with open("catalogo-papapa-digital.pdf", "rb") as f:
+            st.download_button(
+                label="📖 Baixar Catálogo Digital (PDF)",
+                data=f,
+                file_name="catalogo-papapa-digital.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+
+        # Arquivo: Tabela de Preços
+        with open("Tabela de preços Papapá 0226 v2.xlsx", "rb") as f:
+            st.download_button(
+                label="💰 Baixar Tabela de Preços (Excel)",
+                data=f,
+                file_name="Tabela_de_Precos_Papapa_0226.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
+
+    with col2:
+        st.subheader("📋 Guias e Informações")
+        
+        # Arquivo: Informações de Produtos
+        with open("Informações todos os produtos Papapá.pdf", "rb") as f:
+            st.download_button(
+                label="ℹ️ Ficha Técnica de Produtos",
+                data=f,
+                file_name="Informacoes_Produtos_Papapa.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+
+        # Arquivo: Estrutura Inside Sales
+        with open("Estrutura de Operação e Metas - Inside Sales.pdf", "rb") as f:
+            st.download_button(
+                label="🎯 Estrutura de Metas e Operação",
+                data=f,
+                file_name="Estrutura_Metas_Inside_Sales.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+
+# --- MANTENDO OS OUTROS PLACEHOLDERS ---
+elif aba_selecionada == "🚚 Logística & SAC":
+    st.title("🚚 Logística & SAC")
+    with open("GUIA DE RECEBIMENTO DE MERCADORIAS.pdf", "rb") as f:
+        st.download_button(
+            label="📦 Baixar Guia de Recebimento (Avarias)",
+            data=f,
+            file_name="Guia_Recebimento_Mercadorias.pdf",
+            mime="application/pdf"
+        )
+    st.info("As regras detalhadas de logística serão listadas aqui.")
+
+elif aba_selecionada == "✍️ Templates & Scripts":
+    st.title("✍️ Templates & Scripts")
+    with open("Templates IS 2026.docx (2).pdf", "rb") as f:
+        st.download_button(
+            label="📝 Baixar Templates de Mensagens",
+            data=f,
+            file_name="Templates_Scripts_2026.pdf",
+            mime="application/pdf"
+        )
+    st.info("Os scripts de WhatsApp/Email serão formatados para cópia rápida em breve.")
+
+# --- MÓDULO 4, 5: PLACEHOLDERS (Para desenvolvimento futuro) ---
 
 elif aba_selecionada == "🚚 Logística & SAC":
     st.title("🚚 Logística & SAC (Em Breve)")
