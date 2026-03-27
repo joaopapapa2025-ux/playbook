@@ -298,14 +298,14 @@ if menu == "✍️ Templates & Scripts":
         col1, col2 = st.columns(2)
         with col1:
             st.write("**Abordagem Perfil**")
-            st.code("Olá, tudo bem?\nAqui é o [SEU NOME], da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?", language=None)
+            st.code("Olá, tudo bem?\nAqui é [SEU NOME], da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?", language=None)
             
             st.write("**Abordagem Direta**")
-            st.code("Oi, tudo bem?\nSou o [SEU NOME], da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?", language=None)
+            st.code("Oi, tudo bem?\nSou [SEU NOME], da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?", language=None)
 
         with col2:
             st.write("**Abordagem Interesse**")
-            st.code("Oi, tudo bem?\nSou o [SEU NOME], da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?", language=None)
+            st.code("Oi, tudo bem?\nSou [SEU NOME], da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?", language=None)
 
             st.write("**Qualificação rápida**")
             st.code("Antes de te indicar os produtos, queria entender rapidinho:\n• Que tipo de estabelecimento você tem?\n• Em qual cidade/bairro?\n• Seu público é mais família, fitness ou geral?", language=None)
