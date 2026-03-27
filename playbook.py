@@ -588,7 +588,28 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
     
-    # Inicializa o contador de chave para o uploader
+    import json
+    import os
+    import base64
+
+    # Nome do arquivo onde os dados serão salvos "para sempre"
+    ARQUIVO_BANCO = "banco_problemas.json"
+
+    # --- FUNÇÕES DE PERSISTÊNCIA ---
+    def carregar_dados():
+        if os.path.exists(ARQUIVO_BANCO):
+            with open(ARQUIVO_BANCO, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return []
+
+    def salvar_dados(dados):
+        with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
+            json.dump(dados, f, ensure_ascii=False, indent=4)
+
+    # Inicializa o histórico carregando do arquivo
+    if "historico_problemas" not in st.session_state:
+        st.session_state.historico_problemas = carregar_dados()
+
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
 
@@ -600,9 +621,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
-        
-        if "historico_problemas" not in st.session_state:
-            st.session_state.historico_problemas = []
 
         # --- FUNÇÃO CALLBACK PARA SALVAR ---
         def salvar_nota_callback():
@@ -620,14 +638,14 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
-                # Processa múltiplos arquivos (Imagens e Vídeos)
                 lista_arquivos = []
                 if arquivos_anexos:
                     for arq in arquivos_anexos:
-                        # Identifica o tipo pelo nome do arquivo
                         tipo = "video" if arq.name.lower().endswith(('mp4', 'mov', 'avi')) else "foto"
+                        # Convertemos bytes para String (Base64) para poder salvar no JSON
+                        conteudo_base64 = base64.b64encode(arq.getvalue()).decode('utf-8')
                         lista_arquivos.append({
-                            "bytes": arq.getvalue(),
+                            "bytes": conteudo_base64,
                             "tipo": tipo
                         })
                 
@@ -641,57 +659,30 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "mes_referencia": mes_atual
                 }
                 
+                # Adiciona no estado e salva no arquivo físico
                 st.session_state.historico_problemas.insert(0, nova_nota)
+                salvar_dados(st.session_state.historico_problemas)
                 
-                # REGRAS DE LIMPEZA
                 st.session_state["input_area_problemas"] = "" 
                 st.session_state["input_nf_problema"] = ""    
                 st.session_state.uploader_key += 1            
-                
-                st.toast("✅ Registro salvo com sucesso!")
+                st.toast("✅ Registro salvo no banco de dados!")
             else:
                 st.error("Preencha o nome e o texto antes de salvar.")
 
-        # 1. Cadastro de Nova Nota
+        # 1. Cadastro
         with st.expander("➕ Registrar Ocorrência", expanded=True):
             lista_pessoas = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
-            
-            st.selectbox(
-                "Quem está registrando?", 
-                lista_pessoas, 
-                index=None, 
-                placeholder="Selecione seu nome...",
-                key="nome_usuario_log"
-            )
-
-            st.text_input(
-                "Número da NF ou Pedido:",
-                placeholder="Ex: NF 123456...",
-                key="input_nf_problema"
-            )
-
-            st.text_area(
-                "Descreva a ocorrência:",
-                placeholder="Ex: Cliente enviou vídeo mostrando o produto quebrado...",
-                key="input_area_problemas",
-                height=100
-            )
-
-            # ATUALIZADO: Incluindo tipos de vídeo
-            st.file_uploader(
-                "Anexar evidências (Fotos/Vídeos):", 
-                type=["png", "jpg", "jpeg", "mp4", "mov", "avi"],
-                accept_multiple_files=True,
-                key=f"input_midia_prob_{st.session_state.uploader_key}"
-            )
-
+            st.selectbox("Quem está registrando?", lista_pessoas, index=None, placeholder="Seu nome...", key="nome_usuario_log")
+            st.text_input("Número da NF ou Pedido:", placeholder="Ex: NF 123456...", key="input_nf_problema")
+            st.text_area("Descreva a ocorrência:", placeholder="Detalhes do caso...", key="input_area_problemas", height=100)
+            st.file_uploader("Anexar evidências:", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True, key=f"input_midia_prob_{st.session_state.uploader_key}")
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
         st.divider()
 
         # 2. Filtro
-        meses_filtro = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
-                                                        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
+        meses_filtro = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
         filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
         # 3. Listagem
@@ -701,35 +692,28 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
         st.metric("Ocorrências no período", len(notas_exibidas))
 
-        if not notas_exibidas:
-            st.caption("Nenhum registro encontrado.")
-        else:
-            for idx, item in enumerate(notas_exibidas):
-                with st.container():
-                    c_txt, c_del = st.columns([0.85, 0.15])
-                    with c_txt:
-                        st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
-                        
-                        nf_para_mostrar = item.get('nf_pedido', '').strip()
-                        if nf_para_mostrar:
-                            st.markdown(f"**🏷️ NF/Pedido:** `{nf_para_mostrar}`")
-                            
-                        st.write(f"**{item.get('autor')}:** {item.get('texto')}")
-                        
-                        # EXIBIÇÃO DE MÍDIAS (Fotos ou Vídeos)
-                        midias = item.get("midias", [])
-                        if midias:
-                            for m in midias:
-                                if m["tipo"] == "video":
-                                    st.video(m["bytes"])
-                                else:
-                                    st.image(m["bytes"], use_container_width=True)
+        for idx, item in enumerate(notas_exibidas):
+            with st.container():
+                c_txt, c_del = st.columns([0.85, 0.15])
+                with c_txt:
+                    st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
+                    if item.get('nf_pedido'): st.markdown(f"**🏷️ NF/Pedido:** `{item.get('nf_pedido')}`")
+                    st.write(f"**{item.get('autor')}:** {item.get('texto')}")
                     
-                    with c_del:
-                        if st.button("🗑️", key=f"del_{item.get('id_unico')}"):
-                            st.session_state.historico_problemas.remove(item)
-                            st.rerun()
-                    st.markdown("---")
+                    midias = item.get("midias", [])
+                    if midias:
+                        for m in midias:
+                            # Converte de volta de Base64 para bytes para exibir
+                            raw_bytes = base64.b64decode(m["bytes"])
+                            if m["tipo"] == "video": st.video(raw_bytes)
+                            else: st.image(raw_bytes, use_container_width=True)
+                
+                with c_del:
+                    if st.button("🗑️", key=f"del_{item.get('id_unico')}"):
+                        st.session_state.historico_problemas.remove(item)
+                        salvar_dados(st.session_state.historico_problemas) # Atualiza o arquivo após deletar
+                        st.rerun()
+                st.markdown("---")
                     
 ################################################################################
 # --- MÓDULO 7: QUEBRAS DE EXCUSES ---
