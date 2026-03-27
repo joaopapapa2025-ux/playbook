@@ -577,11 +577,14 @@ elif aba_selecionada == "🔗 Links Úteis":
     
     with st.container():
         st.subheader("📝 Cadastro e Operação")
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3) # Aumentado para 3 colunas
         with col1:
-            st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
-            st.caption("Novo cadastro e atualização de cadastro de clientes")
+            st.link_button("🚀 RD CRM (Pipeline)", "https://crm.rdstation.com/app/deals/pipeline", use_container_width=True)
+            st.caption("Gestão de funil e negociações")
         with col2:
+            st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
+            st.caption("Novo cadastro e atualização de clientes")
+        with col3:
             st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
             st.caption("Acompanhamento da realização dos cadastros")
 
