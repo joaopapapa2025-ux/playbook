@@ -175,7 +175,7 @@ elif aba_selecionada == "✍️ Templates & Scripts":
     with tabs[0]:
         st.subheader("📞 Primeiro contato (leads)")
         
-        with st.expander("⭐ Opção 1: Abordagem Consultiva (Recomendada)", expanded=True):
+        with st.expander("⭐ Opção 1: Abordagem consultiva", expanded=True):
             st.code("""Olá, tudo bem?
 Aqui é [SEU NOME], da Papapá.
 Vi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.
