@@ -269,122 +269,154 @@ elif aba_selecionada == "🚚 Logística & SAC":
     with col_p2:
         st.info("**Separação:** Até 3 dias úteis após confirmação.")
 
+import streamlit as st
+
+# 1. Definição do Menu na Sidebar (Isso evita o NameError)
+st.sidebar.title("Menu")
+menu = st.sidebar.radio(
+    "Selecione a seção:",
+    ["✍️ Templates & Scripts", "📋 Políticas e Prazos"]
+)
+
 # --- SEÇÃO: TEMPLATES DE MENSAGENS ---
-if menu == "Templates de Mensagens":
-    st.header("💬 Templates de Comunicação")
-    
+if menu == "✍️ Templates & Scripts":
+    st.title("✍️ Templates & Scripts")
+    st.write("Clique no ícone no canto de cada bloco para copiar.")
+
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "1. Abordagem & Sondagem", 
-        "2. Apresentação & Curva A", 
-        "3. Fechamento & Cadastro", 
-        "4. Pós-Venda & Logística",
-        "5. Financeiro"
+        "1. Abordagem e Sondagem", 
+        "2. Curva A e Mix", 
+        "3. Cadastro e Pagamento", 
+        "4. Logística e Prazos",
+        "5. Pós-Venda e Trocas"
     ])
 
     with tab1:
-        st.subheader("Primeiro Contato (Leads Site)")
+        st.subheader("Primeiro Contato (Leads)")
         
-        opcoes_abordagem = [
-            "Abordagem Padrão (Perfil)",
-            "Abordagem Assertiva",
-            "Abordagem Curiosidade",
-            "Apresentação de Valor (Catálogo)",
-            "Perguntas de Qualificação"
-        ]
-        escolha = st.selectbox("Selecione o modelo:", opcoes_abordagem)
-        
-        templates = {
-            "Abordagem Padrão (Perfil)": "Olá, tudo bem?\nAqui é o João, da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?",
-            "Abordagem Assertiva": "Oi, tudo bem?\nSou o João, da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?",
-            "Abordagem Curiosidade": "Oi, tudo bem?\nSou o João, da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?",
-            "Apresentação de Valor (Catálogo)": "Olá, tudo bem?\nAqui é o João, da Papapá.\nRecebi seu cadastro pela nossa página e quis entrar em contato para te agradecer pelo interesse e entender um pouco melhor o seu perfil.\nA Papapá trabalha com uma linha de alimentação natural e pronta para bebês e crianças, sem conservantes e com ótima aceitação no ponto de venda.\nPosso te enviar o catálogo e as condições comerciais e, na sequência, entender se faz sentido para o seu negócio?",
-            "Perguntas de Qualificação": "Antes de te indicar os produtos, queria entender rapidinho:\n• Que tipo de estabelecimento você tem?\n• Em qual cidade/bairro?\n• Seu público é mais família, fitness ou geral?"
-        }
-        st.code(templates[escolha], language="text")
-
-    with tab2:
-        st.subheader("Estratégia de Venda (Curva A)")
-        st.info("Use estes textos para educar o cliente sobre o que mais vende.")
-        
-        # Template Curva A Detalhado
-        st.write("**Explicação Curva A (Completa)**")
-        curva_a = """Pra te orientar melhor, vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
-Hoje, a nossa Curva A (produtos de maior giro e recompra) é formada por:
-• *Papinhas de fruta* – carro-chefe da marca.
-• *Biscoitinho para fase da dentição* – snack funcional.
-• *Biscotti* – nosso snack mais vendido.
-
-Em um segundo momento, como complemento de mix:
-• *Palitinhos de vegetais*
-• *Yoguzinho*
-
-A partir do seu perfil de negócio, eu te ajudo a montar um pedido inicial enxuto, estratégico e com foco em giro."""
-        st.code(curva_a, language="text")
-
-    with tab3:
-        st.subheader("Condições e Cadastro")
-        
+        # Agrupando as variações de abordagem
         col1, col2 = st.columns(2)
         with col1:
-            st.write("**Dados para Cadastro**")
-            cadastro = "Para darmos sequência e liberar seu cadastro aqui na Papapá, preciso só de algumas informações:\n• CNPJ:\n• Inscrição Estadual (IE):\n• Telefone do financeiro:\n• Telefone de compras:\n• E-mail do financeiro:\n• E-mail de compras:\n• Dados bancários (PIX):\nObs.: É importante constar também a Descrição das Atividades (CNAE)."
-            st.code(cadastro, language="text")
+            st.write("**Abordagem Perfil**")
+            st.code("Olá, tudo bem?\nAqui é o João, da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?", language=None)
             
+            st.write("**Abordagem Direta**")
+            st.code("Oi, tudo bem?\nSou o João, da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?", language=None)
+
         with col2:
-            st.write("**Condições Comerciais**")
-            condicoes = "Pedido mínimo: R$ 800,00.\nVenda por caixas fechadas:\n• Palitinhos e Yoguzinho: 16 un.\n• La Chef e Sopinhas: 6 un.\n• Demais: 12 un.\nFormas: Pix ou Boleto.\nFrete: CIF (por nossa conta) para todo o Brasil."
-            st.code(condicoes, language="text")
+            st.write("**Abordagem Interesse**")
+            st.code("Oi, tudo bem?\nSou o João, da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?", language=None)
+
+            st.write("**Qualificação rápida**")
+            st.code("Antes de te indicar os produtos, queria entender rapidinho:\n• Que tipo de estabelecimento você tem?\n• Em qual cidade/bairro?\n• Seu público é mais família, fitness ou geral?", language=None)
+
+    with tab2:
+        st.subheader("Estratégia de Venda: Curva A")
+        
+        st.write("**Explicação Didática (O que mais gira)**")
+        st.code("""Pra te orientar melhor, vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
+Hoje, a nossa Curva A (produtos de maior giro e recompra) é formada por:
+• Papinhas de fruta – carro-chefe da marca, porta de entrada da maioria dos clientes. São naturais, sem adição de açúcar, não precisam de refrigeração e têm excelente aceitação.
+• Biscoitinho para fase da dentição – snack funcional, muito procurado por pais de bebês, com compra recorrente e ótima saída por impulso.
+• Biscotti – nosso snack mais vendido, feito com cereais selecionados, naturalmente adocicado pelas frutas e com perfil que agrada até adultos.
+
+Em um segundo momento, como complemento de mix e aumento de ticket, entram:
+• Palitinhos de vegetais – assados, não fritos, fonte de proteínas e ideais para lanchinho.
+• Yoguzinho – produto super diferenciado, que não precisa de refrigeração antes de abrir, com shelf life de 15 meses, perfeito para exposição em gôndola.""", language=None)
+
+        st.write("**Sugestão de Pedido Inicial**")
+        st.code("Pelo seu perfil, o que mais faz sentido hoje é começar com a Curva A, porque são os produtos com maior giro e recompra.\nHoje você imagina algo mais como teste ou já pensa em um pedido inicial pra abastecer gôndola?", language=None)
+
+    with tab3:
+        st.subheader("Cadastro e Dados Financeiros")
+        
+        col_cad, col_pix = st.columns(2)
+        with col_cad:
+            st.write("**Checklist para Cadastro**")
+            st.code("""Precisamos das seguintes informações para realizar o cadastro:
+● CNPJ:
+● Inscrição Estadual (IE):
+● Telefone Financeiro:
+● Telefone Compras:
+● E-mail Financeiro:
+● E-mail Compras:
+● Dados Bancários (pix):
+*Obs.: É importante incluir a Descrição das Atividades (CNAE), especificando a comercialização de produtos alimentícios.""", language=None)
+
+        with col_pix:
+            st.write("**Dados para Pagamento (Pix/Banco)**")
+            st.code("""Segue dados de pagamento:
+Pix:
+CNPJ 34.282.307/0001-44
+BABY ROO COMERCIO DE ALIMENTOS S/A
+
+Transferência bancária:
+Banco ITAU | Ag 8931 | CC 05510-0
+Financeiro: contasareceber2@papapa.com.br""", language=None)
 
     with tab4:
         st.subheader("Logística e Prazos")
-        st.write("**Fluxo de Pedido**")
-        fluxo = "• Até 3 dias úteis para separação (CD).\n• 2 dias úteis para faturamento da NF.\n• Após faturamento, coleta pela transportadora.\nO prazo de entrega varia conforme a região."
-        st.code(fluxo, language="text")
         
-        st.write("**Orientações de Recebimento (Avarias)**")
-        st.warning("Texto essencial para evitar prejuízos com transportadoras.")
-        recebimento = "No momento da entrega, é fundamental conferir a mercadoria antes de assinar a NF.\nCaso identifique avaria (caixas amassadas, embalagens violadas, produtos quebrados):\n1. Registre a ressalva na NF.\n2. Não aceite os produtos avariados.\n3. Informe a Papapá imediatamente."
-        st.code(recebimento, language="text")
+        st.write("**Condições Comerciais Gerais**")
+        st.code("""Vou te passar rapidamente nossas condições comerciais pra você se organizar:
+Pedido mínimo: R$ 800,00.
+Venda dos produtos: Trabalhamos com venda por caixas fechadas:
+• Palitinhos de Vegetais e Yoguzinho: caixas com 16 unidades
+• La Chef e Sopinhas: caixas com 6 unidades
+• Demais linhas: caixas com 12 unidades
+Formas de pagamento: Pix ou Boleto.
+Entrega: Frete CIF (por nossa conta) para todo o Brasil.""", language=None)
+
+        st.write("**Prazos de Entrega (Fluxo)**")
+        st.code("""Só pra te explicar rapidamente nosso fluxo de pedido:
+• Após a confirmação, temos até 3 dias úteis para separação no nosso CD.
+• Depois, mais 2 dias úteis para faturamento da Nota Fiscal.
+• Em seguida, o pedido é coletado pela transportadora.
+O prazo de entrega varia conforme a região.""", language=None)
 
     with tab5:
-        st.subheader("Financeiro e Prazos de Pagamento")
+        st.subheader("Ocorrências e Trocas")
         
-        regionais = """PRAZOS DE PAGAMENTO
-SUL E SUDESTE:
-- Até R$ 1.000: 30 dias
-- R$ 1.000 a R$ 2.000: 30/45 dias
-- Acima de R$ 2.000: 30/45/60 dias
+        st.write("**Guia de Recebimento (Avarias)**")
+        st.code("""No momento da entrega, é fundamental que a mercadoria seja conferida antes de assinar a Nota Fiscal.
+Caso seja identificada qualquer avaria visível (caixas amassadas, embalagens violadas, produtos quebrados):
+- Registrar a ressalva na Nota Fiscal, descrevendo o problema.
+- Não aceitar os produtos avariados.
+- Informar a Papapá imediatamente.
+Importante: sem a ressalva registrada na NF no momento da entrega, não conseguimos abrir ocorrência junto à transportadora.""", language=None)
 
-NO/NE/CO/MG/ES:
-- Até R$ 1.000: 45 dias
-- R$ 1.000 a R$ 2.000: 45/60 dias
-- Acima de R$ 2.000: 40/50/60 dias"""
-        st.code(regionais, language="text")
-        
-        st.write("**Política de Trocas (Validade Reduzida)**")
-        trocas = "A troca é aplicável quando o produto é entregue com menos de 60% da validade total. É necessária a emissão de NFD com número da NF de origem, motivo e lotes."
-        st.code(trocas, language="text")
+        st.write("**Política de Troca por Validade**")
+        st.code("""Sobre o processo de troca por validade reduzida aqui na Papapá:
+A troca é aplicável quando o produto é entregue com menos de 60% da validade total. 
+Para dar andamento, solicitamos a emissão da Nota Fiscal de Devolução (NFD).
+Nas observações devem constar: Número da NF de origem, Motivo e Lotes.""", language=None)
 
 # --- SEÇÃO: POLÍTICAS E PRAZOS (Resumo Visual) ---
-if menu == "Políticas e Prazos":
-    st.header("📋 Resumo de Políticas Comerciais")
-    col1, col2 = st.columns(2)
+if menu == "📋 Políticas e Prazos":
+    st.header("📋 Políticas Comerciais e Validades")
     
-    with col1:
-        st.subheader("Validades (Shelf Life)")
-        validade_dict = {
+    col_v, col_p = st.columns(2)
+    with col_v:
+        st.subheader("📅 Validade dos Produtos")
+        validade_data = {
             "Papinhas de Carne": "12 meses", "Yoguzinho": "15 meses",
             "Papinhas de Fruta": "16 meses", "Dentição": "15 meses",
             "Biscotti": "10 meses", "La Chef": "16 meses",
             "Macarrão": "14 meses", "Cereal": "12 meses",
             "Palitinhos": "9 meses", "Sopinhas": "12 meses"
         }
-        st.table(validade_dict)
+        st.table(validade_data)
+        st.info("Todas as linhas dispensam refrigeração.")
+
+    with col_p:
+        st.subheader("💳 Prazos de Pagamento (Boleto)")
+        st.write("**Sul e Sudeste:**")
+        st.code("Até 1k: 30d | 1k-2k: 30/45d | +2k: 30/45/60d", language=None)
+        st.write("**Demais Regiões (NO/NE/CO/MG/ES):**")
+        st.code("Até 1k: 45d | 1k-2k: 45/60d | +2k: 40/50/60d", language=None)
         
-    with col2:
-        st.subheader("Dados de Pagamento (PIX/Transferência)")
-        st.info("CNPJ 34.282.307/0001-44\nBABY ROO COMERCIO DE ALIMENTOS S/A\n\nBanco ITAU - Ag 8931 - CC 05510-0")
-        st.write("**Financeiro:** contasareceber2@papapa.com.br")
+        st.write("**Acesso ao Material (Drive):**")
+        st.code("Link: https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA\nSenha: Papapa@2023", language=None)
     
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
