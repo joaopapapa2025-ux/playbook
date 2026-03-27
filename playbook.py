@@ -230,26 +230,33 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
     st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
     
-    # --- SEÇÃO 1: CADASTRO E CLIENTES ---
-    with st.container():
-        st.subheader("📝 Cadastro e Gestão de Clientes")
-        col1, col2, col3 = st.columns(3)
+    # --- SEÇÃO 1: CADASTRO E OPERAÇÃO ---
+with st.container():
+    st.subheader("📝 Cadastro e Operação")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
+        st.caption("Novo cadastro de lojista")
         
-        with col1:
-            st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
-            st.caption("Novo cadastro de lojista")
-            
-        with col2:
-            st.link_button("👀 Acompanhar Cadastros", "https://teams.microsoft.com/l/message/19:61eee15e-f2e5-4cf2-b034-e466806b1fc2_78a4310d-99a8-43cc-8548-acb2e59581bf@unq.gbl.spaces/1774452870137?context=%7B%22contextType%22%3A%22chat%22%7D", use_container_width=True)
-            st.caption("Link direto para o Teams")
-            
-        with col3:
-            st.link_button("📊 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
-            st.info("**Senha:** amamosnossosclientes")
+    with col2:
+        st.link_button("👀 Acompanhar Cadastros", "https://teams.microsoft.com/l/message/19:61eee15e-f2e5-4cf2-b034-e466806b1fc2_78a4310d-99a8-43cc-8548-acb2e59581bf@unq.gbl.spaces/1774452870137?context=%7B%22contextType%22%3A%22chat%22%7D", use_container_width=True)
+        st.caption("Link direto para o Teams")
 
     st.markdown("---")
 
-    # --- SEÇÃO 2: LOGÍSTICA ---
+# --- SEÇÃO 2: DASHBOARDS E INDICADORES ---
+with st.container():
+    st.subheader("📊 Dashboards de Gestão")
+    col_dash = st.columns(1)[0] # Coluna única para o dash principal
+    
+    with col_dash:
+        st.link_button("📈 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
+        st.info("**Senha:** amamosnossosclientes")
+
+    st.markdown("---")
+
+    # --- SEÇÃO 3: LOGÍSTICA ---
     st.subheader("🚚 Logística e Rastreamento")
     
     # Sub-bloco para Solicitações
@@ -282,7 +289,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     st.markdown("---")
 
-    # --- SEÇÃO 3: MARKETING ---
+    # --- SEÇÃO 4: MARKETING ---
     with st.container():
         st.subheader("🎨 Marketing e Divulgação")
         col_m1, col_m2 = st.columns([1, 2])
