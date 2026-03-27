@@ -349,16 +349,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. SIDEBAR E MENU DE NAVEGAÇÃO ---
-st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=140)
-st.sidebar.title("Navegação Central")
-st.sidebar.divider()
-
-menu = st.sidebar.radio(
-    "Selecione o Módulo:",
-    ["✍️ Templates de Mensagens", "📊 Políticas e Prazos", "ℹ️ Sobre o Hub"]
-)
-
 # --- 4. MÓDULO: TEMPLATES DE MENSAGENS ---
 if menu == "✍️ Templates de Mensagens":
     st.title("✍️ Hub de Templates & Scripts 2026")
