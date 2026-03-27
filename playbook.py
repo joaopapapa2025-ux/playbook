@@ -277,7 +277,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.subheader("📦 Unidades por Caixa")
         st.markdown("""
-        - **Palitinhos e Yoguzinho:** 16 unidades
+        - **Yoguzinho:** 16 unidades
+        - **Palitinhos:** 16 unidades
         - **La Chef:** 6 unidades
         - **Sopinhas:** 6 unidades
         - **Papinhas de Fruta:** 12 unidades
