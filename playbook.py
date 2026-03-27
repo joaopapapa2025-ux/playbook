@@ -290,7 +290,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         """)
 
     with col_info2:
-    st.subheader("💳 Modalidades de Pagamento")
+st.subheader("💳 Modalidades de Pagamento")
     
     # CSS para deixar o texto dentro dos expanders idêntico ao print
     st.markdown("""
