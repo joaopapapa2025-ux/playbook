@@ -74,148 +74,95 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE COM AJUSTE DE FOTO INDIVIDUAL E STATUS) ---
+# --- MÓDULO 1: HOME (EQUIPE COM AJUSTE DE FOTO E STATUS) ---
 ################################################################################
-import streamlit as st
-import pandas as pd
-import base64
-from pathlib import Path
-from datetime import date
-
-# (Supondo que as funções auxiliares de imagem get_base64_of_bin_file e get_member_photo estão definidas antes)
-
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # --- LÓGICA DE PERSISTÊNCIA DO STATUS DIÁRIO ---
-    if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
-        st.session_state.status_date = date.today()
+    # Inicializa o dicionário de status no session_state se não existir
+    if 'daily_status' not in st.session_state:
         st.session_state.daily_status = {}
 
-    # --- CSS REFORMULADO: Aumentado e com suporte a Badge ---
-    st.markdown(f"""
+    # CSS SEM O 'f' antes das aspas para evitar erro de chaves
+    st.markdown("""
         <style>
-        .team-card {{
+        .team-card {
             background-color: white; padding: 25px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 420px; /* Aumentado para caber o input embaixo */
+            height: 420px; 
             display: flex; flex-direction: column; align-items: center; justify-content: start;
-        }}
+        }
         
-        /* Container para a foto e o badge */
-        .photo-container {{
-            position: relative;
-            width: 140px;
-            height: 140px;
-            margin-bottom: 20px;
-        }}
+        .photo-container {
+            position: relative; width: 140px; height: 140px; margin-bottom: 20px;
+        }
 
-        .avatar-round {{
+        .avatar-round {
             width: 140px; height: 140px; border-radius: 50%;
             border: 4px solid #007bff;
-            object-fit: cover; /* ESSENCIAL PARA O ZOOM */
+            object-fit: cover; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        /* --- O PULO DO GATO: AJUSTES INDIVIDUAIS DE ENQUADRAMENTO --- */
-        
-        /* Ajuste para João Vitor: Centralizado, cabeça um pouco mais alta */
-        .photo-joao-vitor {{
-            object-position: center top; 
-        }}
+        /* AJUSTES INDIVIDUAIS PARA ENDIREITAR AS FOTOS */
+        .photo-joao-vitor { object-position: center 20%; }
+        .photo-ana { object-position: center center; }
+        .photo-pedro { object-position: center center; }
+        .photo-joao-paulo { object-position: center 10%; }
+        .photo-thiago { object-position: center center; }
+        .photo-bernardo { object-position: center 15%; }
 
-        /* Ajuste para Ana: Centralizado */
-        .photo-ana {{
-            object-position: center center;
+        .status-badge {
+            position: absolute; top: 5px; right: 5px;
+            background-color: #ffcf00; color: #333;
+            padding: 2px 8px; border-radius: 8px;
+            font-size: 10px; font-weight: bold;
+            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
 
-        /* Ajuste para Pedro: Centralizado */
-        .photo-pedro {{
-            object-position: center center;
-        }
-
-        /* Ajuste para João Paulo: Centralizado horizontalmente, cabeça no topo verticalmente */
-        .photo-joao-paulo {{
-            object-position: center top;
-        }
-
-        /* Ajuste para Bernardo: Centralizado horizontalmente, cabeça no topo verticalmente */
-        .photo-bernardo {{
-            object-position: center top;
-        }
-
-        /* O Badge Amarelo no canto da foto */
-        .status-badge {{
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: #ffcf00;
-            color: #333;
-            padding: 2px 8px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: bold;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 80px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
-        .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
-        
-        /* Ajuste fino no input do Streamlit */
-        .stTextInput > div > div > input {{
-            text-align: center;
-            border-radius: 10px;
-        }
+        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
+        .team-role { color: #666; font-size: 1.0em; margin-bottom: 15px; font-weight: 500; }
         </style>
         """, unsafe_allow_html=True)
 
-    # --- DADOS DA EQUIPE COM CLASSES CSS INDIVIDUAIS ---
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""}, # Sem classe de ajuste
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg", "classe": "photo-ana"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg", "classe": "photo-pedro"},
+        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg", "classe": "photo-joao-paulo"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": "photo-thiago"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "photo-bernardo"}
     ]
     
-    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
-                user_key = f"status_{membro['nome'].split()[0].lower()}" # Gera chave única p/ input
+                user_key = f"st_{membro['nome'].split()[0].lower()}"
                 
-                # Lógica de Imagem
-                caminho_foto = membro['foto']
-                classe_extra = membro['classe_foto']
-                
-                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
+                # Busca a imagem (Base64)
+                caminho = membro['foto']
+                if Path(caminho).exists() and Path(caminho).stat().st_size > 0:
                     try:
-                        foto_base64 = get_base64_of_bin_file(caminho_foto)
-                        ext = caminho_foto.split('.')[-1].lower()
+                        foto_b64 = get_base64_of_bin_file(caminho)
+                        ext = caminho.split('.')[-1].lower()
                         if ext == 'jpg': ext = 'jpeg'
-                        img_html = f"data:image/{ext};base64,{foto_base64}"
-                    except: img_html = img_avatar_html
-                else: img_html = img_avatar_html
+                        img_src = f"data:image/{ext};base64,{foto_b64}"
+                    except: img_src = img_avatar_html
+                else: img_src = img_avatar_html
 
                 with cols[j]:
-                    # Puxa o status do state ou deixa vazio (ou um emoji padrão)
                     status_atual = st.session_state.daily_status.get(user_key, "✨")
 
-                    # Card com Foto + Badge + Info
+                    # Card Visual
                     st.markdown(f"""
                         <div class="team-card">
                             <div class="photo-container">
-                                <img src="{img_html}" class="avatar-round {classe_extra}" alt="{membro['nome']}">
+                                <img src="{img_src}" class="avatar-round {membro['classe']}">
                                 <div class="status-badge">{status_atual}</div>
                             </div>
                             <div class="team-name">{membro['nome']}</div>
@@ -223,17 +170,16 @@ if aba_selecionada == "🏠 Home (Equipe)":
                         </div>
                     """, unsafe_allow_html=True)
 
-                    # Input de texto (na área rosa que você indicou)
-                    novo_status = st.text_input(
-                        "Como você está hoje?", 
+                    # Campo de digitação
+                    novo = st.text_input(
+                        "Como estou hoje?", 
                         value=status_atual, 
                         key=f"in_{user_key}", 
-                        label_visibility="collapsed",
-                        placeholder="Ex: 🚀 Focado"
+                        label_visibility="collapsed"
                     )
                     
-                    if novo_status != status_atual:
-                        st.session_state.daily_status[user_key] = novo_status
+                    if novo != status_atual:
+                        st.session_state.daily_status[user_key] = novo
                         st.rerun()
                     
 ################################################################################
