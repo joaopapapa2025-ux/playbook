@@ -552,8 +552,70 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 ################################################################################
 elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
-    st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
-    st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
+    
+    # Criamos duas colunas: a esquerda para o conteúdo e a direita para as notas
+    col_conteudo, col_notas = st.columns([1.5, 1])
+
+    with col_conteudo:
+        # MANTENDO SEU CONTEÚDO ORIGINAL AQUI
+        st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
+        st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
+        
+        # Aqui você poderá adicionar os exemplos e cenários futuramente
+
+    with col_notas:
+        st.subheader("📝 Notas e Histórico do Time")
+        
+        # Inicializa o histórico na sessão se não existir
+        if "historico_problemas" not in st.session_state:
+            st.session_state.historico_problemas = []
+
+        # 1. Seletor de usuário
+        lista_pessoas = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
+        quem_comentou = st.selectbox("Quem está registrando?", lista_pessoas)
+
+        # 2. Área de texto
+        texto_nota = st.text_area(
+            "Descreva a ocorrência ou dúvida:", 
+            placeholder="Ex: Cliente X reclamou de caixa amassada na NF 123...", 
+            key="txt_problema",
+            height=100
+        )
+
+        # 3. Botão de Salvar
+        if st.button("Salvar Registro", use_container_width=True):
+            if texto_nota.strip():
+                from datetime import datetime
+                agora = datetime.now().strftime("%d/%m/%Y %H:%M")
+                nova_nota = {
+                    "autor": quem_comentou,
+                    "texto": texto_nota.strip(),
+                    "data": agora
+                }
+                # Insere no topo
+                st.session_state.historico_problemas.insert(0, nova_nota)
+                st.toast("✅ Registro salvo!")
+                st.rerun()
+            else:
+                st.warning("Escreva algo antes de salvar.")
+
+        st.divider()
+
+        # 4. Listagem do Histórico
+        if not st.session_state.historico_problemas:
+            st.caption("Nenhum registro recente.")
+        else:
+            for idx, item in enumerate(st.session_state.historico_problemas):
+                with st.container():
+                    c_txt, c_del = st.columns([0.85, 0.15])
+                    with c_txt:
+                        st.caption(f"📅 {item['data']} - **{item['autor']}**")
+                        st.write(item['texto'])
+                    with c_del:
+                        if st.button("🗑️", key=f"del_prob_{idx}"):
+                            st.session_state.historico_problemas.pop(idx)
+                            st.rerun()
+                    st.markdown("---")
 
 ################################################################################
 # --- MÓDULO 7: QUEBRAS DE EXCUSES ---
