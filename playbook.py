@@ -74,69 +74,40 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE COM FOTOS GRANDES E INPUT NO TOPO) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA E CORRIGIDA) ---
 ################################################################################
-from datetime import date
-from pathlib import Path
-
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # Lógica de reset diário (persiste o status enquanto o App estiver aberto)
-    if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
-        st.session_state.status_date = date.today()
-        st.session_state.daily_status = {}
-
-    st.markdown("""
+    # CSS REFORMULADO: AUMENTADO E COM FOTO ANCORADA NO TOPO (CORREÇÃO DE POSIÇÃO)
+    st.markdown(f"""
         <style>
-        .team-card {
-            background-color: white; padding: 20px; border-radius: 15px;
+        .team-card {{
+            background-color: white; padding: 25px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 480px; /* Aumentado para acomodar a foto maior e o input no topo */
+            height: 330px; /* Aumentado ligeiramente para comportar a foto maior */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
-        }
-
-        /* Container da Foto */
-        .photo-container {
-            position: relative;
-            width: 170px; /* Aumentado de 140px p/ 170px */
-            height: 170px; /* Aumentado de 140px p/ 170px */
-            margin-top: 15px; /* Espaço depois do input */
-            margin-bottom: 20px;
-        }
-
-        .photo-circle {
-            width: 170px; /* Foto Grande */
-            height: 170px; /* Foto Grande */
+        }}
+        .avatar-round {{
+            width: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
+            height: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
             border-radius: 50%;
-            border: 5px solid #007bff; /* Borda um pouco mais grossa p/ destacar */
+            border: 4px solid #007bff; /* Borda um pouco mais grossa para destacar */
+            margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             
-            /* --- CORREÇÃO E ENDIREITAMENTO DAS FOTOS (O ZOOMZINHO) --- */
-            object-fit: cover; /* Preenche o círculo e mantém a proporção */
+            /* --- AS DUAS LINHAS ABAIXO SÃO A CORREÇÃO DO PROBLEMA --- */
+            object-fit: cover; /* Mantém a proporção e preenche o círculo */
             object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
-        }
-
-        /* A caixinha amarela (Badge) que reflete o input */
-        .status-badge {
-            position: absolute; top: 0px; right: 0px;
-            background-color: #ffcf00; color: #333;
-            padding: 2px 8px; border-radius: 8px;
-            font-size: 11px; font-weight: bold;
-            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        .team-name { font-weight: bold; font-size: 1.25em; color: #333; margin-bottom: 6px; }
-        .team-role { color: #666; font-size: 1.05em; font-weight: 500;}
-        
-        /* Estilização da barra de texto (Input no Topo) */
-        .stTextInput { margin-bottom: 0px; }
+        }}
+        .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
+        .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
         </style>
         """, unsafe_allow_html=True)
 
+    # Lista da equipe com Cargos Corrigidos e nomes de arquivos exatos
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
@@ -146,48 +117,40 @@ if aba_selecionada == "🏠 Home (Equipe)":
         {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
     ]
     
+    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
-                user_key = f"bar_{membro['nome'].split()[0].lower()}"
                 
-                # Setup da Imagem
+                # Lógica para carregar a foto específica ou o logo padrão
                 caminho_foto = membro['foto']
-                if Path(caminho_foto).exists():
-                    foto_b64 = get_base64_of_bin_file(caminho_foto)
-                    ext = caminho_foto.split('.')[-1].lower()
-                    if ext == 'jpg': ext = 'jpeg'
-                    img_html = f"data:image/{ext};base64,{foto_b64}"
-                else: img_html = img_avatar_html
+                
+                # Verifica se o arquivo existe e se tem conteúdo (size > 0)
+                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
+                    try:
+                        foto_base64 = get_base64_of_bin_file(caminho_foto)
+                        # Identifica a extensão para o cabeçalho base64
+                        ext = caminho_foto.split('.')[-1].lower()
+                        # Trata jpg como jpeg no cabeçalho
+                        if ext == 'jpg': ext = 'jpeg'
+                        img_html = f"data:image/{ext};base64,{foto_base64}"
+                    except:
+                        # Fallback se a conversão falhar
+                        img_html = img_avatar_html
+                else:
+                    # Se não achar a foto da pessoa (como Thiago), usa o logo Papapá
+                    img_html = img_avatar_html 
 
                 with cols[j]:
-                    # Pegamos o valor atual da sessão
-                    status_atual = st.session_state.daily_status.get(user_key, "✨")
-                    
-                    # Abre o HTML do card
-                    st.write('<div class="team-card">', unsafe_allow_html=True)
-                    
-                    # 1. CAIXA DE TEXTO NO TOPO (Como você pediu)
-                    # Usei label_visibility="collapsed" para ele não criar espaço branco de título
-                    novo = st.text_input("Como estou me sentindo hoje?", value=status_atual, key=f"bar_{user_key}", label_visibility="collapsed", placeholder="Sua vibe de hoje...")
-                    if novo != status_atual:
-                        st.session_state.daily_status[user_key] = novo
-                        st.rerun()
-
-                    # 2. CONTEÚDO VISUAL (FOTO GRANDE COM BADGE)
                     st.markdown(f"""
-                        <div class="photo-container">
-                            <img src="{img_html}" class="photo-circle" alt="{membro['nome']}">
-                            <div class="status-badge">{novo}</div>
+                        <div class="team-card">
+                            <img src="{img_html}" class="avatar-round" alt="{membro['nome']}">
+                            <div class="team-name">{membro['nome']}</div>
+                            <div class="team-role">{membro['cargo']}</div>
                         </div>
-                        <div class="team-name">{membro['nome']}</div>
-                        <div class="team-role">{membro['cargo']}</div>
                     """, unsafe_allow_html=True)
-                    
-                    # Fecha o HTML do card
-                    st.write('</div>', unsafe_allow_html=True)
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
