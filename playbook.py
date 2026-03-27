@@ -548,7 +548,28 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     É obrigatório o envio da NFD (Nota Fiscal de Devolução) com o número da NF de origem e lote.""")
 
 ################################################################################
-# --- MÓDULO 6: LINKS ÚTEIS ---
+# --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
+################################################################################
+elif aba_selecionada == "🛠️ Resolução de Problemas":
+    st.header("🛠️ Resolução de Problemas")
+    st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
+    st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
+
+################################################################################
+# --- MÓDULO 7: QUEBRAS DE EXCUSES ---
+################################################################################
+elif aba_selecionada == "🚫 Quebras de Excuses":
+    st.header("🚫 Quebras de Excuses")
+    
+    st.markdown("""
+    <div style="background-color: #fff3cd; padding: 20px; border-radius: 10px; border-left: 5px solid #ffca28;">
+        <h4 style="color: #856404; margin-top: 0;">⏳ Em construção...</h4>
+        <p style="color: #856404;">Estamos mapeando as principais objeções (preço, giro, concorrência) para trazer os melhores argumentos para o time.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+################################################################################
+# --- MÓDULO 8: LINKS ÚTEIS ---
 ################################################################################
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
