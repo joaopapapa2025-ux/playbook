@@ -204,7 +204,7 @@ Posso te enviar o catálogo e as condições comerciais e, na sequência, entend
         st.subheader("🚀 Como explicar o Mix e Giro")
         st.info("Use estes scripts para converter clientes que estão em dúvida sobre o que comprar no primeiro pedido.")
         
-        with st.expander("💎 Script: A força da curva A", expanded=True):
+        with st.expander("💎 Script 1: A força da curva A (resumido)", expanded=True):
             st.code("""Pra te orientar melhor, vou te explicar como funciona o nosso mix e por onde indicamos começar. 
 Hoje, a nossa Curva A (maior giro e recompra) é formada por:
 
@@ -214,7 +214,23 @@ Hoje, a nossa Curva A (maior giro e recompra) é formada por:
 
 Normalmente, quando o cliente começa pela Curva A, ele sente o giro rápido e depois amplia o mix com Palitinhos e Yoguzinho para aumentar o ticket médio.""", language=None)
 
-        with st.expander("🛒 Script: Pergunta para entender primeiro pedido"):
+        with st.expander("📚 Script 2: Explicação curva A (mais completa)"):
+            st.code("""Pra te orientar melhor, vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
+
+Hoje, a nossa Curva A (produtos de maior giro e recompra) é formada por:
+• Papinhas de fruta – carro-chefe da marca, porta de entrada da maioria dos clientes. São naturais, sem adição de açúcar, não precisam de refrigeração e têm excelente aceitação.
+• Biscoitinho para fase da dentição – snack funcional, muito procurado por pais de bebês, com compra recorrente e ótima saída por impulso.
+• Biscotti – nosso snack mais vendido, feito com cereais selecionados, naturalmente adocicado pelas frutas e com perfil que agrada até adultos.
+
+Esses três itens concentram hoje a maior parte do volume da Papapá no ponto de venda e são os que mais performam em praticamente todos os canais (padarias, empórios, hortifruttis e mercados).
+
+Em um segundo momento, como complemento de mix e aumento de ticket, entram:
+• Palitinhos de vegetais – assados, não fritos, fonte de proteínas e ideais para lanchinho.
+• Yoguzinho – produto super diferenciado, que não precisa de refrigeração antes de abrir, com shelf life de 15 meses, perfeito para exposição em gôndola.
+
+Normalmente, quando o cliente começa pela Curva A, ele já consegue sentir giro rápido e recompra, e depois amplia o mix com esses complementares. A partir do seu perfil de negócio, eu te ajudo a montar um pedido inicial enxuto, estratégico e com foco em giro.""", language=None)
+
+        with st.expander("🛒 Script 3: Pergunta para entender o primeiro pedido"):
             st.code("""Pelo seu perfil, o que faz mais sentido é começar com a Curva A. São os produtos de "tiro certo". 
 Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a gôndola para ter uma exposição completa?""", language=None)
 
@@ -261,7 +277,7 @@ Venda por caixas fechadas:
     with tabs[3]:
         st.subheader("🚚 Suporte, Logística e Financeiro")
         
-        with st.expander("📦 Script: Confirmação e Fluxo Logístico", expanded=True):
+        with st.expander("📦 Script: Confirmação e fluxo logístico", expanded=True):
             st.code("""Pedido efetuado com sucesso! Nosso fluxo funciona assim:
 • Até 3 dias úteis para separação no CD.
 • Mais 2 dias úteis para faturamento da NF.
@@ -278,11 +294,11 @@ Se houver caixa amassada, molhada ou produto quebrado:
 3. Me informe imediatamente.
 Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos repor a mercadoria.""", language=None)
 
-        with st.expander("💳 Script: Contato Financeiro"):
-            st.code("""Para assuntos financeiros (2ª via de boleto, prorrogações ou comprovantes), fale direto com nosso time especializado:
+        with st.expander("💳 Script: Contato financeiro"):
+            st.code("""Para assuntos financeiros, como boletos, notas fiscais, comprovantes de pagamento, prorrogação de vencimento ou segunda via, pedimos por gentileza que o contato seja feito diretamente com o nosso financeiro, através do e-mail:
 📧 E-mail: contasareceber2@papapa.com.br""", language=None)
 
-        with st.expander("🔄 Script: Regra de Troca (Validade)"):
+        with st.expander("🔄 Script: Regra de troca (validade)"):
             st.code("""Sobre trocas por validade:
 A Papapá realiza a troca se o produto for entregue com menos de 60% da validade total.
 Para isso, precisamos da emissão da NFD (Nota Fiscal de Devolução) constando:
