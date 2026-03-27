@@ -74,7 +74,7 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA + SENTIMENTO) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE COM STATUS INTERATIVO) ---
 ################################################################################
 from datetime import date
 
@@ -82,21 +82,20 @@ if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # Lógica para resetar o status no final do dia
+    # Lógica de reset diário
     if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
         st.session_state.status_date = date.today()
         st.session_state.daily_status = {}
 
-    # ESTRUTURA CSS (Mantendo sua centralização e adicionando o Badge de Status)
+    # CSS MANTENDO SUA ESTRUTURA E REFINANDO O BADGE
     st.markdown("""
         <style>
         .team-card {
             background-color: white; padding: 20px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 420px; /* Aumentado para caber o input de texto */
+            height: 340px; /* Voltamos ao tamanho original pois o input sumiu do rodapé */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
-            position: relative;
         }
 
         .photo-container { position: relative; width: 140px; height: 140px; margin-bottom: 20px; }
@@ -104,25 +103,32 @@ if aba_selecionada == "🏠 Home (Equipe)":
         .photo-circle {
             width: 140px; height: 140px; border-radius: 50%;
             border: 4px solid #007bff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-size: cover; background-position: center top; background-repeat: no-repeat;
+            background-size: cover; background-repeat: no-repeat;
         }
 
-        /* Badge do Sentimento no canto da foto */
-        .status-badge {
-            position: absolute; top: 5px; right: 5px;
-            background-color: #ffcf00; color: #333;
-            padding: 4px 8px; border-radius: 10px;
-            font-size: 0.75em; font-weight: bold; border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
+        /* Classes de posicionamento que você definiu */
         .photo-joao-vitor { background-position: center 20%; }
         .photo-ana { background-position: center 10%; }
         .photo-joao-paulo { background-position: center 10%; }
         .photo-bernardo { background-position: center 10%; }
 
+        /* Estilo do Botão de Status (Badge) */
+        .stPopover { position: absolute; top: 0px; right: 0px; }
+        .stPopover button {
+            background-color: #ffcf00 !important;
+            color: #333 !important;
+            border-radius: 10px !important;
+            border: 2px solid white !important;
+            font-size: 11px !important;
+            font-weight: bold !important;
+            padding: 2px 8px !important;
+            min-height: 24px !important;
+            line-height: 1.2 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+        }
+
         .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
-        .team-role { color: #666; font-size: 1.0em; margin-bottom: 10px; font-weight: 500;}
+        .team-role { color: #666; font-size: 1.0em; font-weight: 500;}
         </style>
         """, unsafe_allow_html=True)
 
@@ -142,44 +148,40 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 membro = equipe[i + j]
                 user_key = f"status_{membro['nome']}"
                 
+                # Lógica da Foto
                 caminho_foto = membro['foto']
-                classe_extra = membro['classe_foto']
-                
-                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
-                    try:
-                        foto_base64 = get_base64_of_bin_file(caminho_foto)
-                        ext = caminho_foto.split('.')[-1].lower()
-                        if ext == 'jpg': ext = 'jpeg'
-                        estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
-                    except:
-                        estilo_foto = f"background-image: url('{img_avatar_html}');"
+                if Path(caminho_foto).exists():
+                    foto_base64 = get_base64_of_bin_file(caminho_foto)
+                    ext = caminho_foto.split('.')[-1].lower()
+                    if ext == 'jpg': ext = 'jpeg'
+                    estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
                 else:
                     estilo_foto = f"background-image: url('{img_avatar_html}');"
 
                 with cols[j]:
-                    # Recupera o sentimento salvo ou emoji padrão
+                    # Recupera status
                     current_status = st.session_state.daily_status.get(user_key, "✨")
                     
+                    # Abre a div do Card
+                    st.markdown(f'<div class="team-card"><div class="photo-container">', unsafe_allow_html=True)
+                    
+                    # Foto
+                    st.markdown(f'<div class="photo-circle {membro["classe_foto"]}" style="{estilo_foto}"></div>', unsafe_allow_html=True)
+                    
+                    # O Botão Amarelo de Status (Popover)
+                    with st.popover(current_status):
+                        novo_status = st.text_input("Sentimento do dia:", max_chars=12, key=f"in_{user_key}")
+                        if novo_status:
+                            st.session_state.daily_status[user_key] = novo_status
+                            st.rerun()
+
+                    # Fecha containers e coloca Nome/Cargo
                     st.markdown(f"""
-                        <div class="team-card">
-                            <div class="photo-container">
-                                <div class="photo-circle {classe_extra}" style="{estilo_foto}"></div>
-                                <div class="status-badge">{current_status}</div>
                             </div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
-                    
-                    # Campo para cada um preencher seu sentimento
-                    novo_status = st.text_input("Como está hoje?", 
-                                               max_chars=15, 
-                                               key=f"input_{user_key}",
-                                               placeholder="Ex: 🚀 Focado")
-                    
-                    if novo_status:
-                        st.session_state.daily_status[user_key] = novo_status
-                        # O Streamlit atualizará o badge no próximo clique/ação
 
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
