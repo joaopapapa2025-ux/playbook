@@ -74,8 +74,14 @@ if 'aba_atual' not in st.session_state:
 cols = st.columns(6)
 
 labels = [
-    "🏠 Home (Equipe)", "💰 Simulador", "📄 Biblioteca", 
-    "✍️ Scripts", "📊 Políticas", "🔗 Links"
+    "🏠 Home (Equipe)", 
+    "💰 Simulador de Bonificação", 
+    "📄 Biblioteca de Arquivos", 
+    "✍️ Templates & Scripts", 
+    "📊 Políticas Comerciais", 
+    "🛠️ Resolução de Problemas",
+    "🚫 Quebras de Excuses",
+    "🔗 Links Úteis"
 ]
 
 # Renderiza cada botão. Se clicado, muda o session_state
