@@ -651,13 +651,13 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                                                         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
         filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
-        # 3. Listagem (Ajustada para mostrar a NF)
+        # 3. Listagem e Soma
         notas_exibidas = st.session_state.historico_problemas
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
 
-        # READICIONADO: Métrica de quantidade
-            st.metric("Ocorrências no período", len(notas_exibidas))
+        # Métrica que funciona para "Todos" ou filtrado
+        st.metric("Ocorrências no período", len(notas_exibidas))
 
         if not notas_exibidas:
             st.caption("Nenhum registro encontrado.")
@@ -668,7 +668,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     with c_txt:
                         st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
                         
-                        # LOGICA DE EXIBIÇÃO DA NF AQUI:
+                        # Mostra a NF se ela existir no registro
                         nf_para_mostrar = item.get('nf_pedido', '').strip()
                         if nf_para_mostrar:
                             st.markdown(f"**🏷️ NF/Pedido:** `{nf_para_mostrar}`")
