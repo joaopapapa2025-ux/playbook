@@ -34,65 +34,90 @@ else:
     img_logo_src = fallback_avatar
 
 ################################################################################
-# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO (LOGO EM TODAS AS PÁGINAS) ---
+# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO SUPERIOR REFORMULADA ---
 ################################################################################
+# Certifique-se de que a variável 'img_logo_html' (com o Base64 do logo oficial)
+# foi definida anteriormente. Caso contrário, a gente usa oFallback_avatar ou img_avatar_html.
 
-# CSS Customizado para centralizar o logo e estilizar o menu
-st.markdown(f"""
-    <style>
-    [data-testid="stSidebar"] {{ display: none; }} /* Remove menu lateral */
+# NOVA LÓGICA DE CABEÇALHO CENTRALIZADO
+with st.container():
+    col_l, col_c, col_r = st.columns([1, 1, 1])
     
-    /* Container do Logo no Topo */
-    .header-container {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px 0;
-        margin-bottom: 10px;
-    }}
-    .header-logo {{
-        width: 280px; /* Ajuste o tamanho do logo aqui */
-        height: auto;
-    </style>
-    """, unsafe_allow_html=True)
-
-# Exibe o Logo Centralizado
-st.markdown(f"""
-    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <img src="{img_logo_src}" width="250">
-    </div>
-    """, unsafe_allow_html=True)
-
-# Título do Hub (Opcional manter se já tem o logo)
-st.markdown("<h1 style='text-align: center; color: #004a99;'>Hub Inside Sales</h1>", unsafe_allow_html=True)
-
-# Menu de Navegação Horizontal Centralizado
-aba_selecionada = st.radio(
-    "Selecione a área:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
-    horizontal=True,
-    label_visibility="collapsed" # Esconde o texto "Selecione a área" para ficar mais limpo
-)
+    with col_c:
+        # 1. EXIBIÇÃO DO LOGO NO TOPO (CENTRALIZADO)
+        # Usamos o st.image com a imagem que você já carregou
+        st.image(img_logo_html, width=280) 
+        
+        st.markdown("<br>", unsafe_allow_html=True) # Espaçamento
+        
+        # 2. TÍTULO ESTILIZADO (LEVE E INTEGRADO)
+        # O título fica mais clean, centralizado e com a cor da marca Papapá
+        st.markdown(f"""
+            <h2 style='text-align: center; color: #004a99; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 1.8em; margin-top: -10px;'>
+                Hub Inside Sales
+            </h2>
+        """, unsafe_allow_html=True)
 
 st.divider()
 
-# --- CSS ADICIONAL PARA OS CARDS DA EQUIPE ---
+# --- NOVA ESTRUTURA DE NAVEGAÇÃO: ABAS SUPERIORES ---
+
+# CSS Customizado avançado para esconder o rádio e criar abas de navegação
+# Esse CSS remove as bolinhas e faz com que o menu pareça botões centralizados.
 st.markdown("""
     <style>
-    .team-card {
-        background-color: white; padding: 20px; border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
-        margin-bottom: 20px; border: 1px solid #eaeaea;
-        height: 320px;
+    /* Centraliza a row do st.radio na tela */
+    div.row-widget.stRadio > div {
+        display: flex;
+        flex-direction: row; 
+        gap: 15px; /* Espaço entre as abas */
+        justify-content: center; /* Centraliza as abas */
+        margin-top: -20px;
+        border-bottom: 2px solid #eaeaea; /* Borda inferior sutil */
+        padding-bottom: 10px;
     }
-    .avatar-round {
-        width: 130px; height: 130px; border-radius: 50%;
-        object-fit: cover; border: 3px solid #007bff; margin-bottom: 15px;
+    
+    /* Remove as bolinhas de seleção padrão do Streamlit */
+    div.row-widget.stRadio div[role="radiogroup"] span {
+        display: none;
     }
-    .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 5px; }
-    .team-role { color: #666; font-size: 1.0em; margin-bottom: 15px; }
+
+    /* Estiliza cada item do rádio como uma aba/botão */
+    div.row-widget.stRadio div[role="radiogroup"] label {
+        display: inline-block;
+        padding: 8px 18px;
+        background-color: transparent;
+        border-radius: 20px;
+        border: 1px solid #007bff;
+        color: #007bff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    /* Estilo de hover (quando o mouse passa por cima) */
+    div.row-widget.stRadio div[role="radiogroup"] label:hover {
+        background-color: #e0f0ff;
+    }
+
+    /* Estilo do item selecionado: Muda de cor */
+    div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
     </style>
     """, unsafe_allow_html=True)
+
+# 3. NAVEGAÇÃO SUPERIOR (st.radio transformado em abas)
+# Passamos label_visibility="collapsed" para que o Streamlit não desenhe o rótulo "Navegação:".
+# Isso faz ele se comportar exatamente como abas no topo da tela.
+aba_selecionada = st.radio(
+    "Navegação:", # Este rótulo agora será escondido pelo CSS
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
+    horizontal=True,
+    label_visibility="collapsed"
+)
 
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
