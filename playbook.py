@@ -223,3 +223,74 @@ elif aba_selecionada == "🚚 Logística & SAC":
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.title("✍️ Templates & Scripts (Em Breve)")
     st.info("Esta aba será preenchida com os scripts de WhatsApp/Email.")
+
+# --- MÓDULO 6: Links Úteis ---
+
+elif aba_selecionada == "🔗 Links Úteis":
+    st.title("🔗 Central de Links Úteis")
+    st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
+    
+    # --- SEÇÃO 1: CADASTRO E CLIENTES ---
+    with st.container():
+        st.subheader("📝 Cadastro e Gestão de Clientes")
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
+            st.caption("Novo cadastro de lojista")
+            
+        with col2:
+            st.link_button("👀 Acompanhar Cadastros", "https://teams.microsoft.com/l/message/19:61eee15e-f2e5-4cf2-b034-e466806b1fc2_78a4310d-99a8-43cc-8548-acb2e59581bf@unq.gbl.spaces/1774452870137?context=%7B%22contextType%22%3A%22chat%22%7D", use_container_width=True)
+            st.caption("Link direto para o Teams")
+            
+        with col3:
+            st.link_button("📊 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
+            st.info("**Senha:** amamosnossosclientes")
+
+    st.markdown("---")
+
+    # --- SEÇÃO 2: LOGÍSTICA ---
+    st.subheader("🚚 Logística e Rastreamento")
+    
+    # Sub-bloco para Solicitações
+    c1, c2 = st.columns(2)
+    with c1:
+        st.link_button("🚩 Solicitações Logísticas", "https://forms.office.com/Pages/ResponsePage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQpGwsStRQZMoYBHJmx0xW1UMDhXRkQwSEQxU0cwUklNNVVGWTZFRUhVNS4u", use_container_width=True)
+    with c2:
+        st.link_button("📂 Respostas Solicitações", "https://papapacombr-my.sharepoint.com/:x:/g/personal/operacoes_papapa_com_br/IQDfqtRILiD4R5lmLjQujLN3AS4On6breUbk-qRT2a0sUYk?rtime=_eVdf_F13kg", use_container_width=True)
+    
+    st.link_button("📍 Follow-up de Entregas (Sharepoint)", "https://papapacombr.sharepoint.com/:x:/r/sites/Papapa-Fileserver/_layouts/15/Doc.aspx?sourcedoc=%7B5cf28a24-1caa-4578-8641-a96b089efffa%7D&action=edit", use_container_width=True)
+
+    # Cards para Transportadoras
+    st.write("**Portais das Transportadoras:**")
+    t1, t2, t3 = st.columns(3)
+    
+    with t1:
+        st.markdown("**Translovato**")
+        st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento")
+        st.code("User: BABY\nPass: LOVATO")
+        
+    with t2:
+        st.markdown("**Tecmar**")
+        st.link_button("Portal Tecmar", "https://smonet.tecmartransportes.com.br/smonet/#/notas-fiscais")
+        st.code("User: babyroo\nPass: babyroo1*")
+        
+    with t3:
+        st.markdown("**Rodovitor**")
+        st.link_button("Rastrear Rodovitor", "https://ssw.inf.br/2/rastreamento")
+        st.caption("Acesso via SSW")
+
+    st.markdown("---")
+
+    # --- SEÇÃO 3: MARKETING ---
+    with st.container():
+        st.subheader("🎨 Marketing e Divulgação")
+        col_m1, col_m2 = st.columns([1, 2])
+        
+        with col_m1:
+            st.link_button("📂 Drive para Lojistas", "https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA", use_container_width=True)
+        
+        with col_m2:
+            st.warning("**Senha de acesso:** Papapa@2023")
+            st.write("Compartilhe este link com o cliente para fotos, logos e materiais de PDV.")
+
