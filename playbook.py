@@ -272,29 +272,89 @@ elif aba_selecionada == "🚚 Logística & SAC":
 # --- MÓDULO 5: TEMPLATES & SCRIPTS ---
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.title("✍️ Templates & Scripts")
-    st.write("Use os blocos abaixo para copiar rapidamente as informações para o cliente.")
+    st.write("Clique no ícone no canto superior direito de cada bloco para copiar o texto.")
 
-    st.subheader("📦 Condições Comerciais Padrão")
-    texto_condicoes = """🔹 **Pedido Mínimo:** R$ 800,00
-🔹 **Frete:** CIF (por conta da Papapá)
-🔹 **Pagamento:** Pix ou Boleto
-🔹 **Unidades por Caixa:**
-   - Palitinhos e Yoguzinho: 16 unidades
-   - La Chef e Sopinhas: 6 unidades
-   - Demais linhas: 12 unidades"""
+    # --- ABA 1: BOAS-VINDAS E PROSPECÇÃO ---
+    st.subheader("👋 Introdução e Boas-vindas")
     
-    st.code(texto_condicoes, language=None)
-    
-    st.subheader("🗓️ Prazos de Pagamento (Boleto)")
-    tab1, tab2 = st.tabs(["Sul e Sudeste", "Norte/NE/CO/MG/ES"])
-    
-    with tab1:
-        st.write("- Até R$ 1k: 30 dias\n- R$ 1k a 2k: 30/45 dias\n- Acima de R$ 2k: 30/45/60 dias")
-    with tab2:
-        st.write("- Até R$ 1k: 45 dias\n- R$ 1k a 2k: 45/60 dias\n- Acima de R$ 2k: 40/50/60 dias")
+    with st.expander("Mensagem de Apresentação (Novo Cliente)", expanded=True):
+        template_boas_vindas = """Olá, tudo bem? Me chamo [Seu Nome], sou do time de Inside Sales da Papapá! 💙
 
-    st.subheader("📧 E-mail do Financeiro")
+Vi que você tem interesse em levar saúde e praticidade para os pequenos da sua região. Nossa missão é facilitar a vida dos pais com alimentos 100% naturais e práticos.
+
+Gostaria de conhecer melhor seu negócio e apresentar nossas condições. Podemos conversar?"""
+        st.code(template_boas_vindas, language=None)
+
+    # --- ABA 2: CONDIÇÕES E LOGÍSTICA ---
+    st.subheader("📦 Condições Comerciais e Logística")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        with st.expander("Resumo de Condições", expanded=True):
+            texto_condicoes = """🔹 Pedido Mínimo: R$ 800,00
+🔹 Frete: CIF (Grátis para todo o Brasil)
+🔹 Pagamento: Pix ou Boleto
+🔹 Unidades por Caixa:
+   - Palitinhos e Yoguzinho: 16 un.
+   - La Chef e Sopinhas: 6 un.
+   - Demais linhas: 12 un."""
+            st.code(texto_condicoes, language=None)
+            
+    with col2:
+        with st.expander("Prazos de Entrega e Processo", expanded=True):
+            texto_prazos = """✅ Processo de Pedido:
+- Separação: Até 3 dias úteis.
+- Faturamento: Até 2 dias úteis.
+- Coleta: Após faturamento, segue para transportadora.
+
+📍 O prazo final varia conforme sua região."""
+            st.code(texto_prazos, language=None)
+
+    # --- ABA 3: CADASTRO ---
+    st.subheader("📑 Dados para Cadastro")
+    with st.expander("Checklist de Documentação"):
+        template_cadastro = """Para avançarmos com seu cadastro, preciso das seguintes informações:
+
+✅ CNPJ:
+✅ Inscrição Estadual (IE):
+✅ E-mail para Financeiro:
+✅ E-mail para Compras:
+✅ Telefone de Contato:
+✅ Dados Bancários (Pix):"""
+        st.code(template_cadastro, language=None)
+
+    # --- ABA 4: FINANCEIRO E PAGAMENTO ---
+    st.subheader("💰 Financeiro e Prazos de Boleto")
+    
+    tab_sul, tab_norte = st.tabs(["📍 Sul e Sudeste", "📍 Norte, NE, CO, MG e ES"])
+    
+    with tab_sul:
+        st.code("""Pedidos até R$ 1.000,00: 30 dias
+Pedidos entre R$ 1.000,00 e R$ 2.000,00: 30/45 dias
+Pedidos acima de R$ 2.000,00: 30/45/60 dias""", language=None)
+        
+    with tab_norte:
+        st.code("""Pedidos até R$ 1.000,00: 45 dias
+Pedidos entre R$ 1.000,00 e R$ 2.000,00: 45/60 dias
+Pedidos acima de R$ 2.000,00: 40/50/60 dias""", language=None)
+
+    st.info("**E-mail Financeiro:** contasareceber2@papapa.com.br")
     st.code("contasareceber2@papapa.com.br", language=None)
+
+    # --- ABA 5: PÓS-VENDA ---
+    st.subheader("🛠️ Pós-Venda e Avarias")
+    with st.expander("Instrução de Recebimento (Cópia para o Cliente)"):
+        template_avaria = """Olá! Seu pedido está a caminho. 🚚
+
+Lembrete importante: Ao receber a mercadoria, confira tudo antes de assinar o comprovante. 
+Se houver qualquer caixa amassada ou produto danificado, por favor:
+1. Escreva o motivo no verso da Nota Fiscal (Ressalva).
+2. Tire uma foto da NF e dos produtos.
+3. Me avise imediatamente aqui!
+
+Sem a ressalva na NF, não conseguimos repor os itens depois. Obrigado!"""
+        st.code(template_avaria, language=None)
+    
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
