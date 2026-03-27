@@ -577,7 +577,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         # --- PREENCHIMENTO DO ESPAÇO EM BRANCO ---
         st.write("") # Espaçador
-        st.markdown("#### ⏱️ Consulta Rápida de Prazo")
+        st.markdown("#### ⏱️ Consulta Rápida de Prazo para Capitais")
         
         # Dados para a consulta (mesmos da tabela abaixo)
         lista_capitais = ["Curitiba (PR)", "Florianópolis (SC)", "Porto Alegre (RS)", "São Paulo (SP)", 
