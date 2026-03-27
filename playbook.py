@@ -475,21 +475,46 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
     st.divider()
 
+    # Banco de dados de prazos para o calculador e a tabela
+    dados_prazos = [
+        {"Região": "SUL", "Capital": "Curitiba (PR)", "Dias": 7},
+        {"Região": "SUL", "Capital": "Florianópolis (SC)", "Dias": 8},
+        {"Região": "SUL", "Capital": "Porto Alegre (RS)", "Dias": 8},
+        {"Região": "SUDESTE", "Capital": "São Paulo (SP)", "Dias": 7},
+        {"Região": "SUDESTE", "Capital": "Vitória (ES)", "Dias": 9},
+        {"Região": "SUDESTE", "Capital": "Belo Horizonte (MG)", "Dias": 9},
+        {"Região": "SUDESTE", "Capital": "Rio de Janeiro (RJ)", "Dias": 9},
+        {"Região": "CENTRO-OESTE", "Capital": "Cuiabá (MT)", "Dias": 10},
+        {"Região": "CENTRO-OESTE", "Capital": "Campo Grande (MS)", "Dias": 10},
+        {"Região": "CENTRO-OESTE", "Capital": "Goiânia (GO)", "Dias": 11},
+        {"Região": "CENTRO-OESTE", "Capital": "Brasília (DF)", "Dias": 11},
+        {"Região": "NORDESTE", "Capital": "Aracaju (SE)", "Dias": 13},
+        {"Região": "NORDESTE", "Capital": "Salvador (BA)", "Dias": 14},
+        {"Região": "NORDESTE", "Capital": "Maceió (AL)", "Dias": 15},
+        {"Região": "NORDESTE", "Capital": "João Pessoa (PB)", "Dias": 16},
+        {"Região": "NORDESTE", "Capital": "Recife (PE)", "Dias": 16},
+        {"Região": "NORDESTE", "Capital": "Natal (RN)", "Dias": 16},
+        {"Região": "NORDESTE", "Capital": "Fortaleza (CE)", "Dias": 16},
+        {"Região": "NORDESTE", "Capital": "Teresina (PI)", "Dias": 17},
+        {"Região": "NORDESTE", "Capital": "São Luís (MA)", "Dias": 18},
+        {"Região": "NORTE", "Capital": "Palmas (TO)", "Dias": 13},
+        {"Região": "NORTE", "Capital": "Belém (PA)", "Dias": 18},
+        {"Região": "NORTE", "Capital": "Porto Velho (RO)", "Dias": 20},
+        {"Região": "NORTE", "Capital": "Manaus (AM)", "Dias": 23},
+        {"Região": "NORTE", "Capital": "Rio Branco (AC)", "Dias": 25},
+        {"Região": "NORTE", "Capital": "Macapá (AP)", "Dias": 27},
+        {"Região": "NORTE", "Capital": "Boa Vista (RR)", "Dias": 28},
+    ]
+
     col_info1, col_info2 = st.columns(2)
 
     with col_info1:
-        # Estilos CSS
         st.markdown("""
             <style>
             .unidade-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 15px;
-                margin-bottom: 5px;
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                border-left: 4px solid #FF4B4B;
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 8px 15px; margin-bottom: 5px; background-color: #f8f9fa;
+                border-radius: 8px; border-left: 4px solid #FF4B4B;
             }
             .unidade-nome { font-weight: 500; color: #31333F; }
             .unidade-valor {
@@ -499,7 +524,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </style>
         """, unsafe_allow_html=True)
 
-        # 1. VALIDADES
         st.subheader("📅 Shelf Life (Validades)")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
@@ -516,8 +540,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.caption("❄️ Nenhuma linha necessita de refrigeração.")
 
         st.write("") 
-
-        # 2. UNIDADES POR CAIXA
         st.subheader("📦 Unidades por Caixa")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
@@ -535,88 +557,41 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     with col_info2:
         st.subheader("💳 Modalidades de Pagamento")
         
-        st.markdown("""
-            <style>
-            .pagamento-texto { font-size: 16px; line-height: 1.6; color: #31333F; }
-            .highlight { background-color: #f0f2f6; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-            </style>
-        """, unsafe_allow_html=True)
-
         with st.expander("Prazos: Sul e Sudeste", expanded=True):
-            st.markdown("""
-            <div class="pagamento-texto">
-            • <b>Até R$ 1.000:</b> <span class="highlight">30 dias</span><br>
-            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">30/45 dias</span><br>
-            • <b>Acima de R$ 2.000:</b> <span class="highlight">30/45/60 dias</span>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("""• <b>Até R$ 1.000:</b> 30 dias<br>• <b>R$ 1.000 a R$ 2.000:</b> 30/45 dias<br>• <b>Acima de R$ 2.000:</b> 30/45/60 dias""", unsafe_allow_html=True)
 
         with st.expander("Prazos: Demais Regiões", expanded=True):
-            st.markdown("""
-            <div class="pagamento-texto">
-            • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
-            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">45/60 dias</span><br>
-            • <b>Acima de R$ 2.000:</b> <span class="highlight">40/50/60 dias</span>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("""• <b>Até R$ 1.000:</b> 45 dias<br>• <b>R$ 1.000 a R$ 2.000:</b> 45/60 dias<br>• <b>Acima de R$ 2.000:</b> 40/50/60 dias""", unsafe_allow_html=True)
             
         st.success("**Pagamento:** Pix ou Boleto")
 
-        st.markdown("---")
-
         st.subheader("🔄 Trocas e Devoluções")
-        st.warning("""
-        **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
+        st.warning("""**Validade:** < 60% Shelf Life. | **Avarias:** Ressalva no verso da NF é obrigatória.""")
         
-        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo.
+        # --- PREENCHENDO O ESPAÇO EM BRANCO: CALCULADORA RÁPIDA ---
+        st.markdown("---")
+        st.subheader("⏱️ Calculadora de Prazo")
         
-        **Documentação:** Necessário envio da NFD (Nota Fiscal de Devolução) citando a NF de origem e motivo da devolução.
-        """)
+        lista_capitais = [d["Capital"] for d in dados_prazos]
+        selecao_capital = st.selectbox("Selecione a Capital do Cliente:", lista_capitais, index=0)
         
-        st.info("💡 **Dica:** Oriente o lojista a conferir a mercadoria com o transportador presente.")
+        # Busca o dado selecionado
+        info_selecionada = next(item for item in dados_prazos if item["Capital"] == selecao_capital)
+        
+        c_prazo, c_frete = st.columns(2)
+        with c_prazo:
+            st.info(f"📅 **Prazo:** {info_selecionada['Dias']} dias úteis")
+        with c_frete:
+            st.info("🚚 **Frete:** CIF (Grátis)")
+        
+        st.caption("Faturamento + Trânsito incluso.")
 
     st.divider()
 
-    # --- NOVA SEÇÃO: PRAZOS DE LOGÍSTICA ---
-    st.subheader("🚚 Prazo Total Estimado para Capitais")
-    st.caption("Considera Prazo de Saída (5 dias úteis) + Trânsito da Transportadora.")
+    # Tabela Completa abaixo
+    st.subheader("🚚 Tabela Completa de Prazos (Capitais)")
+    st.dataframe(dados_prazos, use_container_width=True, hide_index=True)
     
-    dados_prazos = [
-        {"Região": "SUL", "Capital": "Curitiba (PR)", "Total (Dias Úteis)": 7},
-        {"Região": "SUL", "Capital": "Florianópolis (SC)", "Total (Dias Úteis)": 8},
-        {"Região": "SUL", "Capital": "Porto Alegre (RS)", "Total (Dias Úteis)": 8},
-        {"Região": "SUDESTE", "Capital": "São Paulo (SP)", "Total (Dias Úteis)": 7},
-        {"Região": "SUDESTE", "Capital": "Vitória (ES)", "Total (Dias Úteis)": 9},
-        {"Região": "SUDESTE", "Capital": "Belo Horizonte (MG)", "Total (Dias Úteis)": 9},
-        {"Região": "SUDESTE", "Capital": "Rio de Janeiro (RJ)", "Total (Dias Úteis)": 9},
-        {"Região": "CENTRO-OESTE", "Capital": "Cuiabá (MT)", "Total (Dias Úteis)": 10},
-        {"Região": "CENTRO-OESTE", "Capital": "Campo Grande (MS)", "Total (Dias Úteis)": 10},
-        {"Região": "CENTRO-OESTE", "Capital": "Goiânia (GO)", "Total (Dias Úteis)": 11},
-        {"Região": "CENTRO-OESTE", "Capital": "Brasília (DF)", "Total (Dias Úteis)": 11},
-        {"Região": "NORDESTE", "Capital": "Aracaju (SE)", "Total (Dias Úteis)": 13},
-        {"Região": "NORDESTE", "Capital": "Salvador (BA)", "Total (Dias Úteis)": 14},
-        {"Região": "NORDESTE", "Capital": "Maceió (AL)", "Total (Dias Úteis)": 15},
-        {"Região": "NORDESTE", "Capital": "João Pessoa (PB)", "Total (Dias Úteis)": 16},
-        {"Região": "NORDESTE", "Capital": "Recife (PE)", "Total (Dias Úteis)": 16},
-        {"Região": "NORDESTE", "Capital": "Natal (RN)", "Total (Dias Úteis)": 16},
-        {"Região": "NORDESTE", "Capital": "Fortaleza (CE)", "Total (Dias Úteis)": 16},
-        {"Região": "NORDESTE", "Capital": "Teresina (PI)", "Total (Dias Úteis)": 17},
-        {"Região": "NORDESTE", "Capital": "São Luís (MA)", "Total (Dias Úteis)": 18},
-        {"Região": "NORTE", "Capital": "Palmas (TO)", "Total (Dias Úteis)": 13},
-        {"Região": "NORTE", "Capital": "Belém (PA)", "Total (Dias Úteis)": 18},
-        {"Região": "NORTE", "Capital": "Porto Velho (RO)", "Total (Dias Úteis)": 20},
-        {"Região": "NORTE", "Capital": "Manaus (AM)", "Total (Dias Úteis)": 23},
-        {"Região": "NORTE", "Capital": "Rio Branco (AC)", "Total (Dias Úteis)": 25},
-        {"Região": "NORTE", "Capital": "Macapá (AP)", "Total (Dias Úteis)": 27},
-        {"Região": "NORTE", "Capital": "Boa Vista (RR)", "Total (Dias Úteis)": 28},
-    ]
-    
-    # Exibe a tabela formatada e com busca habilitada
-    st.dataframe(
-        dados_prazos, 
-        use_container_width=True, 
-        hide_index=True
-    )
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
 ################################################################################
