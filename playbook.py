@@ -673,6 +673,12 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                         data_exib = item.get('data', 'Data n/a')
                         mes_exib = item.get('mes_referencia', 'n/a')
                         st.caption(f"📅 {data_exib} | 📂 {mes_exib}")
+
+                        # Exibe a NF se houver
+                        nf_exib = item.get('nf_pedido', '')
+                        if nf_exib:
+                            st.write(f"🏷️ **NF/Pedido:** {nf_exib}")
+                            
                         st.write(f"**{item.get('autor', 'Usuário')}:** {item.get('texto', '')}")
                         
                         if item.get("foto"):
