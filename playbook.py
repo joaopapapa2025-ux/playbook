@@ -177,13 +177,13 @@ elif aba_selecionada == "✍️ Templates & Scripts":
         
         with st.expander("⭐ Opção 1: Abordagem Consultiva (Recomendada)", expanded=True):
             st.code("""Olá, tudo bem?
-Aqui é o João, da Papapá.
+Aqui é [SEU NOME], da Papapá.
 Vi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.
 Você poderia me contar rapidamente que tipo de estabelecimento você tem?""", language=None)
 
         with st.expander("🏢 Opção 2: Foco em Perfil de Negócio"):
             st.code("""Oi, tudo bem?
-Sou o João, da Papapá.
+Sou [SEU NOME], da Papapá.
 Que legal ver seu interesse em trabalhar com nossos produtos!
 Antes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.
 Você pode me contar rapidamente como funciona hoje?""", language=None)
@@ -194,7 +194,7 @@ Você pode me contar rapidamente como funciona hoje?""", language=None)
 • Em qual cidade/bairro?
 • Seu público é mais família, fitness ou geral?""", language=None)
 
-        with st.expander("📩 Opção 4: Agradecimento e Envio de Material"):
+        with st.expander("📩 Opção 4: Abordagem mais direta"):
             st.code("""Olá, tudo bem? Aqui é o João, da Papapá.
 Recebi seu cadastro e quis agradecer pelo interesse. A Papapá trabalha com uma linha de alimentação natural e pronta para bebês e crianças, sem conservantes e com ótima aceitação.
 Posso te enviar o catálogo e as condições comerciais e, na sequência, entender se faz sentido para o seu negócio?""", language=None)
@@ -204,7 +204,7 @@ Posso te enviar o catálogo e as condições comerciais e, na sequência, entend
         st.subheader("🚀 Como explicar o Mix e Giro")
         st.info("Use estes scripts para converter clientes que estão em dúvida sobre o que comprar no primeiro pedido.")
         
-        with st.expander("💎 Script: A Força da Curva A (Detalhado)", expanded=True):
+        with st.expander("💎 Script: A Força da Curva A", expanded=True):
             st.code("""Pra te orientar melhor, vou te explicar como funciona o nosso mix e por onde indicamos começar. 
 Hoje, a nossa Curva A (maior giro e recompra) é formada por:
 
@@ -214,7 +214,7 @@ Hoje, a nossa Curva A (maior giro e recompra) é formada por:
 
 Normalmente, quando o cliente começa pela Curva A, ele sente o giro rápido e depois amplia o mix com Palitinhos e Yoguzinho para aumentar o ticket médio.""", language=None)
 
-        with st.expander("🛒 Script: Sugestão de Pedido Estratégico"):
+        with st.expander("🛒 Script: Pergunta para entender primeiro pedido"):
             st.code("""Pelo seu perfil, o que faz mais sentido é começar com a Curva A. São os produtos de "tiro certo". 
 Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a gôndola para ter uma exposição completa?""", language=None)
 
@@ -234,13 +234,19 @@ Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a g
 
 *Obs.: O CNAE deve permitir a comercialização de produtos alimentícios.""", language=None)
             
-        with c2:
+        with col2:
             st.markdown("### 💰 Condições Comerciais")
             st.code("""Vou te passar nossas condições para você se organizar:
+
 • Pedido mínimo: R$ 800,00.
+• Frete: CIF (Grátis) para todo o Brasil.
 • Pagamento: Pix ou Boleto.
-• Entrega: Frete CIF (Grátis) para todo o Brasil.
-• Venda: Por caixas fechadas (16un, 12un ou 6un conforme a linha).""", language=None)
+
+Venda por caixas fechadas:
+- Yoguzinho e Palitinhos: 16 unidades
+- La Chef e Sopinhas: 6 unidades
+- Papinhas (Fruta/Carne): 12 unidades
+- Dentição, Macarrão, Cereal e Biscotti: 12 unidades""", language=None)
 
         st.divider()
         st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
