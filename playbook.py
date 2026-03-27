@@ -14,8 +14,6 @@ st.set_page_config(
 )
 
 # --- FUNÇÕES AUXILIARES DE IMAGEM (Base64) ---
-
-# Função essencial para converter as fotos em algo que o HTML do card aceite
 def get_base64_of_bin_file(bin_file):
     try:
         with open(bin_file, 'rb') as f:
@@ -24,39 +22,75 @@ def get_base64_of_bin_file(bin_file):
     except:
         return None
 
-# Configurações de Fallback (Caso a foto do membro não exista)
-logo_filename = "Papapa-azul..png" 
+# Nome corrigido conforme seu repositório
+novo_logo_filename = "Papapa-azul.png" 
 fallback_avatar = "https://www.w3schools.com/howto/img_avatar.png"
 
-# Deixa o logo padrão pronto para uso
-img_base64 = get_base64_of_bin_file(logo_filename)
-if img_base64:
-    img_avatar_html = f"data:image/png;base64,{img_base64}"
+# Carrega o logo oficial para o topo
+img_base64_oficial = get_base64_of_bin_file(novo_logo_filename)
+if img_base64_oficial:
+    img_logo_src = f"data:image/png;base64,{img_base64_oficial}"
 else:
-    img_avatar_html = fallback_avatar
+    img_logo_src = fallback_avatar
 
+################################################################################
+# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO (LOGO EM TODAS AS PÁGINAS) ---
+################################################################################
 
-# --- CSS Customizado (Cards, Cores e Esconder Sidebar) ---
+# CSS Customizado para centralizar o logo e estilizar o menu
 st.markdown(f"""
     <style>
     [data-testid="stSidebar"] {{ display: none; }} /* Remove menu lateral */
-    div.row-widget.stRadio > div {{ flex-direction: row; gap: 20px; }} /* Radio Horizontal */
     
-    h1 {{ color: #004a99; font-family: 'Segoe UI', sans-serif; }}
-    
-    .team-card {{
+    /* Container do Logo no Topo */
+    .header-container {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+        margin-bottom: 10px;
+    }}
+    .header-logo {{
+        width: 280px; /* Ajuste o tamanho do logo aqui */
+        height: auto;
+    </style>
+    """, unsafe_allow_html=True)
+
+# Exibe o Logo Centralizado
+st.markdown(f"""
+    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <img src="{img_logo_src}" width="250">
+    </div>
+    """, unsafe_allow_html=True)
+
+# Título do Hub (Opcional manter se já tem o logo)
+st.markdown("<h1 style='text-align: center; color: #004a99;'>Hub Inside Sales</h1>", unsafe_allow_html=True)
+
+# Menu de Navegação Horizontal Centralizado
+aba_selecionada = st.radio(
+    "Selecione a área:",
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
+    horizontal=True,
+    label_visibility="collapsed" # Esconde o texto "Selecione a área" para ficar mais limpo
+)
+
+st.divider()
+
+# --- CSS ADICIONAL PARA OS CARDS DA EQUIPE ---
+st.markdown("""
+    <style>
+    .team-card {
         background-color: white; padding: 20px; border-radius: 15px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
         margin-bottom: 20px; border: 1px solid #eaeaea;
-        height: 280px; /* Mantém todos os cards com o mesmo tamanho vertical */
-    }}
-    .avatar-round {{
-        width: 120px; height: 120px; border-radius: 50%;
+        height: 320px;
+    }
+    .avatar-round {
+        width: 130px; height: 130px; border-radius: 50%;
         object-fit: cover; border: 3px solid #007bff; margin-bottom: 15px;
-    }}
-    .team-name {{ font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }}
-    .team-role {{ color: #666; font-size: 0.9em; margin-bottom: 15px; }}
-    .stCode {{ background-color: #fcfcfc; border-radius: 10px; border: 1px solid #e0e0e0; }}
+    }
+    .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 5px; }
+    .team-role { color: #666; font-size: 1.0em; margin-bottom: 15px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -72,21 +106,6 @@ aba_selecionada = st.radio(
 )
 
 st.divider()
-
-################################################################################
-# --- CONFIGURAÇÕES DE IMAGEM ADICIONAIS ---
-################################################################################
-# Garanta que essa função get_base64_of_bin_file esteja definida antes desse bloco
-# Mudei o nome para bater com o print do seu repositório
-novo_logo_filename = "Papapa-azul.png" 
-
-# Carrega o logo oficial
-img_base64_oficial = get_base64_of_bin_file(novo_logo_filename)
-if img_base64_oficial:
-    img_logo_html = f"data:image/png;base64,{img_base64_oficial}"
-else:
-    # Fallback caso o arquivo não exista
-    img_logo_html = img_avatar_html
 
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
