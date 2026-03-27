@@ -162,92 +162,128 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
 ################################################################################
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.header("✍️ Templates & Scripts")
-    st.markdown("Use os botões no canto superior direito de cada bloco para copiar o texto.")
+    st.markdown("💡 **Dica:** Use os botões no canto superior direito de cada bloco para copiar o texto rapidamente.")
     
-    tabs = st.tabs(["🤝 Abordagem Inicial", "🚀 Sugestão de Mix (Curva A)", "📝 Cadastro & Fechamento", "🚚 Pós-Venda & Financeiro"])
+    tabs = st.tabs([
+        "🤝 Abordagem Inicial", 
+        "🚀 Explicação de Mix (Curva A)", 
+        "📝 Cadastro & Fechamento", 
+        "🚚 Pós-Venda & Financeiro"
+    ])
     
+    # --- ABA 0: ABORDAGEM ---
     with tabs[0]:
-        st.subheader("Primeiro Contato (Lead Novo)")
+        st.subheader("📞 Primeiro Contato (Leads)")
         
-        with st.expander("Opção 1: Abordagem Consultiva (Recomendada)", expanded=True):
+        with st.expander("⭐ Opção 1: Abordagem Consultiva (Recomendada)", expanded=True):
             st.code("""Olá, tudo bem?
 Aqui é o João, da Papapá.
 Vi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.
 Você poderia me contar rapidamente que tipo de estabelecimento você tem?""", language=None)
 
-        with st.expander("Opção 2: Foco em Perfil de Negócio"):
+        with st.expander("🏢 Opção 2: Foco em Perfil de Negócio"):
             st.code("""Oi, tudo bem?
 Sou o João, da Papapá.
 Que legal ver seu interesse em trabalhar com nossos produtos!
 Antes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.
 Você pode me contar rapidamente como funciona hoje?""", language=None)
 
-        with st.expander("Opção 3: Perguntas de Qualificação (Checklist)"):
+        with st.expander("✅ Opção 3: Perguntas de Qualificação (Checklist)"):
             st.code("""Antes de te indicar os produtos, queria entender rapidinho:
 • Que tipo de estabelecimento você tem?
 • Em qual cidade/bairro?
 • Seu público é mais família, fitness ou geral?""", language=None)
 
-    with tabs[1]:
-        st.subheader("Explicação de Mix e Curva A")
-        st.info("💡 Dica: Use este texto para converter clientes que não sabem por onde começar.")
-        
-        with st.expander("Script: Por que começar pela Curva A?", expanded=True):
-            st.code("""Hoje a nossa Curva A, ou seja, os produtos que mais giram e que recomendamos para iniciar, são:
+        with st.expander("📩 Opção 4: Agradecimento e Envio de Material"):
+            st.code("""Olá, tudo bem? Aqui é o João, da Papapá.
+Recebi seu cadastro e quis agradecer pelo interesse. A Papapá trabalha com uma linha de alimentação natural e pronta para bebês e crianças, sem conservantes e com ótima aceitação.
+Posso te enviar o catálogo e as condições comerciais e, na sequência, entender se faz sentido para o seu negócio?""", language=None)
 
-• Papinhas de fruta (carro-chefe) – Naturais, sem adição de açúcar e excelente aceitação.
-• Biscoitinho Dentição – Snack funcional com compra recorrente e saída por impulso.
+    # --- ABA 1: CURVA A ---
+    with tabs[1]:
+        st.subheader("🚀 Como explicar o Mix e Giro")
+        st.info("Use estes scripts para converter clientes que estão em dúvida sobre o que comprar no primeiro pedido.")
+        
+        with st.expander("💎 Script: A Força da Curva A (Detalhado)", expanded=True):
+            st.code("""Pra te orientar melhor, vou te explicar como funciona o nosso mix e por onde indicamos começar. 
+Hoje, a nossa Curva A (maior giro e recompra) é formada por:
+
+• Papinhas de fruta – Nosso carro-chefe. Naturais, sem açúcar e não precisam de refrigeração.
+• Biscoito Dentição – Snack funcional muito procurado por pais, com ótima saída por impulso.
 • Biscotti – Nosso snack mais vendido, agrada bebês e até adultos.
 
-Esses três concentram a maior parte do volume. Em um segundo momento, entram os Palitinhos de Vegetais e o Yoguzinho para complementar o ticket.""", language=None)
+Normalmente, quando o cliente começa pela Curva A, ele sente o giro rápido e depois amplia o mix com Palitinhos e Yoguzinho para aumentar o ticket médio.""", language=None)
 
-        with st.expander("Script: Sugestão de Pedido Inicial"):
-            st.code("""Pelo seu perfil, o que mais faz sentido hoje é começar com a Curva A, porque são os produtos com maior giro e recompra.
-Hoje você imagina algo mais como teste ou já pensa em um pedido inicial pra abastecer gôndola?""", language=None)
+        with st.expander("🛒 Script: Sugestão de Pedido Estratégico"):
+            st.code("""Pelo seu perfil, o que faz mais sentido é começar com a Curva A. São os produtos de "tiro certo". 
+Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a gôndola para ter uma exposição completa?""", language=None)
 
+    # --- ABA 2: CADASTRO ---
     with tabs[2]:
-        st.subheader("Fechamento e Condições")
+        st.subheader("📝 Fechamento de Venda")
         
-        col1, col2 = st.columns(2)
-        with col1:
-            with st.expander("Dados para Cadastro", expanded=True):
-                st.code("""Para darmos sequência e liberar seu cadastro aqui na Papapá, preciso de:
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("### 📋 Dados para Cadastro")
+            st.code("""Para darmos sequência, preciso de:
 • CNPJ:
 • Inscrição Estadual (IE):
-• Telefone Financeiro/Compras:
-• E-mail Financeiro/Compras:
+• Telefone Financeiro e Compras:
+• E-mail Financeiro e Compras:
 • Dados Bancários (pix):
 
-*Obs.: É importante incluir a Descrição das Atividades (CNAE) de produtos alimentícios.""", language=None)
-        
-        with col2:
-            with st.expander("Condições Comerciais (Resumo)"):
-                st.code("""Vou te passar nossas condições pra você se organizar:
+*Obs.: O CNAE deve permitir a comercialização de produtos alimentícios.""", language=None)
+            
+        with c2:
+            st.markdown("### 💰 Condições Comerciais")
+            st.code("""Vou te passar nossas condições para você se organizar:
 • Pedido mínimo: R$ 800,00.
 • Pagamento: Pix ou Boleto.
-• Entrega: Frete CIF (por nossa conta) para todo o Brasil.
-• Venda: Por caixas fechadas (12 un. na maioria das linhas).""", language=None)
+• Entrega: Frete CIF (Grátis) para todo o Brasil.
+• Venda: Por caixas fechadas (16un, 12un ou 6un conforme a linha).""", language=None)
 
+        st.divider()
+        st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.success("**Chave PIX (CNPJ)**")
+            st.code("34.282.307/0001-44")
+        with col_b2:
+            st.info("**Dados Itaú**")
+            st.code("Ag: 8931 | CC: 05510-0\nBABY ROO COMERCIO DE ALIMENTOS S/A")
+
+    # --- ABA 3: PÓS-VENDA ---
     with tabs[3]:
-        st.subheader("Acompanhamento e Suporte")
+        st.subheader("🚚 Suporte, Logística e Financeiro")
         
-        with st.expander("Confirmação de Pedido & Fluxo Logístico"):
+        with st.expander("📦 Script: Confirmação e Fluxo Logístico", expanded=True):
             st.code("""Pedido efetuado com sucesso! Nosso fluxo funciona assim:
 • Até 3 dias úteis para separação no CD.
 • Mais 2 dias úteis para faturamento da NF.
 • Em seguida, coleta da transportadora.
 As NFs e boletos chegam direto no seu e-mail cadastrado!""", language=None)
 
-        with st.expander("🚨 IMPORTANTE: Instrução de Recebimento"):
-            st.warning("Envie isso para evitar problemas com avarias sem ressalva.")
-            st.code("""Orientações para o recebimento:
-É fundamental conferir a mercadoria antes de assinar a Nota Fiscal. 
-Caso identifique caixas amassadas ou produtos quebrados:
-1. Registre a ressalva na Nota Fiscal descrevendo o problema.
+        with st.expander("🚨 Script: Instrução de Recebimento (EVITA PREJUÍZO)"):
+            st.warning("Envie este texto SEMPRE que o pedido for faturado.")
+            st.code("""Uma orientação importante sobre o recebimento:
+No momento da entrega, confira a mercadoria ANTES de assinar o canhoto.
+Se houver caixa amassada, molhada ou produto quebrado:
+1. Registre a RESSALVA na Nota Fiscal descrevendo o erro.
 2. Não aceite os produtos avariados.
-3. Me informe imediatamente!
-Sem a ressalva na NF, a transportadora não aceita a reclamação.""", language=None)
+3. Me informe imediatamente.
+Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos repor a mercadoria.""", language=None)
 
+        with st.expander("💳 Script: Contato Financeiro"):
+            st.code("""Para assuntos financeiros (2ª via de boleto, prorrogações ou comprovantes), fale direto com nosso time especializado:
+📧 E-mail: contasareceber2@papapa.com.br""", language=None)
+
+        with st.expander("🔄 Script: Regra de Troca (Validade)"):
+            st.code("""Sobre trocas por validade:
+A Papapá realiza a troca se o produto for entregue com menos de 60% da validade total.
+Para isso, precisamos da emissão da NFD (Nota Fiscal de Devolução) constando:
+• Número da NF de origem
+• Motivo da devolução
+• Lote do produto""", language=None)
 
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
