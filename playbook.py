@@ -608,7 +608,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     with t1:
         st.markdown("**Translovato**")
         st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento")
-        st.code("User: BABY\nPass: LOVATO")
+        st.code("User: BABY\nPass: Papapa@123")
     with t2:
         st.markdown("**Tecmar**")
         st.link_button("Portal Tecmar", "https://smonet.tecmartransportes.com.br/smonet/#/notas-fiscais")
