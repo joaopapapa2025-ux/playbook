@@ -553,7 +553,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
     
-    # Inicializa o contador de chave para o uploader (necessário para limpar o arquivo)
+    # Inicializa o contador de chave para o uploader
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
 
@@ -573,8 +573,8 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         def salvar_nota_callback():
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
+            nf_pedido = st.session_state.get("input_nf_problema", "").strip() # Captura a NF
             
-            # Pegamos o arquivo usando a chave dinâmica atual
             chave_atual = f"input_foto_prob_{st.session_state.uploader_key}"
             arquivo_foto = st.session_state.get(chave_atual)
             
@@ -585,7 +585,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
-                # Lógica para converter a foto em bytes
                 foto_bytes = None
                 if arquivo_foto is not None:
                     foto_bytes = arquivo_foto.getvalue()
@@ -594,6 +593,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "id_unico": agora.timestamp(),
                     "autor": autor,
                     "texto": texto,
+                    "nf_pedido": nf_pedido, # Garante que a NF entre no dicionário
                     "foto": foto_bytes,
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
                     "mes_referencia": mes_atual
@@ -601,10 +601,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 
                 st.session_state.historico_problemas.insert(0, nova_nota)
                 
-                # REGRAS DE LIMPEZA:
-                st.session_state["input_area_problemas"] = "" # Limpa o texto
-                st.session_state["input_nf_problema"] = ""    # Limpa a NF/Pedido
-                st.session_state.uploader_key += 1           # Muda a chave para limpar o arquivo
+                # REGRAS DE LIMPEZA
+                st.session_state["input_area_problemas"] = "" 
+                st.session_state["input_nf_problema"] = ""    
+                st.session_state.uploader_key += 1           
                 
                 st.toast("✅ Registro salvo com sucesso!")
             else:
@@ -622,46 +622,38 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 key="nome_usuario_log"
             )
 
+            # Campo NF
+            st.text_input(
+                "Número da NF ou Pedido:",
+                placeholder="Ex: NF 12345...",
+                key="input_nf_problema"
+            )
+
             st.text_area(
                 "Descreva a ocorrência:", 
-                placeholder="Ex: Cliente X reclamou de caixa amassada...", 
                 key="input_area_problemas",
                 height=100
             )
 
-            # --- NOVO CAMPO NF/PEDIDO ---
-            st.text_input(
-                "Número da NF ou Pedido:",
-                placeholder="Ex: NF 123456 ou Pedido 123456/00",
-                key="input_nf_problema"
-            )
-
-            # CAMPO DE UPLOAD COM CHAVE DINÂMICA
             st.file_uploader(
-                "Anexar foto da avaria/produto:", 
+                "Anexar foto:", 
                 type=["png", "jpg", "jpeg"],
-                key=f"input_foto_prob_{st.session_state.uploader_key}",
-                help="Arraste ou selecione uma foto de até 200MB"
+                key=f"input_foto_prob_{st.session_state.uploader_key}"
             )
 
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
         st.divider()
 
-        # 2. Filtro por Mês (Mantido)
-        st.write("🔍 **Filtrar por Período:**")
+        # 2. Filtro
         meses_filtro = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                                                         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
-        filtro_mes = st.selectbox("Selecione o mês", meses_filtro)
+        filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
-        # 3. Listagem Filtrada
-        st.markdown("---")
-        
+        # 3. Listagem (Ajustada para mostrar a NF)
         notas_exibidas = st.session_state.historico_problemas
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
-
-        st.metric("Ocorrências no período", len(notas_exibidas))
 
         if not notas_exibidas:
             st.caption("Nenhum registro encontrado.")
@@ -670,26 +662,23 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 with st.container():
                     c_txt, c_del = st.columns([0.85, 0.15])
                     with c_txt:
-                        data_exib = item.get('data', 'Data n/a')
-                        mes_exib = item.get('mes_referencia', 'n/a')
-                        st.caption(f"📅 {data_exib} | 📂 {mes_exib}")
-
+                        st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
+                        
                         # LOGICA DE EXIBIÇÃO DA NF AQUI:
                         nf_para_mostrar = item.get('nf_pedido', '').strip()
                         if nf_para_mostrar:
                             st.markdown(f"**🏷️ NF/Pedido:** `{nf_para_mostrar}`")
                             
-                        st.write(f"**{item.get('autor', 'Usuário')}:** {item.get('texto', '')}")
+                        st.write(f"**{item.get('autor')}:** {item.get('texto')}")
                         
                         if item.get("foto"):
-                            st.image(item["foto"], width=250, caption="Anexo da ocorrência")
+                            st.image(item["foto"], width=250)
                     
                     with c_del:
-                        chave_btn = item.get('id_unico', f"fallback_{idx}")
-                        if st.button("🗑️", key=f"del_{chave_btn}"):
+                        if st.button("🗑️", key=f"del_{item.get('id_unico')}"):
                             st.session_state.historico_problemas.remove(item)
                             st.rerun()
-                    st.markdown("<hr style='margin:5px 0; opacity:0.1'>", unsafe_allow_html=True)
+                    st.markdown("---")
                     
 ################################################################################
 # --- MÓDULO 7: QUEBRAS DE EXCUSES ---
