@@ -227,30 +227,53 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
     st.header("💰 Simulador de Comissionamento Individual")
     
     col_input, col_result = st.columns([1, 1.5])
+    
     with col_input:
-        salario_base = st.number_input("Seu Salário Fixo Base (R$)", min_value=0.0, value=3000.0)
-        meta_mes = st.number_input("Valor da Meta do Mês (R$)", min_value=0.0, value=150000.0)
-        resultado_atual = st.number_input("Seu Resultado Atual Batido (R$)", min_value=0.0, value=135000.0)
+        # Trocamos value por None e adicionamos o placeholder
+        salario_base = st.number_input(
+            "Seu Salário Fixo Base (R$)", 
+            min_value=0.0, 
+            value=None, 
+            placeholder="Preencha aqui seu salário"
+        )
+        meta_mes = st.number_input(
+            "Valor da Meta do Mês (R$)", 
+            min_value=0.0, 
+            value=None, 
+            placeholder="Preencha aqui sua meta do mês"
+        )
+        resultado_atual = st.number_input(
+            "Seu Resultado Atual Batido (R$)", 
+            min_value=0.0, 
+            value=None, 
+            placeholder="Preencha aqui seu resultado atual"
+        )
         
     with col_result:
-        atingimento = (resultado_atual / meta_mes) * 100 if meta_mes > 0 else 0.0
-        
-        if atingimento >= 110.0:
-            perc_bonus, status_meta, cor_metric = 0.30, " Superação (110%+)!", "normal"
-        elif atingimento >= 90.0:
-            perc_bonus, status_meta, cor_metric = 0.20, " No Piso (90-109%)", "normal"
-        else:
-            perc_bonus, status_meta, cor_metric = 0.0, " Abaixo do Piso (<90%)", "inverse"
+        # Só realiza o cálculo se os campos não estiverem vazios
+        if salario_base is not None and meta_mes is not None and resultado_atual is not None:
+            atingimento = (resultado_atual / meta_mes) * 100 if meta_mes > 0 else 0.0
             
-        valor_bonus = salario_base * perc_bonus
-        total_estimado = salario_base + valor_bonus
-        
-        st.metric(label="Atingimento da Meta", value=f"{atingimento:.1f}%", delta=status_meta, delta_color=cor_metric)
-        c1, c2 = st.columns(2)
-        with c1:
-            st.metric(label="Valor do Bônus", value=f"R$ {valor_bonus:,.2f}", delta=f"{perc_bonus*100:.0f}% sobre o fixo")
-        with c2:
-            st.metric(label="Total Estimado", value=f"R$ {total_estimado:,.2f}")
+            if atingimento >= 110.0:
+                perc_bonus, status_meta, cor_metric = 0.30, " Superação (110%+)!", "normal"
+            elif atingimento >= 90.0:
+                perc_bonus, status_meta, cor_metric = 0.20, " No Piso (90-109%)", "normal"
+            else:
+                perc_bonus, status_meta, cor_metric = 0.0, " Abaixo do Piso (<90%)", "inverse"
+                
+            valor_bonus = salario_base * perc_bonus
+            total_estimado = salario_base + valor_bonus
+            
+            st.metric(label="Atingimento da Meta", value=f"{atingimento:.1f}%", delta=status_meta, delta_color=cor_metric)
+            
+            c1, c2 = st.columns(2)
+            with c1:
+                st.metric(label="Valor do Bônus", value=f"R$ {valor_bonus:,.2f}", delta=f"{perc_bonus*100:.0f}% sobre o fixo")
+            with c2:
+                st.metric(label="Total Estimado", value=f"R$ {total_estimado:,.2f}")
+        else:
+            # Mensagem amigável enquanto o usuário não preenche
+            st.info("Insira os valores ao lado para calcular sua bonificação automaticamente.")
 
 ################################################################################
 # --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
