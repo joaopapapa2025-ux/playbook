@@ -13,21 +13,46 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Função para carregar imagem e converter para base64
+# --- FUNÇÕES AUXILIARES DE IMAGEM (Base64) ---
+
+# Função genérica para converter arquivo binário para base64
 def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+    try:
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except FileNotFoundError:
+        return None
 
-# Configuração da imagem do avatar
-img_filename = "Papapa-azul..png"
-if Path(img_filename).exists():
-    img_base64 = get_base64_of_bin_file(img_filename)
-    img_avatar_html = f"data:image/png;base64,{img_base64}"
+# Configuração das imagens padrão e fallback
+logo_filename = "Papapa-azul..png" # Logo da empresa
+fallback_avatar = "https://www.w3schools.com/howto/img_avatar.png" # Link online se nada der certo
+
+# Pré-carrega o logo da empresa para o título/fallback
+logo_base64 = get_base64_of_bin_file(logo_filename)
+if logo_base64:
+    img_logo_html = f"data:image/png;base64,{logo_base64}"
 else:
-    img_avatar_html = "https://www.w3schools.com/howto/img_avatar.png" 
+    img_logo_html = fallback_avatar # Usa o avatar online como fallback do logo
 
-# CSS Customizado (Cards, Cores e Esconder Sidebar)
+# Função para decidir qual foto usar para o membro
+def get_member_photo(nome_membro):
+    # 1. Tenta achar o arquivo específico (ex: João Vitor.jpeg)
+    filename_especifico = f"{nome_membro}.jpeg"
+    base64_especifico = get_base64_of_bin_file(filename_especifico)
+    
+    if base64_especifico:
+        return f"data:image/jpeg;base64,{base64_especifico}"
+    
+    # 2. Se não tiver específico, tenta usar o logo da empresa (Papapa-azul..png)
+    if logo_base64:
+        return f"data:image/png;base64,{logo_base64}"
+    
+    # 3. Fallback final (avatar online cinza)
+    return fallback_avatar
+
+
+# --- CSS Customizado (Cards, Cores e Esconder Sidebar) ---
 st.markdown(f"""
     <style>
     [data-testid="stSidebar"] {{ display: none; }} /* Remove menu lateral */
@@ -39,9 +64,10 @@ st.markdown(f"""
         background-color: white; padding: 20px; border-radius: 15px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
         margin-bottom: 20px; border: 1px solid #eaeaea;
+        height: 280px; /* Mantém todos os cards com o mesmo tamanho vertical */
     }}
     .avatar-round {{
-        width: 110px; height: 110px; border-radius: 50%;
+        width: 120px; height: 120px; border-radius: 50%;
         object-fit: cover; border: 3px solid #007bff; margin-bottom: 15px;
     }}
     .team-name {{ font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }}
@@ -64,11 +90,13 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE COM FOTOS ESPECÍFICAS) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
-    
+    st.write("Conheça o time Inside Sales da Papapá.")
+
+    # --- DADOS DA EQUIPE ---
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador"},
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)"},
@@ -78,15 +106,20 @@ if aba_selecionada == "🏠 Home (Equipe)":
         {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação"}
     ]
     
+    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
+                
+                # CHAMA A FUNÇÃO PARA DECIDIR A FOTO DESTE MEMBRO
+                foto_para_usar = get_member_photo(membro['nome'])
+                
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
-                            <img src="{img_avatar_html}" class="avatar-round">
+                            <img src="{foto_para_usar}" class="avatar-round" alt="{membro['nome']}">
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
