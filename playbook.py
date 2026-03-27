@@ -558,7 +558,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </div>
             """, unsafe_allow_html=True)
 
-        with st.expander("Prazos: Demais Regiões"):
+        with st.expander("Prazos: Demais Regiões", expanded=True):
             st.markdown("""
             <div class="pagamento-texto">
             • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
