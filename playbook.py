@@ -463,7 +463,7 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
 ################################################################################
-elif aba_selected == "📊 Políticas Comerciais":
+elif aba_selecionada == "📊 Políticas Comerciais":
     st.header("📊 Políticas Comerciais")
     
     # Destaques Rápidos
@@ -493,12 +493,12 @@ elif aba_selected == "📊 Políticas Comerciais":
         - **La Chef / Sopinhas:** 6 un.
         """)
 
-        # --- SEÇÃO MOVIDA E ATUALIZADA ---
+        # --- SEÇÃO MOVIDA E ATUALIZADA (Agora ao lado dos prazos) ---
         st.subheader("🔄 Trocas e Devoluções")
         st.warning("""
         **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
         
-        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo. 
+        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo (falta, quebra, etc). Sem a ressalva, a transportadora e a indústria não aceitam a reclamação.
         
         **Documentação:** Necessário envio da NFD (Nota Fiscal de Devolução) citando a NF de origem e o lote.
         """)
@@ -533,9 +533,8 @@ elif aba_selected == "📊 Políticas Comerciais":
             
         st.success("**Pagamento:** Pix ou Boleto (enviado por e-mail)")
         
-        # Espaço extra para alinhar visualmente com a coluna da esquerda
         st.write("") 
-        st.info("💡 **Dica Papapá:** Sempre oriente o lojista a conferir a mercadoria com o transportador presente.")
+        st.info("💡 **Dica Papapá:** Sempre oriente o lojista a conferir a mercadoria com o transportador presente e bater com o que está na NF.")
 
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
