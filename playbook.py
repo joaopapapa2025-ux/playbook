@@ -460,7 +460,7 @@ Sem a ressalva na NF, a transportadora não aceita a reclamação e não consegu
 A Papapá realiza a troca de produtos caso sejam entregues com menos de 60% da sua validade total.
 Para iniciarmos a análise, precisamos que nos envie o lote, a validade e a data de recebimento das mercadorias.
 
-Se a análise confirmar que o produto foi entregue com 60% ou mais da validade transcorrida, entraremos em contato para que vocês emitam a Nota Fiscal de Devolução (NFD), que deve conter:
+Se a análise confirmar que o produto foi entregue com menos de 60% da sua validade total, entraremos em contato para que vocês emitam a Nota Fiscal de Devolução (NFD), que deve conter:
 - Número da NF de origem;
 - Motivo da devolução;
 - Lote do produto.""", language=None)
