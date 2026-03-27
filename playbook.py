@@ -142,7 +142,7 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
     st.markdown("### 🚫 Quebras de Excuses")
     
 elif aba_selecionada == "🔗 Links Úteis":
-    st.markdown("### 🔗 Links Úteis")
+    
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
