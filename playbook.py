@@ -74,71 +74,47 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA E CORRIGIDA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # NOVA ESTRUTURA CSS PARA CENTRALIZAR E PADRONIZAR AS FOTOS
-    st.markdown("""
+    # CSS REFORMULADO: AUMENTADO E COM FOTO ANCORADA NO TOPO (CORREÇÃO DE POSIÇÃO)
+    st.markdown(f"""
         <style>
-        .team-card {
-            background-color: white; padding: 20px; border-radius: 15px;
+        .team-card {{
+            background-color: white; padding: 25px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 330px; /* Mantém todos os cards com o mesmo tamanho vertical */
+            height: 330px; /* Aumentado ligeiramente para comportar a foto maior */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
-        }
-
-        /* O CÍRCULO DA FOTO */
-        .photo-circle {
-            width: 140px; height: 140px; border-radius: 50%;
-            border: 4px solid #007bff; margin-bottom: 20px;
+        }}
+        .avatar-round {{
+            width: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
+            height: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
+            border-radius: 50%;
+            border: 4px solid #007bff; /* Borda um pouco mais grossa para destacar */
+            margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-size: cover; /* A mágica acontece aqui: centraliza e preenche */
-            background-position: center top; /* Centraliza a foto de todos */
-            background-repeat: no-repeat;
-        }
-
-        /* AJUSTE EXCLUSIVO PARA A FOTO DO JOÃO VITOR - POSICIONAMENTO MANUAL */
-        /* Para corrigir a posição da cabeça no card do João Vitor, adicionei esta classe. */
-        .photo-joao-vitor {
-            background-position: center 20%; /* Ajuste manual para subir a cabeça dele */
-        }
-        
-        /* AJUSTE EXCLUSIVO PARA A FOTO DA ANA - POSICIONAMENTO MANUAL */
-        /* Para centralizar o rosto da Ana, adicionei esta classe. */
-        .photo-ana {
-            background-position: center 10%; /* Ajuste manual para o rosto dela */
-        }
-
-        /* AJUSTE EXCLUSIVO PARA A FOTO DO JOÃO PAULO - POSICIONAMENTO MANUAL */
-        /* Para centralizar o rosto do João Paulo, adicionei esta classe. */
-        .photo-joao-paulo {
-            background-position: center 10%; /* Ajuste manual para o rosto dele */
-        }
-
-        /* AJUSTE EXCLUSIVO PARA A FOTO DO BERNARDO - POSICIONAMENTO MANUAL */
-        /* Para centralizar o rosto do Bernardo, adicionei esta classe. */
-        .photo-bernardo {
-            background-position: center 10%; /* Ajuste manual para o rosto dele */
-        }
-
-        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
-        .team-role { color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}
+            
+            /* --- AS DUAS LINHAS ABAIXO SÃO A CORREÇÃO DO PROBLEMA --- */
+            object-fit: cover; /* Mantém a proporção e preenche o círculo */
+            object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
+        }}
+        .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
+        .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe com os nomes dos arquivos. Garanta que as extensões sejam .jpeg
-    # Mantenha os arquivos antigos, mas use os arquivos novos de foco em rostos para obter o melhor resultado.
+    # Lista da equipe com Cargos Corrigidos e nomes de arquivos exatos
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
-        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg"},
+        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
     ]
     
     # Criação de colunas para os cards (máximo 3 por linha)
@@ -150,7 +126,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 
                 # Lógica para carregar a foto específica ou o logo padrão
                 caminho_foto = membro['foto']
-                classe_extra = membro['classe_foto']
                 
                 # Verifica se o arquivo existe e se tem conteúdo (size > 0)
                 if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
@@ -160,19 +135,18 @@ if aba_selecionada == "🏠 Home (Equipe)":
                         ext = caminho_foto.split('.')[-1].lower()
                         # Trata jpg como jpeg no cabeçalho
                         if ext == 'jpg': ext = 'jpeg'
-                        # Define a imagem como plano de fundo (background-image)
-                        estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
+                        img_html = f"data:image/{ext};base64,{foto_base64}"
                     except:
                         # Fallback se a conversão falhar
-                        estilo_foto = f"background-image: url('{img_avatar_html}');"
+                        img_html = img_avatar_html
                 else:
-                    # Se não achar a foto da pessoa (como Thiago e Bernardo), usa o logo Papapá
-                    estilo_foto = f"background-image: url('{img_avatar_html}');"
+                    # Se não achar a foto da pessoa (como Thiago), usa o logo Papapá
+                    img_html = img_avatar_html 
 
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
-                            <div class="photo-circle {classe_extra}" style="{estilo_foto}" title="{membro['nome']}"></div>
+                            <img src="{img_html}" class="avatar-round" alt="{membro['nome']}">
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
