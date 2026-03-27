@@ -284,7 +284,7 @@ Venda por caixas fechadas:
 • Em seguida, coleta da transportadora.
 As NFs e boletos chegam direto no seu e-mail cadastrado!""", language=None)
 
-        with st.expander("🚨 Script: Instrução de Recebimento (EVITA PREJUÍZO)"):
+        with st.expander("🚨 Script: Instruções de recebimento"):
             st.warning("Envie este texto SEMPRE que o pedido for faturado.")
             st.code("""Uma orientação importante sobre o recebimento:
 No momento da entrega, confira a mercadoria ANTES de assinar o canhoto.
