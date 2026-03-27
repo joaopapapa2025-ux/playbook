@@ -553,6 +553,10 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
     
+    # Inicializa o contador de chave para o uploader (necessário para limpar o arquivo)
+    if "uploader_key" not in st.session_state:
+        st.session_state.uploader_key = 0
+
     col_conteudo, col_notas = st.columns([1.5, 1])
 
     with col_conteudo:
@@ -569,7 +573,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         def salvar_nota_callback():
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
-            arquivo_foto = st.session_state.get("input_foto_problema")
+            
+            # Pegamos o arquivo usando a chave dinâmica atual
+            chave_atual = f"input_foto_prob_{st.session_state.uploader_key}"
+            arquivo_foto = st.session_state.get(chave_atual)
             
             if autor and texto:
                 from datetime import datetime
@@ -578,7 +585,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
-                # Lógica para converter a foto em bytes (para salvar no histórico)
+                # Lógica para converter a foto em bytes
                 foto_bytes = None
                 if arquivo_foto is not None:
                     foto_bytes = arquivo_foto.getvalue()
@@ -587,16 +594,17 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "id_unico": agora.timestamp(),
                     "autor": autor,
                     "texto": texto,
-                    "foto": foto_bytes, # Salvamos os bytes da imagem
+                    "foto": foto_bytes,
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
                     "mes_referencia": mes_atual
                 }
                 
                 st.session_state.historico_problemas.insert(0, nova_nota)
                 
-                # Limpa os campos
-                st.session_state["input_area_problemas"] = ""
-                # O uploader não reseta via session_state facilmente, mas o registro limpa o texto.
+                # REGRAS DE LIMPEZA:
+                st.session_state["input_area_problemas"] = "" # Limpa o texto
+                st.session_state.uploader_key += 1           # Muda a chave para limpar o arquivo
+                
                 st.toast("✅ Registro salvo com sucesso!")
             else:
                 st.error("Preencha o nome e o texto antes de salvar.")
@@ -620,11 +628,11 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 height=100
             )
 
-            # --- NOVO CAMPO DE UPLOAD ---
+            # CAMPO DE UPLOAD COM CHAVE DINÂMICA
             st.file_uploader(
                 "Anexar foto da avaria/produto:", 
                 type=["png", "jpg", "jpeg"],
-                key="input_foto_problema",
+                key=f"input_foto_prob_{st.session_state.uploader_key}",
                 help="Arraste ou selecione uma foto de até 200MB"
             )
 
@@ -659,7 +667,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                         st.caption(f"📅 {data_exib} | 📂 {mes_exib}")
                         st.write(f"**{item.get('autor', 'Usuário')}:** {item.get('texto', '')}")
                         
-                        # --- EXIBIÇÃO DA FOTO SE EXISTIR ---
                         if item.get("foto"):
                             st.image(item["foto"], width=250, caption="Anexo da ocorrência")
                     
