@@ -610,8 +610,8 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             texto = st.session_state.get("input_area_problemas", "").strip()
             nf_pedido = st.session_state.get("input_nf_problema", "").strip()
             
-            chave_atual = f"input_foto_prob_{st.session_state.uploader_key}"
-            arquivos_fotos = st.session_state.get(chave_atual) # Agora pode ser uma lista
+            chave_atual = f"input_midia_prob_{st.session_state.uploader_key}"
+            arquivos_anexos = st.session_state.get(chave_atual)
             
             if autor and texto:
                 from datetime import datetime
@@ -620,18 +620,23 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
-                # Processa múltiplos arquivos
-                lista_fotos_bytes = []
-                if arquivos_fotos:
-                    for arq in arquivos_fotos:
-                        lista_fotos_bytes.append(arq.getvalue())
+                # Processa múltiplos arquivos (Imagens e Vídeos)
+                lista_arquivos = []
+                if arquivos_anexos:
+                    for arq in arquivos_anexos:
+                        # Identifica o tipo pelo nome do arquivo
+                        tipo = "video" if arq.name.lower().endswith(('mp4', 'mov', 'avi')) else "foto"
+                        lista_arquivos.append({
+                            "bytes": arq.getvalue(),
+                            "tipo": tipo
+                        })
                 
                 nova_nota = {
                     "id_unico": agora.timestamp(),
                     "autor": autor,
                     "texto": texto,
                     "nf_pedido": nf_pedido,
-                    "fotos": lista_fotos_bytes, # Salva a lista de imagens
+                    "midias": lista_arquivos, 
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
                     "mes_referencia": mes_atual
                 }
@@ -641,7 +646,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 # REGRAS DE LIMPEZA
                 st.session_state["input_area_problemas"] = "" 
                 st.session_state["input_nf_problema"] = ""    
-                st.session_state.uploader_key += 1           
+                st.session_state.uploader_key += 1            
                 
                 st.toast("✅ Registro salvo com sucesso!")
             else:
@@ -667,17 +672,17 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
             st.text_area(
                 "Descreva a ocorrência:",
-                placeholder="Ex: Cliente recebeu x caixas avariadas...",
+                placeholder="Ex: Cliente enviou vídeo mostrando o produto quebrado...",
                 key="input_area_problemas",
                 height=100
             )
 
-            # ATUALIZADO: accept_multiple_files=True
+            # ATUALIZADO: Incluindo tipos de vídeo
             st.file_uploader(
-                "Anexar fotos (múltiplas):", 
-                type=["png", "jpg", "jpeg"],
+                "Anexar evidências (Fotos/Vídeos):", 
+                type=["png", "jpg", "jpeg", "mp4", "mov", "avi"],
                 accept_multiple_files=True,
-                key=f"input_foto_prob_{st.session_state.uploader_key}"
+                key=f"input_midia_prob_{st.session_state.uploader_key}"
             )
 
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
@@ -689,7 +694,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                                                         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
         filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
-        # 3. Listagem e Soma
+        # 3. Listagem
         notas_exibidas = st.session_state.historico_problemas
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
@@ -711,14 +716,14 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             
                         st.write(f"**{item.get('autor')}:** {item.get('texto')}")
                         
-                        # ATUALIZADO: Exibição de múltiplas fotos
-                        fotos = item.get("fotos", [])
-                        if fotos:
-                            # Mostra as fotos em colunas para não ocupar muito espaço vertical
-                            cols_fotos = st.columns(len(fotos) if len(fotos) < 3 else 3)
-                            for i, f_bytes in enumerate(fotos):
-                                with cols_fotos[i % 3]:
-                                    st.image(f_bytes, use_container_width=True)
+                        # EXIBIÇÃO DE MÍDIAS (Fotos ou Vídeos)
+                        midias = item.get("midias", [])
+                        if midias:
+                            for m in midias:
+                                if m["tipo"] == "video":
+                                    st.video(m["bytes"])
+                                else:
+                                    st.image(m["bytes"], use_container_width=True)
                     
                     with c_del:
                         if st.button("🗑️", key=f"del_{item.get('id_unico')}"):
