@@ -74,83 +74,112 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA E CORRIGIDA) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA + SENTIMENTO) ---
 ################################################################################
+from datetime import date
+
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # CSS REFORMULADO: AUMENTADO E COM FOTO ANCORADA NO TOPO (CORREÇÃO DE POSIÇÃO)
-    st.markdown(f"""
+    # Lógica para resetar o status no final do dia
+    if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
+        st.session_state.status_date = date.today()
+        st.session_state.daily_status = {}
+
+    # ESTRUTURA CSS (Mantendo sua centralização e adicionando o Badge de Status)
+    st.markdown("""
         <style>
-        .team-card {{
-            background-color: white; padding: 25px; border-radius: 15px;
+        .team-card {
+            background-color: white; padding: 20px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 330px; /* Aumentado ligeiramente para comportar a foto maior */
+            height: 420px; /* Aumentado para caber o input de texto */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
-        }}
-        .avatar-round {{
-            width: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
-            height: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
-            border-radius: 50%;
-            border: 4px solid #007bff; /* Borda um pouco mais grossa para destacar */
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            
-            /* --- AS DUAS LINHAS ABAIXO SÃO A CORREÇÃO DO PROBLEMA --- */
-            object-fit: cover; /* Mantém a proporção e preenche o círculo */
-            object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
-        }}
-        .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
-        .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
+            position: relative;
+        }
+
+        .photo-container { position: relative; width: 140px; height: 140px; margin-bottom: 20px; }
+
+        .photo-circle {
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 4px solid #007bff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-size: cover; background-position: center top; background-repeat: no-repeat;
+        }
+
+        /* Badge do Sentimento no canto da foto */
+        .status-badge {
+            position: absolute; top: 5px; right: 5px;
+            background-color: #ffcf00; color: #333;
+            padding: 4px 8px; border-radius: 10px;
+            font-size: 0.75em; font-weight: bold; border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .photo-joao-vitor { background-position: center 20%; }
+        .photo-ana { background-position: center 10%; }
+        .photo-joao-paulo { background-position: center 10%; }
+        .photo-bernardo { background-position: center 10%; }
+
+        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
+        .team-role { color: #666; font-size: 1.0em; margin-bottom: 10px; font-weight: 500;}
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe com Cargos Corrigidos e nomes de arquivos exatos
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
     ]
     
-    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
+                user_key = f"status_{membro['nome']}"
                 
-                # Lógica para carregar a foto específica ou o logo padrão
                 caminho_foto = membro['foto']
+                classe_extra = membro['classe_foto']
                 
-                # Verifica se o arquivo existe e se tem conteúdo (size > 0)
                 if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
                     try:
                         foto_base64 = get_base64_of_bin_file(caminho_foto)
-                        # Identifica a extensão para o cabeçalho base64
                         ext = caminho_foto.split('.')[-1].lower()
-                        # Trata jpg como jpeg no cabeçalho
                         if ext == 'jpg': ext = 'jpeg'
-                        img_html = f"data:image/{ext};base64,{foto_base64}"
+                        estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
                     except:
-                        # Fallback se a conversão falhar
-                        img_html = img_avatar_html
+                        estilo_foto = f"background-image: url('{img_avatar_html}');"
                 else:
-                    # Se não achar a foto da pessoa (como Thiago), usa o logo Papapá
-                    img_html = img_avatar_html 
+                    estilo_foto = f"background-image: url('{img_avatar_html}');"
 
                 with cols[j]:
+                    # Recupera o sentimento salvo ou emoji padrão
+                    current_status = st.session_state.daily_status.get(user_key, "✨")
+                    
                     st.markdown(f"""
                         <div class="team-card">
-                            <img src="{img_html}" class="avatar-round" alt="{membro['nome']}">
+                            <div class="photo-container">
+                                <div class="photo-circle {classe_extra}" style="{estilo_foto}"></div>
+                                <div class="status-badge">{current_status}</div>
+                            </div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
+                    
+                    # Campo para cada um preencher seu sentimento
+                    novo_status = st.text_input("Como está hoje?", 
+                                               max_chars=15, 
+                                               key=f"input_{user_key}",
+                                               placeholder="Ex: 🚀 Focado")
+                    
+                    if novo_status:
+                        st.session_state.daily_status[user_key] = novo_status
+                        # O Streamlit atualizará o badge no próximo clique/ação
 
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
