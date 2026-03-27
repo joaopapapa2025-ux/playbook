@@ -269,6 +269,8 @@ elif aba_selecionada == "🚚 Logística & SAC":
     with col_p2:
         st.info("**Separação:** Até 3 dias úteis após confirmação.")
 
+import streamlit as st
+
 # --- SEÇÃO: TEMPLATES DE MENSAGENS ---
 if menu == "Templates de Mensagens":
     st.header("💬 Templates de Comunicação")
