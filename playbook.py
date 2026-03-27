@@ -297,7 +297,6 @@ elif aba_selecionada == "✍️ Templates & Scripts":
 
     st.subheader("📧 E-mail do Financeiro")
     st.code("contasareceber2@papapa.com.br", language=None)
-
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
