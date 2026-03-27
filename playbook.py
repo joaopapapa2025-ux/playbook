@@ -29,48 +29,67 @@ img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO HORIZONTAL (8 COLUNAS) ---
+# --- 2. NAVEGAÇÃO HORIZONTAL PADRONIZADA (FLEXBOX) ---
 ################################################################################
 
 st.markdown(f"""
     <style>
+    /* Esconde a sidebar e ajusta o topo */
     [data-testid="stSidebar"] {{ display: none; }}
+    .main .block-container {{ padding-top: 2rem; }}
+
+    /* Container do Cabeçalho */
     .header-container {{
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
     }}
-    /* Estilização para garantir que os botões fiquem alinhados e caibam na linha */
+
+    /* --- O SEGREDO DO ALINHAMENTO --- */
+    /* Forçamos o container dos botões a usar todo o espaço de forma igual */
+    div[data-testid="stHorizontalBlock"] {{
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important; /* Distribui espaço igual entre eles */
+        align-items: stretch !important;
+        gap: 10px !important; /* Distância fixa entre os botões */
+    }}
+
+    /* Estilo do Botão */
     .stButton > button {{
-        width: 100%;
-        border-radius: 10px;
-        height: 4.5em; /* Um pouco mais alto para comportar nomes longos */
-        background-color: #f0f2f6;
-        color: #1A1C24;
-        font-weight: 700;
-        font-size: 0.8rem !important; /* Fonte levemente menor para caber tudo lado a lado */
-        border: 1px solid #d1d5db;
+        width: 100% !important;
+        border-radius: 8px !important;
+        height: 4.5em !important; 
+        background-color: #f0f2f6 !important;
+        color: #1A1C24 !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important; /* Ajuste para não quebrar a linha */
+        border: 1px solid #d1d5db !important;
         padding: 5px !important;
-        line-height: 1.2;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }}
+
+    /* Hover e Seleção */
     .stButton > button:hover {{
-        border-color: #007bff;
-        color: #007bff;
-        background-color: #ffffff;
+        border-color: #007bff !important;
+        color: #007bff !important;
+        background-color: #ffffff !important;
     }}
     </style>
 
     <div class="header-container">
-        <img src="{img_logo_html}" width="320">
+        <img src="{img_logo_html}" width="300">
         <h1 style='color: #004a99; font-family: sans-serif; font-weight: 850; margin-top: 10px;'>
             Hub Inside Sales
         </h1>
     </div>
     """, unsafe_allow_html=True)
 
-# 1. Lista padronizada (exatamente como nos seus IFs)
+# Lista de opções exatamente como nos seus IFs
 opcoes_menu = [
     "🏠 Home (Equipe)", 
     "💰 Simulador de Bonificação", 
@@ -82,16 +101,16 @@ opcoes_menu = [
     "🔗 Links Úteis"
 ]
 
-# 2. Inicializa o estado
 if 'aba_atual' not in st.session_state:
     st.session_state.aba_atual = "🏠 Home (Equipe)"
 
-# 3. CRIAÇÃO DAS 8 COLUNAS LADO A LADO
+# Criamos as colunas e injetamos os botões
 cols = st.columns(len(opcoes_menu))
 
 for i, label in enumerate(opcoes_menu):
-    if cols[i].button(label, key=f"btn_{label}"):
-        st.session_state.aba_atual = label
+    with cols[i]:
+        if st.button(label, key=f"btn_{label}", use_container_width=True):
+            st.session_state.aba_atual = label
 
 aba_selecionada = st.session_state.aba_atual
 st.divider()
