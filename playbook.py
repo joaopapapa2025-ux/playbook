@@ -29,7 +29,7 @@ img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO POR BOTÕES (ESTRUTURA FINAL) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO HORIZONTAL (8 COLUNAS) ---
 ################################################################################
 
 st.markdown(f"""
@@ -42,23 +42,23 @@ st.markdown(f"""
         text-align: center;
         margin-bottom: 25px;
     }}
-    /* Estilização dos Botões de Navegação */
+    /* Estilização para garantir que os botões fiquem alinhados e caibam na linha */
     .stButton > button {{
         width: 100%;
-        border-radius: 12px;
-        height: 3.5em;
+        border-radius: 10px;
+        height: 4.5em; /* Um pouco mais alto para comportar nomes longos */
         background-color: #f0f2f6;
         color: #1A1C24;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.8rem !important; /* Fonte levemente menor para caber tudo lado a lado */
         border: 1px solid #d1d5db;
-        transition: all 0.2s ease;
+        padding: 5px !important;
+        line-height: 1.2;
     }}
     .stButton > button:hover {{
         border-color: #007bff;
         color: #007bff;
         background-color: #ffffff;
-        transform: translateY(-2px);
     }}
     </style>
 
@@ -70,7 +70,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# 1. Definimos a lista exata com todos os nomes (incluindo as novas abas)
+# 1. Lista padronizada (exatamente como nos seus IFs)
 opcoes_menu = [
     "🏠 Home (Equipe)", 
     "💰 Simulador de Bonificação", 
@@ -82,22 +82,18 @@ opcoes_menu = [
     "🔗 Links Úteis"
 ]
 
-# 2. Inicializa o estado da aba
+# 2. Inicializa o estado
 if 'aba_atual' not in st.session_state:
     st.session_state.aba_atual = "🏠 Home (Equipe)"
 
-# 3. Cria o grid de botões (2 linhas de 4 colunas para não apertar muito)
-col_a, col_b, col_c, col_d = st.columns(4)
-col_e, col_f, col_g, col_h = st.columns(4)
-todas_cols = [col_a, col_b, col_c, col_d, col_e, col_f, col_g, col_h]
+# 3. CRIAÇÃO DAS 8 COLUNAS LADO A LADO
+cols = st.columns(len(opcoes_menu))
 
 for i, label in enumerate(opcoes_menu):
-    if todas_cols[i].button(label, key=f"btn_{label}"):
+    if cols[i].button(label, key=f"btn_{label}"):
         st.session_state.aba_atual = label
 
-# 4. Atribui a variável para os seus IFs funcionarem
 aba_selecionada = st.session_state.aba_atual
-
 st.divider()
 
 ################################################################################
