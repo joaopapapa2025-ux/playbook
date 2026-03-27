@@ -28,90 +28,89 @@ img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO "ULTRA CLEAN" (SEM BOLINHAS) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO "ESTILO BOTÃO" (VERSÃO FINAL SEM ERRO) ---
 ################################################################################
 
 st.markdown(f"""
     <style>
-    /* 1. Limpeza de Interface */
+    /* Limpeza geral */
     [data-testid="stSidebar"] {{ display: none; }}
-    .main .block-container {{ padding-top: 2rem; }}
-
-    /* 2. Container do Logo e Título centralizados */
+    
+    /* Centralização do Header */
     .header-container {{
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }}
 
-    /* 3. TRANSFORMAÇÃO DO RADIO EM BOTÕES REAIS */
-    /* Esconde a bolinha (input) e o círculo visual */
+    /* REMOVE AS BOLINHAS */
     div[data-testid="stRadio"] div[role="radiogroup"] label div:first-child {{
         display: none !important;
     }}
-
-    /* Alinha os botões horizontalmente ao centro */
+    
+    /* ALINHA OS BOTÕES */
     div[data-testid="stRadio"] div[role="radiogroup"] {{
         display: flex;
-        flex-direction: row; 
-        justify-content: center; 
-        gap: 12px;
+        flex-direction: row;
+        justify-content: center;
+        gap: 15px;
         flex-wrap: wrap;
     }}
 
-    /* Estiliza o botão (a label que contém o texto) */
+    /* ESTILO DOS BOTÕES (MAIORES E VISÍVEIS) */
     div[data-testid="stRadio"] div[role="radiogroup"] label {{
-        background-color: #f1f3f6 !important;
-        border: 1px solid #d1d5db !important;
-        padding: 10px 24px !important;
-        border-radius: 50px !important;
+        background-color: #f0f2f6 !important;
+        border: 2px solid #d1d5db !important; /* Borda mais grossa */
+        padding: 12px 30px !important;
+        border-radius: 12px !important; /* Menos redondo, mais 'botão' */
         cursor: pointer !important;
-        transition: all 0.2s ease-in-out !important;
-        min-width: 150px;
-        display: inline-flex;
-        justify-content: center;
+        transition: all 0.2s ease !important;
+        min-width: 200px !important; /* Botões mais largos */
+        display: flex !important;
+        justify-content: center !important;
     }}
 
-    /* FORÇA O TEXTO A APARECER (Correção dos botões em branco) */
+    /* FORÇA O TEXTO A FICAR PRETO E VISÍVEL */
     div[data-testid="stRadio"] div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {{
-        color: #31333F !important;
-        font-weight: 600 !important;
-        font-size: 0.95em !important;
+        color: #1A1C24 !important; /* Quase preto */
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
         margin: 0 !important;
-        text-align: center;
     }}
 
-    /* Estilo do Botão SELECIONADO */
+    /* ESTILO SELECIONADO (AZUL PAPAPÁ) */
     div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] {{
         background-color: #007bff !important;
         border-color: #0056b3 !important;
-        box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
+        box-shadow: 0 4px 15px rgba(0,123,255,0.4) !important;
     }}
 
-    /* Texto do Botão SELECIONADO */
+    /* TEXTO DO SELECIONADO (BRANCO) */
     div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] div[data-testid="stMarkdownContainer"] p {{
         color: white !important;
     }}
 
-    /* Efeito de Hover */
+    /* Hover */
     div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
         border-color: #007bff !important;
-        background-color: #eef6ff !important;
+        transform: translateY(-2px);
     }}
     </style>
 
     <div class="header-container">
-        <img src="{img_logo_html}" width="300">
-        <h1 style='color: #004a99; font-family: sans-serif; font-weight: 800; margin-top: 10px;'>
+        <img src="{img_logo_html}" width="350">
+        <h1 style='color: #004a99; font-family: sans-serif; font-weight: 850; margin-top: 15px;'>
             Hub Inside Sales
         </h1>
     </div>
     """, unsafe_allow_html=True)
 
-# O Menu - Definindo as labels aqui
+# O Menu - Texto direto para não ter erro
 aba_selecionada = st.radio(
     "Navegação",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
