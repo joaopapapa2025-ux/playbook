@@ -445,10 +445,10 @@ As NFs e boletos chegam direto no seu e-mail cadastrado!""", language=None)
             st.code("""Uma orientação importante sobre o recebimento:
 No momento da entrega, confira a mercadoria ANTES de assinar o canhoto.
 Se houver caixa amassada, molhada ou produto quebrado:
-1. Registre a RESSALVA na Nota Fiscal descrevendo o erro.
+1. Registre a RESSALVA no canhoto da Nota Fiscal que fica com a transportadora descrevendo o erro.
 2. Não aceite os produtos avariados.
 3. Me informe imediatamente.
-Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos repor a mercadoria.""", language=None)
+Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos realizar o abatimentos nos boletos.""", language=None)
 
         with st.expander("💳 Script: Contato financeiro"):
             st.code("""Para assuntos financeiros, como boletos, notas fiscais, comprovantes de pagamento, prorrogação de vencimento ou segunda via, pedimos por gentileza que o contato seja feito diretamente com o nosso financeiro, através do e-mail:
@@ -456,11 +456,10 @@ Sem a ressalva na NF, a transportadora não aceita a reclamação e não consegu
 
         with st.expander("🔄 Script: Regra de troca (validade)"):
             st.code("""Sobre trocas por validade:
-A Papapá realiza a troca se o produto for entregue com menos de 60% da validade total.
-Para isso, precisamos da emissão da NFD (Nota Fiscal de Devolução) constando:
-• Número da NF de origem
-• Motivo da devolução
-• Lote do produto""", language=None)
+A Papapá realiza a troca de produtos caso sejam entregues com menos de 60% da sua validade total.
+Para iniciarmos a análise, precisamos que nos envie o lote, a validade e a data de recebimento das mercadorias. Se a análise confirmar que o produto foi entregue com 60% ou mais da validade transcorrida, entraremos em contato para que vocês emitam a Nota Fiscal de Devolução (NFD), que deve conter:- Número da NF de origem;
+- Motivo da devolução;
+- Lote do produto.
 
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
