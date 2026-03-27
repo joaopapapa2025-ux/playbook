@@ -289,44 +289,45 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         - **Biscotti:** 12 unidades
         """)
 
-with col_info2:
-    st.subheader("💳 Modalidades de Pagamento")
-    
-    # CSS para deixar o texto dentro dos expanders idêntico ao print
-    st.markdown("""
-        <style>
-        .pagamento-texto {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #31333F;
-        }
-        .highlight {
-            background-color: #f0f2f6;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    with st.expander("Prazos: Sul e Sudeste", expanded=True):
-        st.markdown("""
-        <div class="pagamento-texto">
-        • <b>Até R$ 1.000:</b> <span class="highlight">30 dias</span><br>
-        • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">30/45 dias</span><br>
-        • <b>Acima de R$ 2.000:</b> <span class="highlight">30/45/60 dias</span>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with st.expander("Prazos: Demais Regiões (NO/NE/CO/MG/ES)"):
-        st.markdown("""
-        <div class="pagamento-texto">
-        • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
-        • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">45/60 dias</span><br>
-        • <b>Acima de R$ 2.000:</b> <span class="highlight">40/50/60 dias</span>
-        </div>
-        """, unsafe_allow_html=True)
+    # ESTE BLOCO ABAIXO FOI CORRIGIDO (Adicionados 4 espaços de indentação)
+    with col_info2:
+        st.subheader("💳 Modalidades de Pagamento")
         
+        # CSS para deixar o texto dentro dos expanders idêntico ao print
+        st.markdown("""
+            <style>
+            .pagamento-texto {
+                font-size: 16px;
+                line-height: 1.6;
+                color: #31333F;
+            }
+            .highlight {
+                background-color: #f0f2f6;
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        with st.expander("Prazos: Sul e Sudeste", expanded=True):
+            st.markdown("""
+            <div class="pagamento-texto">
+            • <b>Até R$ 1.000:</b> <span class="highlight">30 dias</span><br>
+            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">30/45 dias</span><br>
+            • <b>Acima de R$ 2.000:</b> <span class="highlight">30/45/60 dias</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with st.expander("Prazos: Demais Regiões (NO/NE/CO/MG/ES)"):
+            st.markdown("""
+            <div class="pagamento-texto">
+            • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
+            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">45/60 dias</span><br>
+            • <b>Acima de R$ 2.000:</b> <span class="highlight">40/50/60 dias</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
         st.success("**Pagamento:** Pix ou Boleto (enviado por e-mail)")
 
     st.divider()
