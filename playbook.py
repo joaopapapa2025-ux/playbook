@@ -269,15 +269,6 @@ elif aba_selecionada == "🚚 Logística & SAC":
     with col_p2:
         st.info("**Separação:** Até 3 dias úteis após confirmação.")
 
-import streamlit as st
-
-st.set_page_config(page_title="Hub Inside Sales Papapá", layout="wide")
-
-st.title("🚀 Hub Inside Sales - Papapá")
-
-# Sidebar para Navegação
-menu = st.sidebar.radio("Navegação", ["Calculadora de Pedidos", "Catálogo de Produtos", "Templates de Mensagens", "Políticas e Prazos"])
-
 # --- SEÇÃO: TEMPLATES DE MENSAGENS ---
 if menu == "Templates de Mensagens":
     st.header("💬 Templates de Comunicação")
