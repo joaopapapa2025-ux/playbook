@@ -406,7 +406,7 @@ Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a g
 
 *Obs.: O CNAE deve permitir a comercialização de produtos alimentícios.""", language=None)
             
-        with c2: # Corrigido de col2 para c2 e identado corretamente
+        with c2: 
             st.markdown("### 💰 Condições Comerciais")
             st.code("""Vou te passar nossas condições para você se organizar:
 
@@ -419,6 +419,7 @@ Venda por caixas fechadas:
 - La Chef e Sopinhas: 6 unidades
 - Papinhas (Fruta/Carne): 12 unidades
 - Dentição, Macarrão, Cereal e Biscotti: 12 unidades""", language=None)
+        
         st.divider()
         st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
         col_b1, col_b2 = st.columns(2)
@@ -441,8 +442,8 @@ Venda por caixas fechadas:
 As NFs e boletos chegam direto no seu e-mail cadastrado!""", language=None)
 
         with st.expander("🚨 Script: Instruções de recebimento"):
-        st.warning("Envie este texto SEMPRE que o pedido for faturado.")
-        st.code("""Uma orientação importante sobre o recebimento:
+            st.warning("Envie este texto SEMPRE que o pedido for faturado.")
+            st.code("""Uma orientação importante sobre o recebimento:
 No momento da entrega, confira a mercadoria ANTES de assinar o canhoto.
 Se houver caixa amassada, molhada ou produto quebrado:
 1. Registre a RESSALVA no canhoto da Nota Fiscal que fica com a transportadora descrevendo o erro.
@@ -450,12 +451,12 @@ Se houver caixa amassada, molhada ou produto quebrado:
 3. Me informe imediatamente.
 Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos realizar o abatimentos nos boletos.""", language=None)
 
-    with st.expander("💳 Script: Contato financeiro"):
-        st.code("""Para assuntos financeiros, como boletos, notas fiscais, comprovantes de pagamento, prorrogação de vencimento ou segunda via, pedimos por gentileza que o contato seja feito diretamente com o nosso financeiro, através do e-mail:
+        with st.expander("💳 Script: Contato financeiro"):
+            st.code("""Para assuntos financeiros, como boletos, notas fiscais, comprovantes de pagamento, prorrogação de vencimento ou segunda via, pedimos por gentileza que o contato seja feito diretamente com o nosso financeiro, através do e-mail:
 📧 E-mail: contasareceber2@papapa.com.br""", language=None)
 
-    with st.expander("🔄 Script: Regra de troca (validade)"):
-        st.code("""Sobre trocas por validade:
+        with st.expander("🔄 Script: Regra de troca (validade)"):
+            st.code("""Sobre trocas por validade:
 A Papapá realiza a troca de produtos caso sejam entregues com menos de 60% da sua validade total.
 Para iniciarmos a análise, precisamos que nos envie o lote, a validade e a data de recebimento das mercadorias.
 
