@@ -3,147 +3,10 @@ import pandas as pd
 import base64
 from pathlib import Path
 
-# --- CONFIGURAÇÕES DE ESTILO E PÁGINA ---
-st.set_page_config(page_title="Papapá | Sales Hub", layout="wide", page_icon="💙")
+################################################################################
+# --- 1. CONFIGURAÇÕES INICIAIS E ESTILO ---
+################################################################################
 
-# Função para carregar imagem e converter para base64 (necessário para HTML/CSS)
-def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-# Configuração de imagem padrão (Papapa-azul..png)
-# Certifique-se de que este arquivo está na mesma pasta que o script.
-img_filename = "Papapa-azul..png"
-if Path(img_filename).exists():
-    img_base64 = get_base64_of_bin_file(img_filename)
-    img_avatar_html = f"data:image/png;base64,{img_base64}"
-else:
-    # Imagem fallback caso o arquivo não seja encontrado (exemplo online)
-    img_avatar_html = "https://www.w3schools.com/howto/img_avatar.png" 
-
-# CSS Customizado para cards redondos (estilo LinkedIn) e Layout
-st.markdown(f"""
-    <style>
-    /* Estilo da Página */
-    .reportview-container {{
-        background: #f0f2f6;
-    }}
-    
-    /* Título Principal */
-    h1 {{
-        color: #004a99;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }}
-
-    /* Estilo do Card da Equipe */
-    .team-card {{
-        background-color: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        text-align: center;
-        margin-bottom: 20px;
-        border: 1px solid #eaeaea;
-    }}
-    
-    /* Imagem Redonda (Estilo LinkedIn) */
-    .avatar-round {{
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #007bff;
-        margin-bottom: 15px;
-    }}
-
-    /* Nome Completo */
-    .team-name {{
-        font-weight: bold;
-        font-size: 1.1em;
-        color: #333;
-        margin-bottom: 5px;
-    }}
-
-    /* Cargo */
-    .team-role {{
-        color: #666;
-        font-size: 0.9em;
-        margin-bottom: 15px;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- DADOS DA EQUIPE ---
-equipe = [
-    {
-        "nome": "João Vitor Tadra",
-        "cargo": "Coordenador",
-        "foto_html": img_avatar_html
-    },
-    {
-        "nome": "Ana Christina Rodrigues",
-        "cargo": "Analista (Key Accounts)",
-        "foto_html": img_avatar_html
-    },
-    {
-        "nome": "Pedro Henrique Born",
-        "cargo": "Analista (Crescimento)",
-        "foto_html": img_avatar_html
-    },
-    {
-        "nome": "Joao Paulo Ferreira Alves",
-        "cargo": "Analista (Desenvolvimento)",
-        "foto_html": img_avatar_html
-    },
-    {
-        "nome": "Thiago Martins Cabral",
-        "cargo": "Estagiário - Operação (Vekta/Reativação)",
-        "foto_html": img_avatar_html
-    },
-    {
-        "nome": "Bernardo Oliveira Dallegrave",
-        "cargo": "Estagiário - Operação (Vekta/Reativação)",
-        "foto_html": img_avatar_html
-    }
-]
-
-# --- CABEÇALHO E NAVEGAÇÃO SUPERIOR ---
-st.title("Hub Inside Sales | Papapá")
-st.markdown("---")
-
-# Menu de Navegação Superior
-aba_selecionada = st.radio(
-    "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts", "🔗 Links Úteis"],
-    horizontal=True
-)
-
-st.markdown("---")
-
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
-if aba_selecionada == "🏠 Home (Equipe)":
-    st.header("👥 Nossa Equipe")
-    st.write("Conheça o time Inside Sales da Papapá.")
-    
-    # Criação de colunas para os cards (máximo 3 por linha)
-    for i in range(0, len(equipe), 3):
-        cols = st.columns(3)
-        for j in range(3):
-            if i + j < len(equipe):
-                membro = equipe[i + j]
-                with cols[j]:
-                    st.markdown(f"""
-                        <div class="team-card">
-                            <img src="{membro['foto_html']}" class="avatar-round" alt="{membro['nome']}">
-                            <div class="team-name">{membro['nome']}</div>
-                            <div class="team-role">{membro['cargo']}</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-import streamlit as st
-
-# --- 1. CONFIGURAÇÕES DA PÁGINA ---
 st.set_page_config(
     page_title="Papapá | Sales Hub 2026",
     page_icon="💙",
@@ -151,116 +14,166 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS para esconder o menu lateral e alinhar a navegação horizontal
-st.markdown("""
+# Função para converter imagem em base64
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Tenta carregar o avatar da Papapá
+img_filename = "Papapa-azul..png"
+if Path(img_filename).exists():
+    img_base64 = get_base64_of_bin_file(img_filename)
+    img_avatar_html = f"data:image/png;base64,{img_base64}"
+else:
+    img_avatar_html = "https://www.w3schools.com/howto/img_avatar.png" 
+
+# CSS Unificado
+st.markdown(f"""
     <style>
-    [data-testid="stSidebar"] {display: none;}
-    div.row-widget.stRadio > div {flex-direction: row; gap: 20px;}
-    .stCode { background-color: #fcfcfc; border-radius: 10px; border: 1px solid #e0e0e0; }
+    [data-testid="stSidebar"] {{display: none;}}
+    div.row-widget.stRadio > div {{flex-direction: row; gap: 20px;}}
+    .team-card {{
+        background-color: white; padding: 20px; border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
+        margin-bottom: 20px; border: 1px solid #eaeaea;
+    }}
+    .avatar-round {{
+        width: 100px; height: 100px; border-radius: 50%;
+        object-fit: cover; border: 3px solid #004a99; margin-bottom: 10px;
+    }}
+    .team-name {{ font-weight: bold; color: #333; }}
+    .team-role {{ color: #666; font-size: 0.85em; }}
+    .stCode {{ background-color: #fcfcfc; border-radius: 10px; border: 1px solid #e0e0e0; }}
     </style>
     """, unsafe_allow_html=True)
 
+################################################################################
+# --- 2. NAVEGAÇÃO PRINCIPAL ---
+################################################################################
+
 st.title("Hub Inside Sales | Papapá")
 
-# --- 2. NAVEGAÇÃO CENTRAL (Conforme seus prints) ---
 aba_selecionada = st.radio(
     "Navegação:",
-    ["🏠 Home", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas & Prazos"],
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas & Prazos", "🔗 Links Úteis"],
     horizontal=True
 )
 
 st.divider()
 
-# --- 3. LÓGICA DOS MÓDULOS ---
+################################################################################
+# --- MÓDULO 1: HOME (EQUIPE) ---
+################################################################################
+if aba_selecionada == "🏠 Home (Equipe)":
+    st.header("👥 Nossa Equipe")
+    
+    equipe = [
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista (Crescimento)"},
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação"}
+    ]
+    
+    for i in range(0, len(equipe), 3):
+        cols = st.columns(3)
+        for j in range(3):
+            if i + j < len(equipe):
+                m = equipe[i + j]
+                with cols[j]:
+                    st.markdown(f"""
+                        <div class="team-card">
+                            <img src="{img_avatar_html}" class="avatar-round">
+                            <div class="team-name">{m['nome']}</div>
+                            <div class="team-role">{m['cargo']}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-# MÓDULO: HOME
-if aba_selecionada == "🏠 Home":
-    st.subheader("Bem-vindo ao Hub da Equipe!")
-    st.info("Selecione um módulo acima para acessar as ferramentas de vendas.")
-
-# MÓDULO 2: SIMULADOR DE COMISSÃO (SUA LÓGICA CORRIGIDA)
+################################################################################
+# --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
+################################################################################
 elif aba_selecionada == "💰 Simulador de Bonificação":
     st.header("💰 Simulador de Comissionamento Individual")
-    st.write("Calcule a projeção do seu bônus com base no atingimento da meta.")
     
     col_input, col_result = st.columns([1, 1.5])
-    
     with col_input:
-        st.subheader("Entrada de Dados")
-        salario_base = st.number_input("Seu Salário Fixo Base (R$)", min_value=0.0, value=3000.0, step=100.0)
-        meta_mes = st.number_input("Valor da Meta do Mês (R$)", min_value=0.0, value=150000.0, step=1000.0)
-        resultado_atual = st.number_input("Seu Resultado Atual Batido (R$)", min_value=0.0, value=135000.0, step=1000.0)
+        salario_base = st.number_input("Salário Fixo (R$)", value=3000.0)
+        meta_mes = st.number_input("Meta do Mês (R$)", value=150000.0)
+        resultado_atual = st.number_input("Resultado Atual (R$)", value=135000.0)
         
     with col_result:
-        st.subheader("Resultado")
         atingimento = (resultado_atual / meta_mes) * 100 if meta_mes > 0 else 0.0
-        
         if atingimento >= 110.0:
-            perc_bonus, status_meta, cor_metric = 0.30, " Superação (110%+)!", "normal"
+            perc, status, cor = 0.30, "Superação (110%+)", "normal"
         elif atingimento >= 90.0:
-            perc_bonus, status_meta, cor_metric = 0.20, " Dentro do Piso (90-109%)", "normal"
+            perc, status, cor = 0.20, "No Piso (90-109%)", "normal"
         else:
-            perc_bonus, status_meta, cor_metric = 0.0, " Abaixo do Piso (<90%)", "inverse"
+            perc, status, cor = 0.0, "Abaixo do Piso", "inverse"
             
-        valor_bonus = salario_base * perc_bonus
-        total_estimado = salario_base + valor_bonus
-        
-        st.metric(label="Atingimento da Meta", value=f"{atingimento:.1f}%", delta=status_meta, delta_color=cor_metric)
-        
-        c1, c2 = st.columns(2)
-        with c1:
-            st.metric(label="Valor do Bônus", value=f"R$ {valor_bonus:,.2f}", delta=f"{perc_bonus*100:.0f}% sobre o fixo")
-        with c2:
-            st.metric(label="Total (Fixo + Bônus)", value=f"R$ {total_estimado:,.2f}")
+        valor_bonus = salario_base * perc
+        st.metric("Atingimento", f"{atingimento:.1f}%", delta=status, delta_color=cor)
+        st.metric("Bônus Estimado", f"R$ {valor_bonus:,.2f}", delta=f"{perc*100:.0f}%")
 
-# MÓDULO 3: BIBLIOTECA DE ARQUIVOS (SUA LÓGICA DE DOWNLOADS)
+################################################################################
+# --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
+################################################################################
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
-    st.write("Central de downloads para todos os materiais oficiais da Papapá.")
-
-    col1, col2 = st.columns(2)
-    with col1:
+    c1, c2 = st.columns(2)
+    
+    with c1:
         st.subheader("📁 Materiais de Venda")
-        arquivos_venda = {
-            "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
-            "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
-            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
+        arquivos = {
+            "📖 Catálogo Digital": "catalogo-papapa-digital.pdf",
+            "💰 Tabela de Preços": "Tabela de preços Papapá 0226 v2.xlsx",
+            "ℹ️ Ficha Técnica": "Informações todos os produtos Papapá.pdf"
         }
-        for label, path in arquivos_venda.items():
+        for label, path in arquivos.items():
             try:
                 with open(path, "rb") as f:
                     st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError:
-                st.error(f"Arquivo não encontrado: {path}")
+            except: st.error(f"Falta: {path}")
 
-    with col2:
+    with c2:
         st.subheader("📋 Guias e Processos")
-        arquivos_processo = {
-            "🎯 Estrutura de Metas e Operação": "Estrutura de Operação e Metas - Inside Sales.pdf",
-            "📦 Guia de Recebimento (Avarias)": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
-            "📝 Templates de Mensagens (PDF)": "Templates IS 2026.docx (2).pdf"
+        processos = {
+            "🎯 Estrutura de Metas": "Estrutura de Operação e Metas - Inside Sales.pdf",
+            "📦 Guia de Avarias": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
+            "📝 Templates PDF": "Templates IS 2026.docx (2).pdf"
         }
-        for label, path in arquivos_processo.items():
+        for label, path in processos.items():
             try:
                 with open(path, "rb") as f:
                     st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError:
-                st.error(f"Arquivo não encontrado: {path}")
+            except: st.error(f"Falta: {path}")
 
-# MÓDULO 4: TEMPLATES (RECUPERADO)
+################################################################################
+# --- MÓDULO 4: TEMPLATES & SCRIPTS ---
+################################################################################
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.header("✍️ Templates & Scripts")
-    tabs = st.tabs(["🤝 Abordagem", "🚀 Curva A", "📝 Cadastro", "🚚 Logística", "🛠️ Pós-Venda"])
-    with tabs[0]:
-        st.write("**Abordagem Perfil**")
+    t = st.tabs(["🤝 Abordagem", "🚀 Curva A", "📝 Cadastro", "🚚 Logística"])
+    with t[0]:
+        st.write("**Abordagem Perfil (WhatsApp)**")
         st.code("Olá, tudo bem? Aqui é o [Seu Nome], da Papapá...", language=None)
+    with t[1]:
+        st.write("**Sugestão Curva A** [cite: 242, 243]")
+        st.code("Recomendamos iniciar com: Papinhas de Fruta, Biscoito Dentição e Biscotti.", language=None)
 
-# MÓDULO 5: POLÍTICAS (RECUPERADO)
+################################################################################
+# --- MÓDULO 5: POLÍTICAS & PRAZOS ---
+################################################################################
 elif aba_selecionada == "📊 Políticas & Prazos":
     st.header("📊 Políticas Comerciais")
-    st.write("**Validade:** Papinhas (16 meses), Yoguzinho (15 meses).")
-    
+    st.info("**Pedido Mínimo:** R$ 800,00 [cite: 163]")
+    st.write("**Prazos de Entrega:** 3 dias separação + 2 dias faturamento [cite: 175, 176]")
+    st.write("**Validades:** Papinhas Fruta (16 meses), Yoguzinho (15 meses) [cite: 183, 184]")
+
+################################################################################
 # --- MÓDULO 6: LINKS ÚTEIS ---
+################################################################################
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
     st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
