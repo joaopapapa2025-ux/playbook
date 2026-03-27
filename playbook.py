@@ -205,7 +205,8 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
                 label="Total (Fixo + Bônus)",
                 value=f"R$ {total_estimado:,.2f}"
             )
-   import streamlit as st
+
+import streamlit as st
 
 # --- 1. CONFIGURAÇÕES DA PÁGINA (ESTILO E TÍTULO) ---
 st.set_page_config(
