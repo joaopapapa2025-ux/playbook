@@ -211,8 +211,6 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
         else:
             st.success(f"Bônus de {perc_bonus*100:.0f}% garantido sobre o salário base.")
 
-import streamlit as st
-
 # --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.title("📄 Biblioteca de Arquivos")
