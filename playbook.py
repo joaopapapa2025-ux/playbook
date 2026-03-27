@@ -628,6 +628,13 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 height=100
             )
 
+            # --- NOVO CAMPO NF/PEDIDO ---
+            st.text_input(
+                "Número da NF ou Pedido:",
+                placeholder="Ex: NF 12345 ou Pedido #987",
+                key="input_nf_problema"
+            )
+
             # CAMPO DE UPLOAD COM CHAVE DINÂMICA
             st.file_uploader(
                 "Anexar foto da avaria/produto:", 
