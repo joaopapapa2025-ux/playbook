@@ -3,9 +3,6 @@ import pandas as pd
 import base64
 from pathlib import Path
 
-import streamlit as st
-import base64
-
 ################################################################################
 # --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
 ################################################################################
