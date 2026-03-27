@@ -450,17 +450,14 @@ Se houver caixa amassada, molhada ou produto quebrado:
 3. Me informe imediatamente.
 Sem a ressalva na NF, a transportadora não aceita a reclamação e não conseguimos realizar o abatimentos nos boletos.""", language=None)
 
-    # Script 2: Contato Financeiro
     with st.expander("💳 Script: Contato financeiro"):
-        st.info("Utilize este script para direcionar dúvidas sobre boletos e NFs.")
         st.code("""Para assuntos financeiros, como boletos, notas fiscais, comprovantes de pagamento, prorrogação de vencimento ou segunda via, pedimos por gentileza que o contato seja feito diretamente com o nosso financeiro, através do e-mail:
 📧 E-mail: contasareceber2@papapa.com.br""", language=None)
 
-    # Script 3: Regra de Troca
     with st.expander("🔄 Script: Regra de troca (validade)"):
         st.code("""Sobre trocas por validade:
 A Papapá realiza a troca de produtos caso sejam entregues com menos de 60% da sua validade total.
-Para iniciarmos a análise, precisamos que nos envie o lote, a validade e a data de recebimento das mercadorias. 
+Para iniciarmos a análise, precisamos que nos envie o lote, a validade e a data de recebimento das mercadorias.
 
 Se a análise confirmar que o produto foi entregue com 60% ou mais da validade transcorrida, entraremos em contato para que vocês emitam a Nota Fiscal de Devolução (NFD), que deve conter:
 - Número da NF de origem;
