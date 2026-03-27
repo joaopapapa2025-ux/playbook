@@ -112,10 +112,10 @@ equipe = [
 st.title("Hub Inside Sales | Papapá")
 st.markdown("---")
 
-# Menu de Navegação Superior (Mais moderno que sidebar)
+# Menu de Navegação Superior
 aba_selecionada = st.radio(
     "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts"],
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "🚚 Logística & SAC", "✍️ Templates & Scripts", "🔗 Links Úteis"],
     horizontal=True
 )
 
