@@ -22,7 +22,7 @@ def get_base64_of_bin_file(bin_file):
     except:
         return None
 
-# Carregamento Unificado do Logo
+# Carregamento do Logo (Papapa-azul.png)
 arquivo_logo = "Papapa-azul.png" 
 img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 
@@ -32,81 +32,84 @@ else:
     img_logo_html = "https://www.w3schools.com/howto/img_avatar.png" 
 
 ################################################################################
-# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO ESTILO "PILLS" ---
+# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO ESTILO "PILLS" (SEM BOLINHAS) ---
 ################################################################################
 
-# CSS Ninja para transformar o rádio em botões modernos e centralizar tudo
+# CSS Ninja para transformar o rádio em botões modernos
 st.markdown("""
     <style>
-    /* 1. Esconde a sidebar e ajusta o topo */
+    /* 1. Esconde a sidebar e limpa o topo */
     [data-testid="stSidebar"] { display: none; }
-    .stApp { margin-top: -50px; }
-
+    
     /* 2. Container do Logo e Título */
     .main-header {
         text-align: center;
-        padding: 20px 0;
+        padding-bottom: 10px;
     }
     
-    /* 3. Estilização RADICAL do st.radio (Transforma em Botões/Abas) */
+    /* 3. TRANSFORMAÇÃO DO RADIO EM BOTÕES (PILLS) */
     div.row-widget.stRadio > div {
         display: flex;
         flex-direction: row; 
         justify-content: center; 
-        gap: 10px;
-        background-color: #f8f9fa; /* Fundo sutil para o menu */
-        padding: 10px;
-        border-radius: 50px; /* Menu arredondado */
+        gap: 12px;
+        background-color: #f1f3f6; /* Fundo sutil do menu */
+        padding: 8px 15px;
+        border-radius: 50px;
         width: fit-content;
         margin: 0 auto;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0;
     }
     
-    /* Esconde as bolinhas de rádio */
-    div.row-widget.stRadio div[role="radiogroup"] span { display: none; }
+    /* ESCONDE AS BOLINHAS E O INPUT PADRÃO */
+    div.row-widget.stRadio div[role="radiogroup"] label[data-baseweb="radio"] div:first-child {
+        display: none !important;
+    }
 
-    /* Transforma os labels em Botões Interativos */
+    /* Estiliza os Labels como Botões Arredondados */
     div.row-widget.stRadio div[role="radiogroup"] label {
-        padding: 10px 22px !important;
-        border-radius: 30px !important;
-        border: none !important;
-        background-color: white !important;
-        color: #555 !important;
+        padding: 8px 20px !important;
+        border-radius: 25px !important;
+        background-color: transparent !important;
+        color: #444 !important;
         font-weight: 600 !important;
         font-size: 0.95em !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         margin: 0 !important;
+        border: none !important;
     }
 
-    /* Efeito de Hover (Passar o mouse) */
+    /* Efeito de Hover */
     div.row-widget.stRadio div[role="radiogroup"] label:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: #e2e6ea !important;
         color: #007bff !important;
     }
 
-    /* Estilo do Botão Selecionado (Destaque Papapá) */
+    /* ESTILO DO BOTÃO SELECIONADO */
     div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {
         background-color: #007bff !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        box-shadow: 0 4px 10px rgba(0,123,255,0.25);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Exibição Visual do Cabeçalho
+# Exibição do Cabeçalho
 st.markdown('<div class="main-header">', unsafe_allow_html=True)
-st.image(img_logo_html, width=280) # Logo centralizado via container
+# Centralização do logo
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    st.image(img_logo_html, width=280)
+
 st.markdown(f"""
-    <h2 style='color: #004a99; font-family: sans-serif; margin-top: -10px; font-weight: 700; letter-spacing: -0.5px;'>
+    <h2 style='text-align: center; color: #004a99; font-family: sans-serif; margin-top: -15px; font-weight: 700;'>
         Hub Inside Sales
     </h2>
 """, unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# O Menu de Navegação - Agora em formato de Botões Modernos
+# O Menu de Navegação - Agora como botões modernos
 aba_selecionada = st.radio(
     "Menu",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
