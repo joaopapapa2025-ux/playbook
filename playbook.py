@@ -234,9 +234,9 @@ Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a g
 
 *Obs.: O CNAE deve permitir a comercialização de produtos alimentícios.""", language=None)
             
-with col2:
-    st.markdown("### 💰 Condições Comerciais")
-    st.code("""Vou te passar nossas condições para você se organizar:
+        with c2: # Corrigido de col2 para c2 e identado corretamente
+            st.markdown("### 💰 Condições Comerciais")
+            st.code("""Vou te passar nossas condições para você se organizar:
 
 • Pedido mínimo: R$ 800,00.
 • Frete: CIF (Grátis) para todo o Brasil.
@@ -247,7 +247,6 @@ Venda por caixas fechadas:
 - La Chef e Sopinhas: 6 unidades
 - Papinhas (Fruta/Carne): 12 unidades
 - Dentição, Macarrão, Cereal e Biscotti: 12 unidades""", language=None)
-
         st.divider()
         st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
         col_b1, col_b2 = st.columns(2)
