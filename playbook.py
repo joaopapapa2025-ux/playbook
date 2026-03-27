@@ -211,39 +211,92 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
         else:
             st.success(f"Bônus de {perc_bonus*100:.0f}% garantido sobre o salário base.")
 
+import streamlit as st
+
 # --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.title("📄 Biblioteca de Arquivos")
-    st.write("Baixe aqui os materiais atualizados para suporte às vendas.")
+    st.write("Central de downloads para todos os materiais oficiais da Papapá.")
 
     col1, col2 = st.columns(2)
+    
     with col1:
         st.subheader("📁 Materiais de Venda")
-        with open("catalogo-papapa-digital.pdf", "rb") as f:
-            st.download_button("📖 Baixar Catálogo Digital (PDF)", f, file_name="catalogo-papapa-digital.pdf", mime="application/pdf", use_container_width=True)
-        with open("Tabela de preços Papapá 0226 v2.xlsx", "rb") as f:
-            st.download_button("💰 Baixar Tabela de Preços (Excel)", f, file_name="Tabela_de_Precos_Papapa_0226.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+        # Lista de arquivos para download
+        arquivos_venda = {
+            "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
+            "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
+            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
+        }
+        for label, path in arquivos_venda.items():
+            with open(path, "rb") as f:
+                st.download_button(label, f, file_name=path, use_container_width=True)
 
     with col2:
-        st.subheader("📋 Guias e Informações")
-        with open("Informações todos os produtos Papapá.pdf", "rb") as f:
-            st.download_button("ℹ️ Ficha Técnica de Produtos", f, file_name="Informacoes_Produtos_Papapa.pdf", mime="application/pdf", use_container_width=True)
-        with open("Estrutura de Operação e Metas - Inside Sales.pdf", "rb") as f:
-            st.download_button("🎯 Estrutura de Metas e Operação", f, file_name="Estrutura_Metas_Inside_Sales.pdf", mime="application/pdf", use_container_width=True)
+        st.subheader("📋 Guias e Processos")
+        arquivos_processo = {
+            "🎯 Estrutura de Metas e Operação": "Estrutura de Operação e Metas - Inside Sales.pdf",
+            "📦 Guia de Recebimento (Avarias)": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
+            "📝 Templates de Mensagens (PDF)": "Templates IS 2026.docx (2).pdf"
+        }
+        for label, path in arquivos_processo.items():
+            with open(path, "rb") as f:
+                st.download_button(label, f, file_name=path, use_container_width=True)
 
 # --- MÓDULO 4: LOGÍSTICA & SAC ---
 elif aba_selecionada == "🚚 Logística & SAC":
     st.title("🚚 Logística & SAC")
-    with open("GUIA DE RECEBIMENTO DE MERCADORIAS.pdf", "rb") as f:
-        st.download_button("📦 Baixar Guia de Recebimento (Avarias)", f, file_name="Guia_Recebimento_Mercadorias.pdf", mime="application/pdf")
-    st.info("As regras detalhadas de logística serão listadas aqui.")
+    st.subheader("Principais Regras de Recebimento")
+    
+    st.warning("**Atenção:** Entregas sem ressalva na Nota Fiscal não serão reconhecidas pela logística.")
+    
+    with st.expander("🔍 O que conferir no ato da entrega?"):
+        st.write("""
+        - Caixas amassadas ou rasgadas.
+        - Embalagens violadas ou produtos quebrados.
+        - Divergência entre físico e Nota Fiscal.
+        """)
+        
+    with st.expander("🔄 Procedimento para Avarias"):
+        st.write("""
+        1. **Registrar Ressalva:** Descrever o problema no verso da NF.
+        2. **Recusa Parcial:** Se apenas parte estiver ruim, recuse apenas os itens avariados.
+        3. **NFD:** O cliente deve emitir a Nota Fiscal de Devolução para os itens recusados.
+        """)
+
+    st.subheader("⏱️ Prazos e Processos")
+    col_p1, col_p2 = st.columns(2)
+    with col_p1:
+        st.info("**Faturamento:** Até 2 dias úteis após a separação.")
+    with col_p2:
+        st.info("**Separação:** Até 3 dias úteis após confirmação.")
 
 # --- MÓDULO 5: TEMPLATES & SCRIPTS ---
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.title("✍️ Templates & Scripts")
-    with open("Templates IS 2026.docx (2).pdf", "rb") as f:
-        st.download_button("📝 Baixar Templates de Mensagens", f, file_name="Templates_Scripts_2026.pdf", mime="application/pdf")
-    st.info("Os scripts de WhatsApp/Email serão formatados para cópia rápida em breve.")
+    st.write("Use os blocos abaixo para copiar rapidamente as informações para o cliente.")
+
+    st.subheader("📦 Condições Comerciais Padrão")
+    texto_condicoes = """🔹 **Pedido Mínimo:** R$ 800,00
+🔹 **Frete:** CIF (por conta da Papapá)
+🔹 **Pagamento:** Pix ou Boleto
+🔹 **Unidades por Caixa:**
+   - Palitinhos e Yoguzinho: 16 unidades
+   - La Chef e Sopinhas: 6 unidades
+   - Demais linhas: 12 unidades"""
+    
+    st.code(texto_condicoes, language=None)
+    
+    st.subheader("🗓️ Prazos de Pagamento (Boleto)")
+    tab1, tab2 = st.tabs(["Sul e Sudeste", "Norte/NE/CO/MG/ES"])
+    
+    with tab1:
+        st.write("- Até R$ 1k: 30 dias\n- R$ 1k a 2k: 30/45 dias\n- Acima de R$ 2k: 30/45/60 dias")
+    with tab2:
+        st.write("- Até R$ 1k: 45 dias\n- R$ 1k a 2k: 45/60 dias\n- Acima de R$ 2k: 40/50/60 dias")
+
+    st.subheader("📧 E-mail do Financeiro")
+    st.code("contasareceber2@papapa.com.br", language=None)
 
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
