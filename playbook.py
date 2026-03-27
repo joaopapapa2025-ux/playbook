@@ -3,6 +3,9 @@ import pandas as pd
 import base64
 from pathlib import Path
 
+import streamlit as st
+import base64
+
 ################################################################################
 # --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
 ################################################################################
@@ -13,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- FUNÇÕES AUXILIARES DE IMAGEM (Base64) ---
+# --- FUNÇÃO AUXILIAR DE IMAGEM ---
 def get_base64_of_bin_file(bin_file):
     try:
         with open(bin_file, 'rb') as f:
@@ -25,91 +28,89 @@ def get_base64_of_bin_file(bin_file):
 # Carregamento do Logo
 arquivo_logo = "Papapa-azul.png" 
 img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
-
-if img_base64_oficial:
-    img_logo_html = f"data:image/png;base64,{img_base64_oficial}"
-else:
-    img_logo_html = "https://www.w3schools.com/howto/img_avatar.png" 
+img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO MODERN PILLS (SEM BOLINHAS) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO "ZERO BOLINHAS" ---
 ################################################################################
 
 st.markdown(f"""
     <style>
-    /* 1. Esconde a sidebar e limpa o topo */
+    /* Esconde a sidebar */
     [data-testid="stSidebar"] {{ display: none; }}
-    .main .block-container {{ padding-top: 2rem; }}
-
-    /* 2. Container do Logo e Título centralizados */
+    
+    /* Centralização Total do Cabeçalho */
     .header-container {{
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
     }}
 
-    /* 3. SUMIR COM AS BOLINHAS DE VEZ */
-    /* Esse seletor ataca a estrutura interna do rádio do Streamlit */
-    div.row-widget.stRadio div[role="radiogroup"] > label div:first-child {{
+    /* --- O SEGREDO PARA SUMIR COM AS BOLINHAS --- */
+    /* Esconde o círculo do rádio e a marca de seleção interna */
+    [data-testid="stWidgetLabel"] {{
+        display: none;
+    }}
+    div[data-testid="stRadio"] div[role="radiogroup"] label div:first-child {{
         display: none !important;
     }}
-
-    /* 4. TRANSFORMAR O MENU EM BOTÕES (PILLS) */
-    div.row-widget.stRadio > div {{
+    
+    /* Estiliza o container dos botões */
+    div[data-testid="stRadio"] div[role="radiogroup"] {{
         display: flex;
-        flex-direction: row; 
-        justify-content: center; 
-        gap: 10px;
-        background-color: transparent;
+        flex-direction: row;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
     }}
 
-    div.row-widget.stRadio div[role="radiogroup"] label {{
+    /* Estiliza os botões em si */
+    div[data-testid="stRadio"] div[role="radiogroup"] label {{
         background-color: #f0f2f6 !important;
         border: 1px solid #d1d5db !important;
-        padding: 8px 20px !important;
-        border-radius: 50px !important;
-        color: #31333F !important;
-        font-weight: 600 !important;
+        padding: 10px 24px !important;
+        border-radius: 30px !important;
         cursor: pointer !important;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease !important;
     }}
 
     /* Botão Selecionado */
-    div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {{
+    div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] {{
         background-color: #007bff !important;
         color: white !important;
         border-color: #0056b3 !important;
-        box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
     }}
 
-    /* Efeito Hover */
-    div.row-widget.stRadio div[role="radiogroup"] label:hover {{
+    /* Hover */
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
         border-color: #007bff !important;
         color: #007bff !important;
-        background-color: #eef6ff !important;
+        background-color: #ffffff !important;
     }}
     </style>
 
     <div class="header-container">
-        <img src="{img_logo_html}" width="280">
-        <h1 style='color: #004a99; font-family: sans-serif; margin-top: 10px; font-weight: 800;'>
+        <img src="{img_logo_html}" width="300">
+        <h1 style='color: #004a99; font-family: sans-serif; font-weight: 850; margin-top: 15px;'>
             Hub Inside Sales
         </h1>
     </div>
     """, unsafe_allow_html=True)
 
-# O Menu de Navegação - Limpo e sem bolinhas
+# Menu de Navegação - Sem bolinhas agora!
 aba_selecionada = st.radio(
-    "Menu",
+    "Navegação",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
     horizontal=True,
     label_visibility="collapsed"
 )
 
 st.divider()
+
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
