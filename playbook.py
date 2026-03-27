@@ -74,47 +74,41 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA E CORRIGIDA) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
-    st.write("Conheça o time Inside Sales da Papapá.")
-
-    # CSS REFORMULADO: AUMENTADO E COM FOTO ANCORADA NO TOPO (CORREÇÃO DE POSIÇÃO)
+    
+    # CSS AJUSTADO PARA O "ZOOMZINHO" (object-fit e tamanho maior)
     st.markdown(f"""
         <style>
         .team-card {{
-            background-color: white; padding: 25px; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
+            background-color: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 330px; /* Aumentado ligeiramente para comportar a foto maior */
-            display: flex; flex-direction: column; align-items: center; justify-content: start;
+            height: 320px; /* Aumentei a altura do card para acomodar a foto maior */
         }}
         .avatar-round {{
-            width: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
-            height: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
+            width: 140px; /* Aumentado de 110px */
+            height: 140px; /* Aumentado de 110px */
             border-radius: 50%;
-            border: 4px solid #007bff; /* Borda um pouco mais grossa para destacar */
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            
-            /* --- AS DUAS LINHAS ABAIXO SÃO A CORREÇÃO DO PROBLEMA --- */
-            object-fit: cover; /* Mantém a proporção e preenche o círculo */
-            object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
+            object-fit: cover; /* ESSA É A MÁGICA DO ZOOM QUE PREENCHE O CÍRCULO */
+            border: 3px solid #007bff; margin-bottom: 15px;
         }}
-        .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
-        .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
+        .team-name {{ font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }}
+        .team-role {{ color: #666; font-size: 0.9em; margin-bottom: 15px; }}
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe com Cargos Corrigidos e nomes de arquivos exatos
+    # Lista da equipe com os nomes EXATOS dos arquivos que você subiu
+    # Garanta que a extensão seja .jpeg (e não .jpg) como no seu print
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)", "foto": "Ana.jpeg"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista (Crescimento)", "foto": "Pedro.jpeg"},
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)", "foto": "João Paulo.jpeg"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"}, # Sem foto ainda
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"} # Sem foto ainda
     ]
     
     # Criação de colunas para os cards (máximo 3 por linha)
@@ -140,7 +134,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
                         # Fallback se a conversão falhar
                         img_html = img_avatar_html
                 else:
-                    # Se não achar a foto da pessoa (como Thiago), usa o logo Papapá
+                    # Se não achar a foto da pessoa (como Thiago e Bernardo), usa o logo Papapá
                     img_html = img_avatar_html 
 
                 with cols[j]:
