@@ -195,7 +195,7 @@ Você pode me contar rapidamente como funciona hoje?""", language=None)
 • Seu público é mais família, fitness ou geral?""", language=None)
 
         with st.expander("📩 Opção 4: Abordagem mais direta"):
-            st.code("""Olá, tudo bem? Aqui é o João, da Papapá.
+            st.code("""Olá, tudo bem? Aqui é [SEU NOME], da Papapá.
 Recebi seu cadastro e quis agradecer pelo interesse. A Papapá trabalha com uma linha de alimentação natural e pronta para bebês e crianças, sem conservantes e com ótima aceitação.
 Posso te enviar o catálogo e as condições comerciais e, na sequência, entender se faz sentido para o seu negócio?""", language=None)
 
