@@ -488,22 +488,20 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.subheader("📦 Unidades por Caixa")
         st.markdown("""
-        - **Yoguzinho / Palitinhos:** 16 un.
-        - **Papinhas / Dentição / Macarrão / Cereal / Biscotti:** 12 un.
-        - **La Chef / Sopinhas:** 6 un.
-        """)
-
-        # --- SEÇÃO MOVIDA E ATUALIZADA (Agora ao lado dos prazos) ---
-        st.subheader("🔄 Trocas e Devoluções")
-        st.warning("""
-        **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
-        
-        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo (falta, quebra, etc). Sem a ressalva, a transportadora e a indústria não aceitam a reclamação.
-        
-        **Documentação:** Necessário envio da NFD (Nota Fiscal de Devolução) citando a NF de origem e o lote.
+        - **Yoguzinho:** 16 unidades
+        - **Palitinhos:** 16 unidades
+        - **La Chef:** 6 unidades
+        - **Sopinhas:** 6 unidades
+        - **Papinhas de Fruta:** 12 unidades
+        - **Papinhas de Carne:** 12 unidades
+        - **Dentição:** 12 unidades
+        - **Macarrão:** 12 unidades
+        - **Cereal:** 12 unidades
+        - **Biscotti:** 12 unidades
         """)
 
     with col_info2:
+        # Colocando Prazos e Trocas na mesma coluna da direita para alinhar
         st.subheader("💳 Modalidades de Pagamento")
         
         st.markdown("""
@@ -522,7 +520,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </div>
             """, unsafe_allow_html=True)
 
-        with st.expander("Prazos: Demais Regiões (NO/NE/CO/MG/ES)"):
+        with st.expander("Prazos: Demais Regiões"):
             st.markdown("""
             <div class="pagamento-texto">
             • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
@@ -531,10 +529,20 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </div>
             """, unsafe_allow_html=True)
             
-        st.success("**Pagamento:** Pix ou Boleto (enviado por e-mail)")
+        st.success("**Pagamento:** Pix ou Boleto")
+
+        st.markdown("---") # Pequeno separador interno na coluna
+
+        st.subheader("🔄 Trocas e Devoluções")
+        st.warning("""
+        **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
         
-        st.write("") 
-        st.info("💡 **Dica Papapá:** Sempre oriente o lojista a conferir a mercadoria com o transportador presente e bater com o que está na NF.")
+        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo.
+        
+        **Documentação:** Necessário envio da NFD (Nota Fiscal de Devolução) citando a NF de origem e motivo da devolução.
+        """)
+        
+        st.info("💡 **Dica:** Sempre oriente o lojista a conferir a mercadoria com o transportador presente.")
 
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
