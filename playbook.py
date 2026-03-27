@@ -237,11 +237,11 @@ with st.container():
     
     with col1:
         st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
-        st.caption("Novo cadastro de lojista")
+        st.caption("Novo cadastro e atualização de cadastro de clientes")
         
     with col2:
-        st.link_button("👀 Acompanhar Cadastros", "https://teams.microsoft.com/l/message/19:61eee15e-f2e5-4cf2-b034-e466806b1fc2_78a4310d-99a8-43cc-8548-acb2e59581bf@unq.gbl.spaces/1774452870137?context=%7B%22contextType%22%3A%22chat%22%7D", use_container_width=True)
-        st.caption("Link direto para o Teams")
+        st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
+        st.caption("Acompanhamento da realização dos cadastros")
 
     st.markdown("---")
 
