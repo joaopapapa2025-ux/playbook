@@ -608,10 +608,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         def salvar_nota_callback():
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
-            nf_pedido = st.session_state.get("input_nf_problema", "").strip() # Captura a NF
+            nf_pedido = st.session_state.get("input_nf_problema", "").strip()
             
             chave_atual = f"input_foto_prob_{st.session_state.uploader_key}"
-            arquivo_foto = st.session_state.get(chave_atual)
+            arquivos_fotos = st.session_state.get(chave_atual) # Agora pode ser uma lista
             
             if autor and texto:
                 from datetime import datetime
@@ -620,16 +620,18 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
-                foto_bytes = None
-                if arquivo_foto is not None:
-                    foto_bytes = arquivo_foto.getvalue()
+                # Processa múltiplos arquivos
+                lista_fotos_bytes = []
+                if arquivos_fotos:
+                    for arq in arquivos_fotos:
+                        lista_fotos_bytes.append(arq.getvalue())
                 
                 nova_nota = {
                     "id_unico": agora.timestamp(),
                     "autor": autor,
                     "texto": texto,
-                    "nf_pedido": nf_pedido, # Garante que a NF entre no dicionário
-                    "foto": foto_bytes,
+                    "nf_pedido": nf_pedido,
+                    "fotos": lista_fotos_bytes, # Salva a lista de imagens
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
                     "mes_referencia": mes_atual
                 }
@@ -657,10 +659,9 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 key="nome_usuario_log"
             )
 
-            # Campo NF
             st.text_input(
                 "Número da NF ou Pedido:",
-                placeholder="Ex: NF 123456 ou Pedido 123456/00",
+                placeholder="Ex: NF 123456...",
                 key="input_nf_problema"
             )
 
@@ -671,9 +672,11 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 height=100
             )
 
+            # ATUALIZADO: accept_multiple_files=True
             st.file_uploader(
-                "Anexar foto:", 
+                "Anexar fotos (múltiplas):", 
                 type=["png", "jpg", "jpeg"],
+                accept_multiple_files=True,
                 key=f"input_foto_prob_{st.session_state.uploader_key}"
             )
 
@@ -691,7 +694,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
 
-        # Métrica que funciona para "Todos" ou filtrado
         st.metric("Ocorrências no período", len(notas_exibidas))
 
         if not notas_exibidas:
@@ -703,15 +705,20 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     with c_txt:
                         st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
                         
-                        # Mostra a NF se ela existir no registro
                         nf_para_mostrar = item.get('nf_pedido', '').strip()
                         if nf_para_mostrar:
                             st.markdown(f"**🏷️ NF/Pedido:** `{nf_para_mostrar}`")
                             
                         st.write(f"**{item.get('autor')}:** {item.get('texto')}")
                         
-                        if item.get("foto"):
-                            st.image(item["foto"], width=250)
+                        # ATUALIZADO: Exibição de múltiplas fotos
+                        fotos = item.get("fotos", [])
+                        if fotos:
+                            # Mostra as fotos em colunas para não ocupar muito espaço vertical
+                            cols_fotos = st.columns(len(fotos) if len(fotos) < 3 else 3)
+                            for i, f_bytes in enumerate(fotos):
+                                with cols_fotos[i % 3]:
+                                    st.image(f_bytes, use_container_width=True)
                     
                     with c_del:
                         if st.button("🗑️", key=f"del_{item.get('id_unico')}"):
