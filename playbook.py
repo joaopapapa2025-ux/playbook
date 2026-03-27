@@ -478,42 +478,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     col_info1, col_info2 = st.columns(2)
 
     with col_info1:
-        st.subheader("📅 Shelf Life (Validades)")
-        
-        # CSS já está no bloco anterior, então usamos as mesmas classes
-        st.markdown("""
-            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">15 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">15 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">14 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">12 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">10 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
-        """, unsafe_allow_html=True)
-        st.caption("❄️ Nenhuma linha necessita de refrigeração.")
-
-        st.write("") # Espaçador
-        
-        st.subheader("📦 Unidades por Caixa")
-        st.markdown("""
-            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">6 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">12 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">12 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">12 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">12 un.</span></div>
-        """, unsafe_allow_html=True)
-
-        st.subheader("📦 Unidades por Caixa")
-        
-        # CSS para criar os cartões de unidades
+        # Estilos CSS (Centralizados aqui para evitar repetição)
         st.markdown("""
             <style>
             .unidade-row {
@@ -538,7 +503,29 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 border-radius: 5px;
             }
             </style>
-            
+        """, unsafe_allow_html=True)
+
+        # 1. VALIDADES
+        st.subheader("📅 Shelf Life (Validades)")
+        st.markdown("""
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">15 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">15 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">14 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">10 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
+        """, unsafe_allow_html=True)
+        st.caption("❄️ Nenhuma linha necessita de refrigeração.")
+
+        st.write("") # Espaçador visual
+
+        # 2. UNIDADES POR CAIXA
+        st.subheader("📦 Unidades por Caixa")
+        st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
