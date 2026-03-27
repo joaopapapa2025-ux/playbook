@@ -114,35 +114,6 @@ for i, label in enumerate(opcoes_menu):
 
 aba_selecionada = st.session_state.aba_atual
 st.divider()
-
-################################################################################
-# --- 3. LÓGICA DE CONTEÚDO (IF / ELIF) ---
-################################################################################
-
-if aba_selecionada == "🏠 Home (Equipe)":
-    st.markdown("### 🏠 Painel da Equipe")
-    # Aqui vamos colocar os cards do time depois
-    
-elif aba_selecionada == "💰 Simulador de Bonificação":
-    st.markdown("### 💰 Simulador de Bonificação")
-    
-elif aba_selecionada == "📄 Biblioteca de Arquivos":
-    st.markdown("### 📄 Biblioteca de Arquivos")
-    
-elif aba_selecionada == "✍️ Templates & Scripts":
-    st.markdown("### ✍️ Templates & Scripts")
-    
-elif aba_selecionada == "📊 Políticas Comerciais":
-    st.markdown("### 📊 Políticas Comerciais")
-
-elif aba_selecionada == "🛠️ Resolução de Problemas":
-    st.markdown("### 🛠️ Resolução de Problemas")
-
-elif aba_selecionada == "🚫 Quebras de Excuses":
-    st.markdown("### 🚫 Quebras de Excuses")
-    
-elif aba_selecionada == "🔗 Links Úteis":
-    st.markdown("### 🔗 Links Úteis")
     
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
