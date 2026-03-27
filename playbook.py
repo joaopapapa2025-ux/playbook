@@ -74,7 +74,7 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE COM DIGITAÇÃO NO TOPO DO CARD) ---
+# --- MÓDULO 1: HOME (EQUIPE SEM QUADROS BRANCOS E BARRA NO TOPO) ---
 ################################################################################
 from datetime import date
 
@@ -87,18 +87,27 @@ if aba_selecionada == "🏠 Home (Equipe)":
         st.session_state.status_date = date.today()
         st.session_state.daily_status = {}
 
+    # CSS LIMPO (Focado apenas no card e na foto)
     st.markdown("""
         <style>
-        .team-card {
-            background-color: white; padding: 15px; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
-            margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 410px; /* Altura ajustada para o input no topo */
-            display: flex; flex-direction: column; align-items: center;
+        .team-card-container {
+            background-color: white; 
+            padding: 20px; 
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            text-align: center;
+            border: 1px solid #eaeaea;
+            margin-bottom: 20px;
+            height: 380px; /* Altura fixa para manter simetria */
         }
 
-        /* Container da Foto */
-        .photo-container { position: relative; width: 140px; height: 140px; margin-top: 10px; }
+        .photo-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 140px;
+            height: 140px;
+            margin: 15px 0;
+        }
 
         .photo-circle {
             width: 140px; height: 140px; border-radius: 50%;
@@ -106,39 +115,35 @@ if aba_selecionada == "🏠 Home (Equipe)":
             background-size: cover; background-repeat: no-repeat;
         }
 
-        /* A caixinha amarela (Badge) que reflete o que foi digitado */
-        .status-badge {
-            position: absolute; top: 0px; right: 0px;
-            background-color: #ffcf00; color: #333;
-            padding: 2px 8px; border-radius: 8px;
-            font-size: 10px; font-weight: bold;
-            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-
-        /* Seus enquadramentos de foto salvos */
+        /* Enquadramentos salvos */
         .photo-joao-vitor { background-position: center 20%; }
         .photo-ana { background-position: center 10%; }
         .photo-joao-paulo { background-position: center 10%; }
         .photo-bernardo { background-position: center 10%; }
 
-        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-top: 15px; }
-        .team-role { color: #666; font-size: 0.9em; font-weight: 500;}
-        
-        /* Estilização da barra de texto */
-        .stTextInput { margin-bottom: 10px; }
+        .status-badge {
+            position: absolute; top: 0; right: 0;
+            background-color: #ffcf00; color: #333;
+            padding: 2px 8px; border-radius: 8px;
+            font-size: 10px; font-weight: bold;
+            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-top: 5px; }
+        .team-role { color: #666; font-size: 0.9em; }
         </style>
         """, unsafe_allow_html=True)
 
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista Key Accounts", "foto": "Ana.jpeg", "classe": "photo-ana"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista Crescimento", "foto": "Pedro.jpeg", "classe": "photo-pedro"},
+        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista Desenvolvimento", "foto": "João Paulo.jpeg", "classe": "photo-joao-paulo"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": ""},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "photo-bernardo"}
     ]
     
+    # Renderização em Grid 3x2
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
@@ -146,40 +151,40 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 membro = equipe[i + j]
                 user_key = f"st_{membro['nome']}"
                 
-                # Foto Logic
-                caminho_foto = membro['foto']
-                if Path(caminho_foto).exists():
-                    foto_b64 = get_base64_of_bin_file(caminho_foto)
-                    ext = caminho_foto.split('.')[-1].lower()
-                    estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_b64}');"
+                # Setup da Foto
+                caminho = membro['foto']
+                if Path(caminho).exists():
+                    b64 = get_base64_of_bin_file(caminho)
+                    ext = caminho.split('.')[-1].lower()
+                    img_style = f"background-image: url('data:image/{ext};base64,{b64}');"
                 else:
-                    estilo_foto = f"background-image: url('{img_avatar_html}');"
+                    img_style = f"background-image: url('{img_avatar_html}');"
 
                 with cols[j]:
-                    # Pegamos o valor atual
-                    status_atual = st.session_state.daily_status.get(user_key, "✨")
-                    
-                    # Abre o card
-                    st.write('<div class="team-card">', unsafe_allow_html=True)
-                    
-                    # 1. BARRA DE DIGITAÇÃO NO TOPO
-                    novo = st.text_input("Status:", value=status_atual, key=f"bar_{user_key}", label_visibility="collapsed", placeholder="Como você está?")
-                    if novo != status_atual:
-                        st.session_state.daily_status[user_key] = novo
-                        st.rerun()
+                    # O segredo para sumir com os quadros brancos é o st.container() 
+                    # envolvendo o conteúdo de cada coluna
+                    with st.container():
+                        st.markdown('<div class="team-card-container">', unsafe_allow_html=True)
+                        
+                        # BARRA DE TEXTO NO TOPO (Como você pediu)
+                        status_atual = st.session_state.daily_status.get(user_key, "✨")
+                        novo_status = st.text_input("Status", value=status_atual, key=f"input_{user_key}", label_visibility="collapsed")
+                        
+                        if novo_status != status_atual:
+                            st.session_state.daily_status[user_key] = novo_status
+                            st.rerun()
 
-                    # 2. FOTO COM O BADGE AMARELO (Reflexo do input)
-                    st.markdown(f"""
-                        <div class="photo-container">
-                            <div class="photo-circle {membro['classe_foto']}" style="{estilo_foto}"></div>
-                            <div class="status-badge">{novo}</div>
-                        </div>
-                        <div class="team-name">{membro['nome']}</div>
-                        <div class="team-role">{membro['cargo']}</div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Fecha o card
-                    st.write('</div>', unsafe_allow_html=True)
+                        # CONTEÚDO VISUAL (Foto + Badge + Nomes)
+                        st.markdown(f"""
+                            <div class="photo-wrapper">
+                                <div class="photo-circle {membro['classe']}" style="{img_style}"></div>
+                                <div class="status-badge">{novo_status}</div>
+                            </div>
+                            <div class="team-name">{membro['nome']}</div>
+                            <div class="team-role">{membro['cargo']}</div>
+                        """, unsafe_allow_html=True)
+                        
+                        st.markdown('</div>', unsafe_allow_html=True)
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
