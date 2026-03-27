@@ -61,6 +61,19 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 ################################################################################
+# --- 2. NAVEGAÇÃO SUPERIOR ---
+################################################################################
+st.title("Hub Inside Sales | Papapá")
+
+aba_selecionada = st.radio(
+    "Navegação:",
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
+    horizontal=True
+)
+
+st.divider()
+
+################################################################################
 # --- CONFIGURAÇÕES DE IMAGEM ADICIONAIS ---
 ################################################################################
 # Garanta que essa função get_base64_of_bin_file esteja definida antes desse bloco
@@ -74,19 +87,6 @@ if img_base64_oficial:
 else:
     # Fallback caso o arquivo não exista
     img_logo_html = img_avatar_html
-
-################################################################################
-# --- 2. NAVEGAÇÃO SUPERIOR ---
-################################################################################
-st.title("Hub Inside Sales | Papapá")
-
-aba_selecionada = st.radio(
-    "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
-    horizontal=True
-)
-
-st.divider()
 
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
