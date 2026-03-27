@@ -565,11 +565,11 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if "historico_problemas" not in st.session_state:
             st.session_state.historico_problemas = []
 
-        # --- FUNÇÃO CALLBACK PARA SALVAR E LIMPAR ---
+        # --- FUNÇÃO CALLBACK PARA SALVAR ---
         def salvar_nota_callback():
-            # Pegamos os valores que estão nos widgets
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
+            arquivo_foto = st.session_state.get("input_foto_problema")
             
             if autor and texto:
                 from datetime import datetime
@@ -578,18 +578,26 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                 
+                # Lógica para converter a foto em bytes (para salvar no histórico)
+                foto_bytes = None
+                if arquivo_foto is not None:
+                    foto_bytes = arquivo_foto.getvalue()
+                
                 nova_nota = {
                     "id_unico": agora.timestamp(),
                     "autor": autor,
                     "texto": texto,
+                    "foto": foto_bytes, # Salvamos os bytes da imagem
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
                     "mes_referencia": mes_atual
                 }
                 
                 st.session_state.historico_problemas.insert(0, nova_nota)
-                # AGORA SIM: Limpamos o campo dentro do callback (forma correta)
+                
+                # Limpa os campos
                 st.session_state["input_area_problemas"] = ""
-                st.toast("✅ Registro salvo!")
+                # O uploader não reseta via session_state facilmente, mas o registro limpa o texto.
+                st.toast("✅ Registro salvo com sucesso!")
             else:
                 st.error("Preencha o nome e o texto antes de salvar.")
 
@@ -602,7 +610,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 lista_pessoas, 
                 index=None, 
                 placeholder="Selecione seu nome...",
-                key="nome_usuario_log" # Atribuímos uma key para pegar no callback
+                key="nome_usuario_log"
             )
 
             st.text_area(
@@ -612,12 +620,19 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 height=100
             )
 
-            # O botão agora chama a função acima (on_click)
+            # --- NOVO CAMPO DE UPLOAD ---
+            st.file_uploader(
+                "Anexar foto da avaria/produto:", 
+                type=["png", "jpg", "jpeg"],
+                key="input_foto_problema",
+                help="Arraste ou selecione uma foto de até 200MB"
+            )
+
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
         st.divider()
 
-        # 2. Filtro por Mês
+        # 2. Filtro por Mês (Mantido)
         st.write("🔍 **Filtrar por Período:**")
         meses_filtro = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                                                         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
@@ -643,6 +658,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                         mes_exib = item.get('mes_referencia', 'n/a')
                         st.caption(f"📅 {data_exib} | 📂 {mes_exib}")
                         st.write(f"**{item.get('autor', 'Usuário')}:** {item.get('texto', '')}")
+                        
+                        # --- EXIBIÇÃO DA FOTO SE EXISTIR ---
+                        if item.get("foto"):
+                            st.image(item["foto"], width=250, caption="Anexo da ocorrência")
                     
                     with c_del:
                         chave_btn = item.get('id_unico', f"fallback_{idx}")
