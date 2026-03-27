@@ -57,7 +57,7 @@ st.title("Hub Inside Sales | Papapá")
 
 aba_selecionada = st.radio(
     "Navegação:",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas & Prazos", "🔗 Links Úteis"],
+    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
     horizontal=True
 )
 
