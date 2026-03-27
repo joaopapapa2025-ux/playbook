@@ -338,7 +338,7 @@ with col_info2:
 ################################################################################
 # --- MÓDULO 6: LINKS ÚTEIS ---
 ################################################################################
-    elif aba_selecionada == "🔗 Links Úteis":
+elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
     st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
     
