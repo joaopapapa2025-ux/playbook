@@ -463,7 +463,7 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
 ################################################################################
-elif aba_selecionada == "📊 Políticas Comerciais":
+elif aba_selected == "📊 Políticas Comerciais":
     st.header("📊 Políticas Comerciais")
     
     # Destaques Rápidos
@@ -488,36 +488,28 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.subheader("📦 Unidades por Caixa")
         st.markdown("""
-        - **Yoguzinho:** 16 unidades
-        - **Palitinhos:** 16 unidades
-        - **La Chef:** 6 unidades
-        - **Sopinhas:** 6 unidades
-        - **Papinhas de Fruta:** 12 unidades
-        - **Papinhas de Carne:** 12 unidades
-        - **Dentição:** 12 unidades
-        - **Macarrão:** 12 unidades
-        - **Cereal:** 12 unidades
-        - **Biscotti:** 12 unidades
+        - **Yoguzinho / Palitinhos:** 16 un.
+        - **Papinhas / Dentição / Macarrão / Cereal / Biscotti:** 12 un.
+        - **La Chef / Sopinhas:** 6 un.
         """)
 
-    # ESTE BLOCO ABAIXO FOI CORRIGIDO (Adicionados 4 espaços de indentação)
+        # --- SEÇÃO MOVIDA E ATUALIZADA ---
+        st.subheader("🔄 Trocas e Devoluções")
+        st.warning("""
+        **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
+        
+        **Avarias/Faltas:** No ato da entrega, é **obrigatório realizar a ressalva no verso da Nota Fiscal** apontando o motivo. 
+        
+        **Documentação:** Necessário envio da NFD (Nota Fiscal de Devolução) citando a NF de origem e o lote.
+        """)
+
     with col_info2:
         st.subheader("💳 Modalidades de Pagamento")
         
-        # CSS para deixar o texto dentro dos expanders idêntico ao print
         st.markdown("""
             <style>
-            .pagamento-texto {
-                font-size: 16px;
-                line-height: 1.6;
-                color: #31333F;
-            }
-            .highlight {
-                background-color: #f0f2f6;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-weight: bold;
-            }
+            .pagamento-texto { font-size: 16px; line-height: 1.6; color: #31333F; }
+            .highlight { background-color: #f0f2f6; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
             </style>
         """, unsafe_allow_html=True)
 
@@ -540,12 +532,10 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             """, unsafe_allow_html=True)
             
         st.success("**Pagamento:** Pix ou Boleto (enviado por e-mail)")
-
-    st.divider()
-    
-    st.subheader("🔄 Política de Trocas e Devoluções")
-    st.info("""A troca por validade reduzida só é aplicada se o produto chegar com **menos de 60% da validade total**. 
-    É obrigatório o envio da NFD (Nota Fiscal de Devolução) com o número da NF de origem e lote.""")
+        
+        # Espaço extra para alinhar visualmente com a coluna da esquerda
+        st.write("") 
+        st.info("💡 **Dica Papapá:** Sempre oriente o lojista a conferir a mercadoria com o transportador presente.")
 
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
