@@ -29,7 +29,7 @@ img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO POR BOTÕES (GARANTIDO) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO POR BOTÕES (ESTRUTURA FINAL) ---
 ################################################################################
 
 st.markdown(f"""
@@ -40,40 +40,38 @@ st.markdown(f"""
         flex-direction: column;
         align-items: center;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }}
-    /* Estiliza os botões para parecerem abas */
+    /* Estilização dos Botões de Navegação */
     .stButton > button {{
         width: 100%;
-        border-radius: 20px;
-        height: 3em;
+        border-radius: 12px;
+        height: 3.5em;
         background-color: #f0f2f6;
-        color: #31333F;
-        font-weight: 600;
+        color: #1A1C24;
+        font-weight: 700;
+        font-size: 0.9rem;
         border: 1px solid #d1d5db;
+        transition: all 0.2s ease;
     }}
     .stButton > button:hover {{
         border-color: #007bff;
         color: #007bff;
+        background-color: #ffffff;
+        transform: translateY(-2px);
     }}
     </style>
 
     <div class="header-container">
-        <img src="{img_logo_html}" width="300">
+        <img src="{img_logo_html}" width="320">
         <h1 style='color: #004a99; font-family: sans-serif; font-weight: 850; margin-top: 10px;'>
             Hub Inside Sales
         </h1>
     </div>
     """, unsafe_allow_html=True)
 
-# Inicializa o estado da aba se não existir
-if 'aba_atual' not in st.session_state:
-    st.session_state.aba_atual = "🏠 Home (Equipe)"
-
-# Cria 6 colunas para os botões do menu
-cols = st.columns(6)
-
-labels = [
+# 1. Definimos a lista exata com todos os nomes (incluindo as novas abas)
+opcoes_menu = [
     "🏠 Home (Equipe)", 
     "💰 Simulador de Bonificação", 
     "📄 Biblioteca de Arquivos", 
@@ -84,16 +82,52 @@ labels = [
     "🔗 Links Úteis"
 ]
 
-# Renderiza cada botão. Se clicado, muda o session_state
-for i, label in enumerate(labels):
-    if cols[i].button(label, key=f"btn_{i}"):
+# 2. Inicializa o estado da aba
+if 'aba_atual' not in st.session_state:
+    st.session_state.aba_atual = "🏠 Home (Equipe)"
+
+# 3. Cria o grid de botões (2 linhas de 4 colunas para não apertar muito)
+col_a, col_b, col_c, col_d = st.columns(4)
+col_e, col_f, col_g, col_h = st.columns(4)
+todas_cols = [col_a, col_b, col_c, col_d, col_e, col_f, col_g, col_h]
+
+for i, label in enumerate(opcoes_menu):
+    if todas_cols[i].button(label, key=f"btn_{label}"):
         st.session_state.aba_atual = label
 
+# 4. Atribui a variável para os seus IFs funcionarem
 aba_selecionada = st.session_state.aba_atual
+
 st.divider()
 
-# Teste de visualização
-st.write(f"### Você está em: {aba_selecionada}")
+################################################################################
+# --- 3. LÓGICA DE CONTEÚDO (IF / ELIF) ---
+################################################################################
+
+if aba_selecionada == "🏠 Home (Equipe)":
+    st.markdown("### 🏠 Painel da Equipe")
+    # Aqui vamos colocar os cards do time depois
+    
+elif aba_selecionada == "💰 Simulador de Bonificação":
+    st.markdown("### 💰 Simulador de Bonificação")
+    
+elif aba_selecionada == "📄 Biblioteca de Arquivos":
+    st.markdown("### 📄 Biblioteca de Arquivos")
+    
+elif aba_selecionada == "✍️ Templates & Scripts":
+    st.markdown("### ✍️ Templates & Scripts")
+    
+elif aba_selecionada == "📊 Políticas Comerciais":
+    st.markdown("### 📊 Políticas Comerciais")
+
+elif aba_selecionada == "🛠️ Resolução de Problemas":
+    st.markdown("### 🛠️ Resolução de Problemas")
+
+elif aba_selecionada == "🚫 Quebras de Excuses":
+    st.markdown("### 🚫 Quebras de Excuses")
+    
+elif aba_selecionada == "🔗 Links Úteis":
+    st.markdown("### 🔗 Links Úteis")
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
