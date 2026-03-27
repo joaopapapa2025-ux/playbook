@@ -3,6 +3,9 @@ import pandas as pd
 import base64
 from pathlib import Path
 
+import streamlit as st
+import base64
+
 ################################################################################
 # --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
 ################################################################################
@@ -13,7 +16,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- FUNÇÃO AUXILIAR DE IMAGEM ---
 def get_base64_of_bin_file(bin_file):
     try:
         with open(bin_file, 'rb') as f:
@@ -22,22 +24,18 @@ def get_base64_of_bin_file(bin_file):
     except:
         return None
 
-# Carregamento do Logo
 arquivo_logo = "Papapa-azul.png" 
 img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO "MODERN BUTTONS" (FORÇA TEXTO) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO (FORÇA BRUTA NO TEXTO) ---
 ################################################################################
 
 st.markdown(f"""
     <style>
-    /* 1. Limpeza de interface */
     [data-testid="stSidebar"] {{ display: none; }}
-    .main .block-container {{ padding-top: 2rem; }}
-
-    /* 2. Container do Logo centralizado */
+    
     .header-container {{
         display: flex;
         flex-direction: column;
@@ -47,13 +45,12 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* 3. TRANSFORMAÇÃO DO RADIO EM BOTÕES */
-    /* Esconde a bolinha e o círculo */
-    div[data-testid="stRadio"] div[role="radiogroup"] label div:first-child {{
+    /* ESCONDE A BOLINHA */
+    div[data-testid="stRadio"] div[role="radiogroup"] > label div:first-child {{
         display: none !important;
     }}
 
-    /* Alinha os botões ao centro */
+    /* CONTAINER DOS BOTÕES */
     div[data-testid="stRadio"] div[role="radiogroup"] {{
         display: flex;
         flex-direction: row; 
@@ -62,44 +59,37 @@ st.markdown(f"""
         flex-wrap: wrap;
     }}
 
-    /* Estilo do Botão (Label) */
+    /* ESTILO DO BOTÃO */
     div[data-testid="stRadio"] div[role="radiogroup"] label {{
         background-color: #f0f2f6 !important;
         border: 1px solid #d1d5db !important;
-        padding: 12px 25px !important;
-        border-radius: 10px !important;
+        padding: 12px 20px !important;
+        border-radius: 12px !important;
         cursor: pointer !important;
         min-width: 180px;
         display: flex;
         justify-content: center;
-        transition: 0.2s;
+        align-items: center;
     }}
 
-    /* --- O SEGREDO: FORÇAR O TEXTO A APARECER --- */
-    /* Esse seletor garante que o texto dentro do botão fique visível e preto */
-    div[data-testid="stRadio"] div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {{
-        color: #111111 !important;
+    /* --- ESTE BLOCO RESOLVE O TEXTO BRANCO --- */
+    /* Alvo: Qualquer texto dentro da label do rádio */
+    div[data-testid="stRadio"] div[role="radiogroup"] label * {{
+        color: #1A1C24 !important;
         font-weight: 700 !important;
-        font-size: 1rem !important;
+        text-decoration: none !important;
         opacity: 1 !important;
-        display: block !important;
     }}
 
-    /* Estilo quando SELECIONADO (Azul Papapá) */
+    /* ESTILO SELECIONADO */
     div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] {{
         background-color: #007bff !important;
         border-color: #0056b3 !important;
     }}
 
-    /* Texto quando SELECIONADO (Branco) */
-    div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] div[data-testid="stMarkdownContainer"] p {{
+    /* TEXTO SELECIONADO (BRANCO) */
+    div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] * {{
         color: #ffffff !important;
-    }}
-
-    /* Hover */
-    div[data-testid="stRadio"] div[role="radiogroup"] label:hover {{
-        border-color: #007bff !important;
-        background-color: #eef6ff !important;
     }}
     </style>
 
@@ -111,7 +101,6 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# Menu de Navegação
 aba_selecionada = st.radio(
     "Navegação",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
@@ -120,6 +109,10 @@ aba_selecionada = st.radio(
 )
 
 st.divider()
+
+# Teste de conteúdo para confirmar que a aba muda
+if aba_selecionada == "🏠 Home (Equipe)":
+    st.subheader("Bem-vindo ao Hub da Equipe!")
 
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
