@@ -234,9 +234,9 @@ Hoje você imagina algo mais como um teste inicial ou já pensa em abastecer a g
 
 *Obs.: O CNAE deve permitir a comercialização de produtos alimentícios.""", language=None)
             
-        with col2:
-            st.markdown("### 💰 Condições Comerciais")
-            st.code("""Vou te passar nossas condições para você se organizar:
+with col2:
+    st.markdown("### 💰 Condições Comerciais")
+    st.code("""Vou te passar nossas condições para você se organizar:
 
 • Pedido mínimo: R$ 800,00.
 • Frete: CIF (Grátis) para todo o Brasil.
