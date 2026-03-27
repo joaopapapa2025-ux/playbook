@@ -575,16 +575,19 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
     st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
     
-    # --- NOVO BLOCO: FERRAMENTAS PRINCIPAIS ---
+    # --- BLOCO ATUALIZADO: FERRAMENTAS DE TRABALHO (3 COLUNAS) ---
     with st.container():
         st.subheader("🛠️ Ferramentas de Trabalho (Daily)")
-        col_v1, col_v2 = st.columns(2)
+        col_v1, col_v2, col_v3 = st.columns(3)
         with col_v1:
             st.link_button("🚀 RD CRM (Pipeline)", "https://crm.rdstation.com/app/deals/pipeline", use_container_width=True)
             st.caption("Gestão de funil e negociações")
         with col_v2:
             st.link_button("🤖 Vekta AI", "https://app.vektasales.com.br/chat", use_container_width=True)
             st.caption("Nossa ferramenta de Inteligência Artificial")
+        with col_v3:
+            st.link_button("📦 Dibb (ERP)", "http://170.231.15.12:8080/web/view/app/ger/GER801V.php?term=3321245", use_container_width=True)
+            st.caption("Consulta de pedidos e faturamento")
     
     st.markdown("---")
 
