@@ -603,6 +603,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 
                 # REGRAS DE LIMPEZA:
                 st.session_state["input_area_problemas"] = "" # Limpa o texto
+                st.session_state["input_nf_problema"] = ""    # Limpa a NF/Pedido
                 st.session_state.uploader_key += 1           # Muda a chave para limpar o arquivo
                 
                 st.toast("✅ Registro salvo com sucesso!")
