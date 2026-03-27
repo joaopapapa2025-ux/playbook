@@ -271,212 +271,125 @@ elif aba_selecionada == "🚚 Logística & SAC":
 
 import streamlit as st
 
-# --- 1. CONFIGURAÇÕES DA PÁGINA (ESTILO E TÍTULO) ---
+# --- 1. CONFIGURAÇÕES DA PÁGINA ---
 st.set_page_config(
-    page_title="Papapá | Sales Hub 2026",
+    page_title="Papapá | Sales Hub",
     page_icon="💙",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    layout="wide"
 )
 
-# --- 2. CSS CUSTOMIZADO (Design Premium Papapá) ---
-# Aqui definimos as cores, bordas redondas e sombras para os cards.
+# --- 2. CSS CUSTOMIZADO (Identidade Papapá) ---
 st.markdown("""
     <style>
-    /* Configuração Geral de Cores e Fundo */
-    .stApp {
-        background-color: #f7f9fc;
-        color: #333333;
-    }
+    .stApp { background-color: #f8f9fb; }
+    [data-testid="stSidebar"] { background-color: #ffffff; border-right: 1px solid #eee; }
+    h1, h2, h3 { color: #004a99 !important; font-family: 'Segoe UI', sans-serif; }
     
-    /* Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #eaeef2;
-    }
-    
-    /* Títulos Principais */
-    h1 {
-        color: #004a99; /* Azul Papapá */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-    
-    /* Subtítulos de Cards */
-    h3 {
-        color: #0056b3;
-        font-size: 1.1em;
-        font-weight: 600;
-        margin-top: 15px;
-    }
-
-    /* Estilo para Tabs (Abas de Navegação Interna) */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-    }
+    /* Estilo das Abas */
+    .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] {
-        height: 40px;
-        white-space: pre;
         background-color: #ffffff;
-        border-radius: 20px;
-        border: 1px solid #eaeef2;
-        color: #666666;
-        padding: 0px 20px;
-    }
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: #eaeef2;
+        border-radius: 15px 15px 0 0;
+        padding: 10px 20px;
+        border: 1px solid #eee;
     }
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        background-color: #007bff; /* Azul de seleção */
-        color: #ffffff;
-        font-weight: 600;
-    }
-
-    /* Estilo para Blocos de Código (Botões de Copiar) */
-    .stCode {
-        background-color: #fcfcfc;
-        border-radius: 10px;
-        border: 1px solid #e0e0e0;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.03);
+        background-color: #004a99;
+        color: white !important;
     }
     
-    /* Container para Margens/Cards */
-    .block-container {
-        padding-top: 3rem;
-        padding-bottom: 3rem;
-    }
+    /* Blocos de Código/Templates */
+    .stCode { border: 1px solid #d1d9e0; border-radius: 10px; background-color: white !important; }
     </style>
     """, unsafe_allow_html=True)
 
+# --- 3. SIDEBAR (APENAS 2 MENUS) ---
+st.sidebar.image("https://papapa.com.br/wp-content/uploads/2021/06/logo-papapa.png", width=120)
+st.sidebar.title("Navegação")
+
+menu = st.sidebar.radio(
+    "Ir para:",
+    ["✍️ Templates de Mensagens", "📋 Políticas e Prazos"]
+)
+
 # --- 4. MÓDULO: TEMPLATES DE MENSAGENS ---
 if menu == "✍️ Templates de Mensagens":
-    st.title("✍️ Hub de Templates & Scripts 2026")
-    st.write("Abra a aba correspondente e clique no ícone de copiar rápida.")
-
+    st.title("✍️ Hub de Templates & Scripts")
+    
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "🤝 Abordagem e Sondagem", 
-        "🚀 Curva A & Mix Estratégico", 
-        "📝 Cadastro e Pagamento", 
-        "🚚 Logística e Prazos",
-        "Pós-Venda e Trocas"
+        "🤝 Abordagem", "🚀 Curva A", "📝 Cadastro/PIX", "🚚 Logística", "🛠️ Pós-Venda"
     ])
 
     with tab1:
-        st.write("### 📞 Primeiro Contato (Apresentação e Qualificação)")
-        
-        # Agrupando em Cards Visuais
-        with st.container():
-            col1, col2 = st.columns(2)
-            with col1:
-                st.write("**Modelos: Introdução e Sondagem Perfil**")
-                # Modelo 1
-                with st.expander("Aproximação Clássica (Perfil Lojista)", expanded=True):
-                    text1 = """Olá, tudo bem?\nAqui é o [Seu Nome], da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?"""
-                    st.code(text1, language=None)
-                
-                # Modelo 2
-                with st.expander("Abordagem Assertiva (Foco Negócio)", expanded=True):
-                    text2 = """Oi, tudo bem?\nSou o [Seu Nome], da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?"""
-                    st.code(text2, language=None)
+        st.subheader("Modelos de Abordagem e Sondagem")
+        col1, col2 = st.columns(2)
+        with col1:
+            with st.expander("Aproximação Clássica (Lojista)", expanded=True):
+                st.code("Olá, tudo bem?\nAqui é o [Seu Nome], da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?", language=None)
+            
+            with st.expander("Abordagem Assertiva (Foco Negócio)"):
+                st.code("Oi, tudo bem?\nSou o [Seu Nome], da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?", language=None)
 
-            with col2:
-                st.write("**Modelos: Cadastro e Checklist de Qualificação**")
-                # Modelo 3
-                with st.expander("Abordagem Interessada (Catálogo)", expanded=True):
-                    text3 = """Oi, tudo bem?\nSou o [Seu Nome], da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?"""
-                    st.code(text3, language=None)
-
-                # Modelo 4
-                with st.expander("Checklist de Qualificação Rápida", expanded=True):
-                    text4 = """Antes de te indicar os produtos, queria entender rapidinho:\n• Que tipo de estabelecimento você tem?\n• Em qual cidade/bairro?\n• Seu público é mais família, fitness ou geral?"""
-                    st.code(text4, language=None)
+        with col2:
+            with st.expander("Interesse em Catálogo", expanded=True):
+                st.code("Oi, tudo bem?\nSou o [Seu Nome], da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?", language=None)
 
     with tab2:
-        st.write("### 🚀 Curva A: O que mais gira e gera recompra")
-        st.info("Utilize este texto para educar o cliente sobre a nossa linha carro-chefe.")
-        
-        curva_a_text = """Vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
+        st.subheader("🚀 Estratégia de Mix (Curva A)")
+        st.info("Dica: Use este script para garantir o giro rápido no cliente novo.")
+        st.code("""Vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
 Hoje, a nossa Curva A (produtos de maior giro e recompra) é formada por:
-• Papinhas de fruta – Nosso carro-chefe. Sem adição de açúcar, não precisam de refrigeração e têm excelente aceitação.
-• Biscoitinho para fase da dentição – Snack funcional procurado por pais de bebês, com compra recorrente.
-• Biscotti – Nosso snack mais vendido, Naturally adocicado pelas frutas.
+• Papinhas de fruta – Nosso carro-chefe. Sem adição de açúcar e não precisam de refrigeração.
+• Biscoitinho para fase da dentição – Snack funcional com alta procura.
+• Biscotti – Nosso snack mais vendido, naturalmente adocicado pelas frutas.
 
 Em um segundo momento, entram como complemento:
-• Palitinhos de vegetais – Assados, fonte de proteínas.
-• Yoguzinho – Diferenciado,Shelf Life de 15 meses (fora de geladeira).
-
-Eu te ajudo a montar um pedido inicial estratégico focado em giro rápido."""
-        st.code(curva_a_text, language=None)
-        st.caption("Fale do giro rápido e da recompra dos itens de Curva A.")
+• Palitinhos de vegetais – Assados e fonte de proteínas.
+• Yoguzinho – Shelf Life de 15 meses (fora de geladeira).""", language=None)
 
     with tab3:
-        st.write("### 📝 Cadastro e Dados Financeiros")
-        st.markdown("<p style='color: grey;'>Para darmos sequência e liberar seu cadastro aqui na Papapá...</p>", unsafe_allow_html=True)
-        
-        col_cad, col_pix = st.columns(2)
-        with col_cad:
-            st.write("**1. Checklist de Documentação (Enviar ao Cliente)**")
-            st.code("""● CNPJ:\n● Inscrição Estadual (IE):\n● Telefone Financeiro:\n● Telefone Compras:\n● E-mail Financeiro:\n● E-mail Compras:\n● Dados Bancários (pix):\n*Obs.: É importante constar também a Descrição das Atividades (CNAE).""", language=None)
-
-        with col_pix:
-            st.write("**2. Dados Oficiais para Pagamento (PIX/Transferência)**")
-            st.code("""Segue dados de pagamento:\nPix:\nCNPJ 34.282.307/0001-44\nBABY ROO COMERCIO DE ALIMENTOS S/A\n\nTransferência Itaú:\nAg 8931 | CC 05510-0\nFinanceiro: contasareceber2@papapa.com.br""", language=None)
+        st.subheader("📝 Cadastro e Dados Financeiros")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.write("**Documentos para Cadastro:**")
+            st.code("● CNPJ:\n● Inscrição Estadual (IE):\n● Telefone Financeiro:\n● Telefone Compras:\n● E-mail Financeiro:\n● E-mail Compras:\n● Dados Bancários (pix):", language=None)
+        with c2:
+            st.write("**Dados para Pagamento (PIX/Itaú):**")
+            st.code("Pix: CNPJ 34.282.307/0001-44\nBABY ROO COMERCIO DE ALIMENTOS S/A\n\nTransferência Itaú:\nAg 8931 | CC 05510-0", language=None)
 
     with tab4:
-        st.write("### 🚚 Logística, Prazos e Condições Padrão")
-        
-        st.write("**Visão Geral das Condições**")
-        st.code("""🔹 Pedido Mínimo: R$ 800,00.\n🔹 Venda: Caixas Fechadas (16 un: Palitinhos e Yoguzinho | 6 un: Chef/Sopinhas | 12 un: Demais lines).\n🔹 Pagamento: Pix ou Boleto.\n🔹 Frete: CIF (Grátis) para todo o Brasil.""", language=None)
-
-        st.write("**Prazos e Fluxo de Pedido**")
-        st.code("""Só pra te explicar nosso fluxo:\n• Até 3 dias úteis para separação no nosso CD.\n• Depois, mais 2 dias úteis para faturamento da Nota Fiscal.\n• Em seguida, coleta pela transportadora. (O prazo varia por região).""", language=None)
+        st.subheader("🚚 Logística e Fluxo de Pedido")
+        st.code("""🔹 Pedido Mínimo: R$ 800,00.\n🔹 Venda: Caixas Fechadas.\n🔹 Frete: CIF (Grátis) para todo o Brasil.\n\nFluxo de Prazo:\n• Até 3 dias úteis para separação.\n• + 2 dias úteis para faturamento.\n• Após isso, segue para coleta da transportadora.""", language=None)
 
     with tab5:
-        st.write("### Pós-Venda e Gestão de Ocorrências")
-        st.write("**Guia de Recebimento (Avarias)**")
-        st.warning("**Atenção:** Sem a ressalva na Nota Fiscal, não conseguimos abrir ocorrência.")
-        st.code("""No momento da entrega, confira a mercadoria antes de assinar a NF.\nIdentificou avaria (embalagens violadas, caixas amassadas, produtos quebrados)?\n1. Registre a ressalva na Nota Fiscal descrevendo o problema.\n2. Não aceite os produtos avariados.\n3. Informe a Papapá imediatamente.""", language=None)
+        st.subheader("🛠️ Gestão de Ocorrências (Avarias)")
+        st.warning("Sem a ressalva na NF, a logística não aceita a reclamação!")
+        st.code("""No momento da entrega, confira a mercadoria antes de assinar a NF.\nIdentificou avaria (embalagem violada, caixa amassada)?\n1. Registre a ressalva na Nota Fiscal.\n2. Não aceite os produtos avariados.\n3. Informe a Papapá imediatamente.""", language=None)
 
-        st.write("**Política de Troca por Validade Reduzida**")
-        st.code("""Trocas por validade reduzida são aplicáveis quando o produto é entregue com menos de 60% da validade total.\nÉ necessário a emissão de NFD (Nota Fiscal de Devolução).""", language=None)
-
-# --- 5. MÓDULO: POLÍTICAS E PRAZOS (Resumo Visual) ---
-if menu == "📊 Políticas e Prazos":
-    st.title("📊 Políticas Comerciais Papapá 2026")
+# --- 5. MÓDULO: POLÍTICAS E PRAZOS ---
+if menu == "📋 Políticas e Prazos":
+    st.title("📊 Políticas Comerciais Papapá")
     
-    col_valid, col_praz = st.columns(2)
-    
-    with col_valid:
+    col_a, col_b = st.columns(2)
+    with col_a:
         st.subheader("📅 Tabela de Validade (Shelf Life)")
-        validade_dict = {
-            "Papinhas de Carne": "12 meses", "Yoguzinho": "15 meses",
-            "Papinhas de Fruta": "16 meses", "Dentição": "15 meses",
+        validade_data = {
+            "Papinhas de Fruta": "16 meses", "Papinhas de Carne": "12 meses",
+            "Yoguzinho": "15 meses", "Dentição": "15 meses",
             "Biscotti": "10 meses", "La Chef": "16 meses",
             "Macarrão": "14 meses", "Cereal": "12 meses",
             "Palitinhos": "9 meses", "Sopinhas": "12 meses"
         }
-        st.table(validade_dict)
-        st.info("Dispensam refrigeração devido à fabricação e embalagem.")
+        st.table(validade_data)
 
-    with col_praz:
-        st.subheader("💳 Prazos de Pagamento (Boleto)")
-        st.write("**Sul e Sudeste:**")
+    with col_b:
+        st.subheader("💳 Prazos de Boleto")
+        st.markdown("**Sul e Sudeste:**")
         st.code("Até 1k: 30d | 1k-2k: 30/45d | +2k: 30/45/60d", language=None)
-        
-        st.write("**Outras Regiões (NO/NE/CO/MG/ES):**")
+        st.markdown("**Demais Regiões (NO/NE/CO/MG/ES):**")
         st.code("Até 1k: 45d | 1k-2k: 45/60d | +2k: 40/50/60d", language=None)
-        
         st.divider()
-        st.subheader("📂 Material de PDV e Catálogo")
-        st.write("Acesso pelo Drive Papapá:")
-        st.code("Link: https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA\nSenha: Papapa@2023", language=None)
-
-# --- 6. MÓDULO: SOBRE O HUB ---
-if menu == "ℹ️ Sobre o Hub":
-    st.title("ℹ️ Hub Inside Sales 2026")
-    st.write("Esta ferramenta centraliza os recursos e processos para o time Inside Sales da Papapá.")
-    st.write("💙 Criado para facilitar o dia a dia e impulsionar nossas vendas com agilidade.")
+        st.write("**Financeiro:** contasareceber2@papapa.com.br")
     
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
