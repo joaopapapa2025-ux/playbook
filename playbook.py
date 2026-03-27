@@ -22,88 +22,91 @@ def get_base64_of_bin_file(bin_file):
     except:
         return None
 
-# Nome corrigido conforme seu repositório
-novo_logo_filename = "Papapa-azul.png" 
-fallback_avatar = "https://www.w3schools.com/howto/img_avatar.png"
-
-# Carrega o logo oficial para o topo
-img_base64_oficial = get_base64_of_bin_file(novo_logo_filename)
-if img_base64_oficial:
-    img_logo_src = f"data:image/png;base64,{img_base64_oficial}"
-else:
-    img_logo_src = fallback_avatar
-
-################################################################################
-# --- 1. CONFIGURAÇÕES DE IMAGEM DO LOGO ---
-################################################################################
-# Nome do arquivo conforme seu repositório
+# Carregamento Unificado do Logo
 arquivo_logo = "Papapa-azul.png" 
-
-# Carrega o logo oficial
 img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 
 if img_base64_oficial:
-    # Esta é a variável que o st.image vai usar
     img_logo_html = f"data:image/png;base64,{img_base64_oficial}"
 else:
-    # Se o arquivo não for encontrado, usamos o fallback para não dar NameError
     img_logo_html = "https://www.w3schools.com/howto/img_avatar.png" 
 
 ################################################################################
-# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO SUPERIOR REFORMULADA ---
+# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO ESTILO "PILLS" ---
 ################################################################################
 
-# CSS para deixar o menu bonito (sem bolinhas) e centralizar tudo
+# CSS Ninja para transformar o rádio em botões modernos e centralizar tudo
 st.markdown("""
     <style>
-    [data-testid="stSidebar"] { display: none; } /* Garante que a sidebar suma */
+    /* 1. Esconde a sidebar e ajusta o topo */
+    [data-testid="stSidebar"] { display: none; }
+    .stApp { margin-top: -50px; }
+
+    /* 2. Container do Logo e Título */
+    .main-header {
+        text-align: center;
+        padding: 20px 0;
+    }
     
-    /* Estilo das abas de navegação */
+    /* 3. Estilização RADICAL do st.radio (Transforma em Botões/Abas) */
     div.row-widget.stRadio > div {
         display: flex;
         flex-direction: row; 
-        gap: 12px; 
         justify-content: center; 
-        margin-top: 5px;
+        gap: 10px;
+        background-color: #f8f9fa; /* Fundo sutil para o menu */
+        padding: 10px;
+        border-radius: 50px; /* Menu arredondado */
+        width: fit-content;
+        margin: 0 auto;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
     
+    /* Esconde as bolinhas de rádio */
     div.row-widget.stRadio div[role="radiogroup"] span { display: none; }
 
+    /* Transforma os labels em Botões Interativos */
     div.row-widget.stRadio div[role="radiogroup"] label {
-        padding: 8px 16px;
-        border-radius: 20px;
-        border: 1px solid #007bff;
-        color: #007bff;
-        font-weight: 600;
-        font-size: 0.9em;
-        cursor: pointer;
-        transition: 0.3s;
+        padding: 10px 22px !important;
+        border-radius: 30px !important;
+        border: none !important;
+        background-color: white !important;
+        color: #555 !important;
+        font-weight: 600 !important;
+        font-size: 0.95em !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin: 0 !important;
     }
 
-    div.row-widget.stRadio div[role="radiogroup"] label:hover { background-color: #f0f7ff; }
+    /* Efeito de Hover (Passar o mouse) */
+    div.row-widget.stRadio div[role="radiogroup"] label:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        color: #007bff !important;
+    }
 
+    /* Estilo do Botão Selecionado (Destaque Papapá) */
     div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {
-        background-color: #007bff;
-        color: white;
+        background-color: #007bff !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(0,123,255,0.3);
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Exibição do Cabeçalho
-with st.container():
-    # Centraliza o logo
-    c1, c2, c3 = st.columns([1, 1.2, 1])
-    with c2:
-        st.image(img_logo_html, width=280)
-    
-    # Título estilizado logo abaixo do logo
-    st.markdown("""
-        <h2 style='text-align: center; color: #004a99; font-family: sans-serif; margin-top: -10px; margin-bottom: 20px;'>
-            Hub Inside Sales
-        </h2>
-    """, unsafe_allow_html=True)
+# Exibição Visual do Cabeçalho
+st.markdown('<div class="main-header">', unsafe_allow_html=True)
+st.image(img_logo_html, width=280) # Logo centralizado via container
+st.markdown(f"""
+    <h2 style='color: #004a99; font-family: sans-serif; margin-top: -10px; font-weight: 700; letter-spacing: -0.5px;'>
+        Hub Inside Sales
+    </h2>
+""", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# O Menu de Navegação (Rádio transformado em abas pelo CSS acima)
+# O Menu de Navegação - Agora em formato de Botões Modernos
 aba_selecionada = st.radio(
     "Menu",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
@@ -112,6 +115,7 @@ aba_selecionada = st.radio(
 )
 
 st.divider()
+
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
