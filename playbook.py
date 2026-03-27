@@ -269,91 +269,131 @@ elif aba_selecionada == "🚚 Logística & SAC":
     with col_p2:
         st.info("**Separação:** Até 3 dias úteis após confirmação.")
 
-# --- MÓDULO 5: TEMPLATES & SCRIPTS ---
-elif aba_selecionada == "✍️ Templates & Scripts":
-    st.title("✍️ Templates & Scripts")
-    st.write("Clique no ícone no canto superior direito de cada bloco para copiar o texto.")
+import streamlit as st
 
-    # --- ABA 1: BOAS-VINDAS E PROSPECÇÃO ---
-    st.subheader("👋 Introdução e Boas-vindas")
+st.set_page_config(page_title="Hub Inside Sales Papapá", layout="wide")
+
+st.title("🚀 Hub Inside Sales - Papapá")
+
+# Sidebar para Navegação
+menu = st.sidebar.radio("Navegação", ["Calculadora de Pedidos", "Catálogo de Produtos", "Templates de Mensagens", "Políticas e Prazos"])
+
+# --- SEÇÃO: TEMPLATES DE MENSAGENS ---
+if menu == "Templates de Mensagens":
+    st.header("💬 Templates de Comunicação")
     
-    with st.expander("Mensagem de Apresentação (Novo Cliente)", expanded=True):
-        template_boas_vindas = """Olá, tudo bem? Me chamo [Seu Nome], sou do time de Inside Sales da Papapá! 💙
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "1. Abordagem & Sondagem", 
+        "2. Apresentação & Curva A", 
+        "3. Fechamento & Cadastro", 
+        "4. Pós-Venda & Logística",
+        "5. Financeiro"
+    ])
 
-Vi que você tem interesse em levar saúde e praticidade para os pequenos da sua região. Nossa missão é facilitar a vida dos pais com alimentos 100% naturais e práticos.
-
-Gostaria de conhecer melhor seu negócio e apresentar nossas condições. Podemos conversar?"""
-        st.code(template_boas_vindas, language=None)
-
-    # --- ABA 2: CONDIÇÕES E LOGÍSTICA ---
-    st.subheader("📦 Condições Comerciais e Logística")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        with st.expander("Resumo de Condições", expanded=True):
-            texto_condicoes = """🔹 Pedido Mínimo: R$ 800,00
-🔹 Frete: CIF (Grátis para todo o Brasil)
-🔹 Pagamento: Pix ou Boleto
-🔹 Unidades por Caixa:
-   - Palitinhos e Yoguzinho: 16 un.
-   - La Chef e Sopinhas: 6 un.
-   - Demais linhas: 12 un."""
-            st.code(texto_condicoes, language=None)
-            
-    with col2:
-        with st.expander("Prazos de Entrega e Processo", expanded=True):
-            texto_prazos = """✅ Processo de Pedido:
-- Separação: Até 3 dias úteis.
-- Faturamento: Até 2 dias úteis.
-- Coleta: Após faturamento, segue para transportadora.
-
-📍 O prazo final varia conforme sua região."""
-            st.code(texto_prazos, language=None)
-
-    # --- ABA 3: CADASTRO ---
-    st.subheader("📑 Dados para Cadastro")
-    with st.expander("Checklist de Documentação"):
-        template_cadastro = """Para avançarmos com seu cadastro, preciso das seguintes informações:
-
-✅ CNPJ:
-✅ Inscrição Estadual (IE):
-✅ E-mail para Financeiro:
-✅ E-mail para Compras:
-✅ Telefone de Contato:
-✅ Dados Bancários (Pix):"""
-        st.code(template_cadastro, language=None)
-
-    # --- ABA 4: FINANCEIRO E PAGAMENTO ---
-    st.subheader("💰 Financeiro e Prazos de Boleto")
-    
-    tab_sul, tab_norte = st.tabs(["📍 Sul e Sudeste", "📍 Norte, NE, CO, MG e ES"])
-    
-    with tab_sul:
-        st.code("""Pedidos até R$ 1.000,00: 30 dias
-Pedidos entre R$ 1.000,00 e R$ 2.000,00: 30/45 dias
-Pedidos acima de R$ 2.000,00: 30/45/60 dias""", language=None)
+    with tab1:
+        st.subheader("Primeiro Contato (Leads Site)")
         
-    with tab_norte:
-        st.code("""Pedidos até R$ 1.000,00: 45 dias
-Pedidos entre R$ 1.000,00 e R$ 2.000,00: 45/60 dias
-Pedidos acima de R$ 2.000,00: 40/50/60 dias""", language=None)
+        opcoes_abordagem = [
+            "Abordagem Padrão (Perfil)",
+            "Abordagem Assertiva",
+            "Abordagem Curiosidade",
+            "Apresentação de Valor (Catálogo)",
+            "Perguntas de Qualificação"
+        ]
+        escolha = st.selectbox("Selecione o modelo:", opcoes_abordagem)
+        
+        templates = {
+            "Abordagem Padrão (Perfil)": "Olá, tudo bem?\nAqui é o João, da Papapá.\nVi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.\nVocê poderia me contar rapidamente que tipo de estabelecimento você tem?",
+            "Abordagem Assertiva": "Oi, tudo bem?\nSou o João, da Papapá.\nVi que você se cadastrou para receber mais informações. Antes de te enviar o material, queria só entender melhor o seu perfil pra te mandar algo mais assertivo.\nVocê trabalha com qual tipo de negócio?",
+            "Abordagem Curiosidade": "Oi, tudo bem?\nSou o João, da Papapá.\nQue legal ver seu interesse em trabalhar com nossos produtos!\nAntes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.\nVocê pode me contar rapidamente como funciona hoje?",
+            "Apresentação de Valor (Catálogo)": "Olá, tudo bem?\nAqui é o João, da Papapá.\nRecebi seu cadastro pela nossa página e quis entrar em contato para te agradecer pelo interesse e entender um pouco melhor o seu perfil.\nA Papapá trabalha com uma linha de alimentação natural e pronta para bebês e crianças, sem conservantes e com ótima aceitação no ponto de venda.\nPosso te enviar o catálogo e as condições comerciais e, na sequência, entender se faz sentido para o seu negócio?",
+            "Perguntas de Qualificação": "Antes de te indicar os produtos, queria entender rapidinho:\n• Que tipo de estabelecimento você tem?\n• Em qual cidade/bairro?\n• Seu público é mais família, fitness ou geral?"
+        }
+        st.code(templates[escolha], language="text")
 
-    st.info("**E-mail Financeiro:** contasareceber2@papapa.com.br")
-    st.code("contasareceber2@papapa.com.br", language=None)
+    with tab2:
+        st.subheader("Estratégia de Venda (Curva A)")
+        st.info("Use estes textos para educar o cliente sobre o que mais vende.")
+        
+        # Template Curva A Detalhado
+        st.write("**Explicação Curva A (Completa)**")
+        curva_a = """Pra te orientar melhor, vou te explicar rapidamente como funciona o nosso mix e por onde normalmente indicamos começar.
+Hoje, a nossa Curva A (produtos de maior giro e recompra) é formada por:
+• *Papinhas de fruta* – carro-chefe da marca.
+• *Biscoitinho para fase da dentição* – snack funcional.
+• *Biscotti* – nosso snack mais vendido.
 
-    # --- ABA 5: PÓS-VENDA ---
-    st.subheader("🛠️ Pós-Venda e Avarias")
-    with st.expander("Instrução de Recebimento (Cópia para o Cliente)"):
-        template_avaria = """Olá! Seu pedido está a caminho. 🚚
+Em um segundo momento, como complemento de mix:
+• *Palitinhos de vegetais*
+• *Yoguzinho*
 
-Lembrete importante: Ao receber a mercadoria, confira tudo antes de assinar o comprovante. 
-Se houver qualquer caixa amassada ou produto danificado, por favor:
-1. Escreva o motivo no verso da Nota Fiscal (Ressalva).
-2. Tire uma foto da NF e dos produtos.
-3. Me avise imediatamente aqui!
+A partir do seu perfil de negócio, eu te ajudo a montar um pedido inicial enxuto, estratégico e com foco em giro."""
+        st.code(curva_a, language="text")
 
-Sem a ressalva na NF, não conseguimos repor os itens depois. Obrigado!"""
-        st.code(template_avaria, language=None)
+    with tab3:
+        st.subheader("Condições e Cadastro")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write("**Dados para Cadastro**")
+            cadastro = "Para darmos sequência e liberar seu cadastro aqui na Papapá, preciso só de algumas informações:\n• CNPJ:\n• Inscrição Estadual (IE):\n• Telefone do financeiro:\n• Telefone de compras:\n• E-mail do financeiro:\n• E-mail de compras:\n• Dados bancários (PIX):\nObs.: É importante constar também a Descrição das Atividades (CNAE)."
+            st.code(cadastro, language="text")
+            
+        with col2:
+            st.write("**Condições Comerciais**")
+            condicoes = "Pedido mínimo: R$ 800,00.\nVenda por caixas fechadas:\n• Palitinhos e Yoguzinho: 16 un.\n• La Chef e Sopinhas: 6 un.\n• Demais: 12 un.\nFormas: Pix ou Boleto.\nFrete: CIF (por nossa conta) para todo o Brasil."
+            st.code(condicoes, language="text")
+
+    with tab4:
+        st.subheader("Logística e Prazos")
+        st.write("**Fluxo de Pedido**")
+        fluxo = "• Até 3 dias úteis para separação (CD).\n• 2 dias úteis para faturamento da NF.\n• Após faturamento, coleta pela transportadora.\nO prazo de entrega varia conforme a região."
+        st.code(fluxo, language="text")
+        
+        st.write("**Orientações de Recebimento (Avarias)**")
+        st.warning("Texto essencial para evitar prejuízos com transportadoras.")
+        recebimento = "No momento da entrega, é fundamental conferir a mercadoria antes de assinar a NF.\nCaso identifique avaria (caixas amassadas, embalagens violadas, produtos quebrados):\n1. Registre a ressalva na NF.\n2. Não aceite os produtos avariados.\n3. Informe a Papapá imediatamente."
+        st.code(recebimento, language="text")
+
+    with tab5:
+        st.subheader("Financeiro e Prazos de Pagamento")
+        
+        regionais = """PRAZOS DE PAGAMENTO
+SUL E SUDESTE:
+- Até R$ 1.000: 30 dias
+- R$ 1.000 a R$ 2.000: 30/45 dias
+- Acima de R$ 2.000: 30/45/60 dias
+
+NO/NE/CO/MG/ES:
+- Até R$ 1.000: 45 dias
+- R$ 1.000 a R$ 2.000: 45/60 dias
+- Acima de R$ 2.000: 40/50/60 dias"""
+        st.code(regionais, language="text")
+        
+        st.write("**Política de Trocas (Validade Reduzida)**")
+        trocas = "A troca é aplicável quando o produto é entregue com menos de 60% da validade total. É necessária a emissão de NFD com número da NF de origem, motivo e lotes."
+        st.code(trocas, language="text")
+
+# --- SEÇÃO: POLÍTICAS E PRAZOS (Resumo Visual) ---
+if menu == "Políticas e Prazos":
+    st.header("📋 Resumo de Políticas Comerciais")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Validades (Shelf Life)")
+        validade_dict = {
+            "Papinhas de Carne": "12 meses", "Yoguzinho": "15 meses",
+            "Papinhas de Fruta": "16 meses", "Dentição": "15 meses",
+            "Biscotti": "10 meses", "La Chef": "16 meses",
+            "Macarrão": "14 meses", "Cereal": "12 meses",
+            "Palitinhos": "9 meses", "Sopinhas": "12 meses"
+        }
+        st.table(validade_dict)
+        
+    with col2:
+        st.subheader("Dados de Pagamento (PIX/Transferência)")
+        st.info("CNPJ 34.282.307/0001-44\nBABY ROO COMERCIO DE ALIMENTOS S/A\n\nBanco ITAU - Ag 8931 - CC 05510-0")
+        st.write("**Financeiro:** contasareceber2@papapa.com.br")
     
 # --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
