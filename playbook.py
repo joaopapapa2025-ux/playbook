@@ -625,12 +625,13 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             # Campo NF
             st.text_input(
                 "Número da NF ou Pedido:",
-                placeholder="Ex: NF 12345...",
+                placeholder="Ex: NF 123456 ou Pedido 123456/00",
                 key="input_nf_problema"
             )
 
             st.text_area(
-                "Descreva a ocorrência:", 
+                "Descreva a ocorrência:",
+                placeholder="Ex: Cliente recebeu x caixas avariadas...",
                 key="input_area_problemas",
                 height=100
             )
