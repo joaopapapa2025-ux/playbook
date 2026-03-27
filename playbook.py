@@ -74,7 +74,7 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE COM BADGE EDITÁVEL NO CANTO DA FOTO) ---
+# --- MÓDULO 1: HOME (EQUIPE COM INPUT DIRETO NA FOTO) ---
 ################################################################################
 from datetime import date
 
@@ -89,15 +89,16 @@ if aba_selecionada == "🏠 Home (Equipe)":
 
     st.markdown("""
         <style>
+        /* Card do Time */
         .team-card {
             background-color: white; padding: 20px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 400px; /* Ajustado para caber o input embaixo sem confusão */
-            display: flex; flex-direction: column; align-items: center;
+            height: 320px; display: flex; flex-direction: column; align-items: center;
         }
 
-        .photo-container { position: relative; width: 140px; height: 140px; margin-bottom: 20px; }
+        /* Container da Foto + Input */
+        .photo-container { position: relative; width: 140px; height: 140px; }
 
         .photo-circle {
             width: 140px; height: 140px; border-radius: 50%;
@@ -105,30 +106,37 @@ if aba_selecionada == "🏠 Home (Equipe)":
             background-size: cover; background-repeat: no-repeat;
         }
 
-        /* A caixinha amarela no cantinho */
-        .status-badge {
-            position: absolute; top: 0px; right: 0px;
-            background-color: #ffcf00; color: #333;
-            padding: 2px 8px; border-radius: 8px;
-            font-size: 10px; font-weight: bold;
-            border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-
+        /* Posições das fotos (Mantendo as suas) */
         .photo-joao-vitor { background-position: center 20%; }
         .photo-ana { background-position: center 10%; }
         .photo-joao-paulo { background-position: center 10%; }
         .photo-bernardo { background-position: center 10%; }
 
-        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-top: 10px; }
-        .team-role { color: #666; font-size: 0.9em; margin-bottom: 15px; }
-        
-        /* Estilizando o input para ser discreto */
-        .stTextInput input {
-            font-size: 12px !important;
-            text-align: center !important;
-            border-radius: 10px !important;
+        /* GAMBIARRA DO BEM: Move o input de texto para dentro da caixinha amarela */
+        .stTextInput {
+            position: absolute !important;
+            top: -5px !important;
+            right: -5px !important;
+            width: 85px !important;
+            z-index: 10;
         }
+
+        /* Deixa o input com cara de "Badge Amarelo" */
+        .stTextInput input {
+            background-color: #ffcf00 !important;
+            color: #333 !important;
+            font-size: 10px !important;
+            font-weight: bold !important;
+            border: 2px solid white !important;
+            border-radius: 10px !important;
+            padding: 2px 5px !important;
+            height: 24px !important;
+            text-align: center !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+        }
+
+        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-top: 15px; }
+        .team-role { color: #666; font-size: 0.9em; font-weight: 500;}
         </style>
         """, unsafe_allow_html=True)
 
@@ -148,7 +156,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 membro = equipe[i + j]
                 user_key = f"status_{membro['nome']}"
                 
-                # Carregamento da imagem
                 caminho_foto = membro['foto']
                 if Path(caminho_foto).exists():
                     foto_b64 = get_base64_of_bin_file(caminho_foto)
@@ -158,27 +165,29 @@ if aba_selecionada == "🏠 Home (Equipe)":
                     estilo_foto = f"background-image: url('{img_avatar_html}');"
 
                 with cols[j]:
-                    # Pega o status atual
-                    status_atual = st.session_state.daily_status.get(user_key, "✨")
+                    # Pegamos o valor atual da sessão
+                    val_atual = st.session_state.daily_status.get(user_key, "✨")
                     
-                    # Card Visual
+                    # Começamos o HTML do card
+                    st.markdown(f'<div class="team-card"><div class="photo-container">', unsafe_allow_html=True)
+                    st.markdown(f'<div class="photo-circle {membro["classe_foto"]}" style="{estilo_foto}"></div>', unsafe_allow_html=True)
+                    
+                    # O segredo: o input de texto fica aqui dentro do container, e o CSS joga ele pro topo
+                    # label_visibility="collapsed" é crucial para não aparecer texto em cima da foto
+                    novo_val = st.text_input("status", value=val_atual, key=f"inp_{user_key}", label_visibility="collapsed", max_chars=12)
+                    
+                    # Se mudar, salva
+                    if novo_val != val_atual:
+                        st.session_state.daily_status[user_key] = novo_val
+                        st.rerun()
+
+                    # Fecha o HTML
                     st.markdown(f"""
-                        <div class="team-card">
-                            <div class="photo-container">
-                                <div class="photo-circle {membro['classe_foto']}" style="{estilo_foto}"></div>
-                                <div class="status-badge">{status_atual}</div>
                             </div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
-                    
-                    # Input pequeno logo abaixo do card
-                    novo = st.text_input("Status:", value=status_atual, key=f"in_{user_key}", label_visibility="collapsed", placeholder="Sua vibe...")
-                    if novo != status_atual:
-                        st.session_state.daily_status[user_key] = novo
-                        st.rerun()
-
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
 ################################################################################
