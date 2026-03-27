@@ -252,7 +252,7 @@ Sem a ressalva na NF, a transportadora não aceita a reclamação.""", language=
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
 ################################################################################
-elif aba_selecionada == "📊 Políticas & Prazos":
+elif aba_selecionada == "📊 Políticas Comerciais":
     st.header("📊 Políticas Comerciais")
     
     # Destaques Rápidos
