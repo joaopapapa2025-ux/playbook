@@ -568,28 +568,35 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         # 1. Cadastro de Nova Nota
         with st.expander("➕ Registrar Ocorrência", expanded=True):
             lista_pessoas = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
-            quem_comentou = st.selectbox("Quem está registrando?", lista_pessoas)
+            
+            # Adicionado index=None e placeholder para vir em branco
+            quem_comentou = st.selectbox(
+                "Quem está registrando?", 
+                lista_pessoas, 
+                index=None, 
+                placeholder="Selecione seu nome..."
+            )
 
-            # Usamos o session_state para controlar o conteúdo da área de texto
             texto_nota = st.text_area(
                 "Descreva a ocorrência:", 
                 placeholder="Ex: Cliente X reclamou de caixa amassada...", 
-                key="input_area_problemas", # Chave para controle
+                key="input_area_problemas",
                 height=100
             )
 
             if st.button("Salvar Registro", use_container_width=True):
-                if st.session_state.input_area_problemas.strip():
+                # Validação: precisa de nome e texto
+                if quem_comentou and st.session_state.input_area_problemas.strip():
                     from datetime import datetime
                     agora = datetime.now()
                     
-                    # Dicionário de meses para facilitar o filtro
                     meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                                 "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                     
                     mes_atual = f"{meses_pt[agora.month - 1]}/2026"
                     
                     nova_nota = {
+                        "id_unico": agora.timestamp(), # Criado para evitar erro de chave duplicada no delete
                         "autor": quem_comentou,
                         "texto": st.session_state.input_area_problemas.strip(),
                         "data": agora.strftime("%d/%m/%Y %H:%M"),
@@ -598,13 +605,13 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     
                     st.session_state.historico_problemas.insert(0, nova_nota)
                     
-                    # LIMPEZA: Reseta o campo de texto no session_state
+                    # Limpeza segura do campo de texto
                     st.session_state.input_area_problemas = ""
                     
                     st.toast("✅ Registro salvo!")
                     st.rerun()
                 else:
-                    st.warning("O campo está vazio.")
+                    st.warning("Por favor, selecione seu nome e descreva a ocorrência.")
 
         st.divider()
 
@@ -617,7 +624,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         # 3. Listagem Filtrada
         st.markdown("---")
         
-        # Lógica do filtro
         notas_exibidas = st.session_state.historico_problemas
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in st.session_state.historico_problemas if n['mes_referencia'] == filtro_mes]
@@ -625,16 +631,15 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if not notas_exibidas:
             st.caption("Nenhum registro encontrado para este período.")
         else:
-            for idx, item in enumerate(notas_exibidas):
+            for item in notas_exibidas:
                 with st.container():
                     c_txt, c_del = st.columns([0.85, 0.15])
                     with c_txt:
                         st.caption(f"📅 {item['data']} | 📂 {item['mes_referencia']}")
                         st.write(f"**{item['autor']}:** {item['texto']}")
                     with c_del:
-                        # Chave única baseada no índice e mês para evitar erro de ID duplicado
-                        if st.button("🗑️", key=f"del_{item['mes_referencia']}_{idx}"):
-                            # Remove o item original da lista principal
+                        # Usamos o id_unico no key para o Streamlit nunca confundir os botões
+                        if st.button("🗑️", key=f"del_{item['id_unico']}"):
                             st.session_state.historico_problemas.remove(item)
                             st.rerun()
                     st.markdown("<hr style='margin:5px 0; opacity:0.1'>", unsafe_allow_html=True)
