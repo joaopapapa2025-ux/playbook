@@ -208,6 +208,38 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 
 import streamlit as st
 
+# --- MÓDULO 3: BIBLIOTECA DE ARQUIVOS ---
+elif aba_selecionada == "📄 Biblioteca de Arquivos":
+    st.title("📄 Biblioteca de Arquivos")
+    st.write("Central de downloads para todos os materiais oficiais da Papapá.")
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("📁 Materiais de Venda")
+        # Lista de arquivos para download
+        arquivos_venda = {
+            "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
+            "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
+            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
+        }
+        for label, path in arquivos_venda.items():
+            with open(path, "rb") as f:
+                st.download_button(label, f, file_name=path, use_container_width=True)
+
+    with col2:
+        st.subheader("📋 Guias e Processos")
+        arquivos_processo = {
+            "🎯 Estrutura de Metas e Operação": "Estrutura de Operação e Metas - Inside Sales.pdf",
+            "📦 Guia de Recebimento (Avarias)": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
+            "📝 Templates de Mensagens (PDF)": "Templates IS 2026.docx (2).pdf"
+        }
+        for label, path in arquivos_processo.items():
+            with open(path, "rb") as f:
+                st.download_button(label, f, file_name=path, use_container_width=True)
+
+import streamlit as st
+
 # --- 1. CONFIGURAÇÕES DA PÁGINA ---
 st.set_page_config(
     page_title="Papapá | Sales Hub 2026",
