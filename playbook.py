@@ -29,67 +29,32 @@ img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 img_logo_html = f"data:image/png;base64,{img_base64_oficial}" if img_base64_oficial else ""
 
 ################################################################################
-# --- 2. CABEÇALHO E NAVEGAÇÃO (FORÇA BRUTA NO TEXTO) ---
+# --- 2. CABEÇALHO E NAVEGAÇÃO POR BOTÕES (GARANTIDO) ---
 ################################################################################
 
 st.markdown(f"""
     <style>
     [data-testid="stSidebar"] {{ display: none; }}
-    
     .header-container {{
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }}
-
-    /* ESCONDE A BOLINHA */
-    div[data-testid="stRadio"] div[role="radiogroup"] > label div:first-child {{
-        display: none !important;
+    /* Estiliza os botões para parecerem abas */
+    .stButton > button {{
+        width: 100%;
+        border-radius: 20px;
+        height: 3em;
+        background-color: #f0f2f6;
+        color: #31333F;
+        font-weight: 600;
+        border: 1px solid #d1d5db;
     }}
-
-    /* CONTAINER DOS BOTÕES */
-    div[data-testid="stRadio"] div[role="radiogroup"] {{
-        display: flex;
-        flex-direction: row; 
-        justify-content: center; 
-        gap: 15px;
-        flex-wrap: wrap;
-    }}
-
-    /* ESTILO DO BOTÃO */
-    div[data-testid="stRadio"] div[role="radiogroup"] label {{
-        background-color: #f0f2f6 !important;
-        border: 1px solid #d1d5db !important;
-        padding: 12px 20px !important;
-        border-radius: 12px !important;
-        cursor: pointer !important;
-        min-width: 180px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }}
-
-    /* --- ESTE BLOCO RESOLVE O TEXTO BRANCO --- */
-    /* Alvo: Qualquer texto dentro da label do rádio */
-    div[data-testid="stRadio"] div[role="radiogroup"] label * {{
-        color: #1A1C24 !important;
-        font-weight: 700 !important;
-        text-decoration: none !important;
-        opacity: 1 !important;
-    }}
-
-    /* ESTILO SELECIONADO */
-    div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] {{
-        background-color: #007bff !important;
-        border-color: #0056b3 !important;
-    }}
-
-    /* TEXTO SELECIONADO (BRANCO) */
-    div[data-testid="stRadio"] div[role="radiogroup"] label[data-selected="true"] * {{
-        color: #ffffff !important;
+    .stButton > button:hover {{
+        border-color: #007bff;
+        color: #007bff;
     }}
     </style>
 
@@ -101,19 +66,28 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-aba_selecionada = st.radio(
-    "Navegação",
-    ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
-    horizontal=True,
-    label_visibility="collapsed"
-)
+# Inicializa o estado da aba se não existir
+if 'aba_atual' not in st.session_state:
+    st.session_state.aba_atual = "🏠 Home (Equipe)"
 
+# Cria 6 colunas para os botões do menu
+cols = st.columns(6)
+
+labels = [
+    "🏠 Home (Equipe)", "💰 Simulador", "📄 Biblioteca", 
+    "✍️ Scripts", "📊 Políticas", "🔗 Links"
+]
+
+# Renderiza cada botão. Se clicado, muda o session_state
+for i, label in enumerate(labels):
+    if cols[i].button(label, key=f"btn_{i}"):
+        st.session_state.aba_atual = label
+
+aba_selecionada = st.session_state.aba_atual
 st.divider()
 
-# Teste de conteúdo para confirmar que a aba muda
-if aba_selecionada == "🏠 Home (Equipe)":
-    st.subheader("Bem-vindo ao Hub da Equipe!")
-
+# Teste de visualização
+st.write(f"### Você está em: {aba_selecionada}")
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
