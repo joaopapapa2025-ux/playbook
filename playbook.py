@@ -74,17 +74,15 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE COM AJUSTE DE FOTO E STATUS) ---
+# --- MÓDULO 1: HOME (EQUIPE - CORREÇÃO DE ERRO DE CHAVE DUPLICADA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # Inicializa o dicionário de status no session_state se não existir
     if 'daily_status' not in st.session_state:
         st.session_state.daily_status = {}
 
-    # CSS SEM O 'f' antes das aspas para evitar erro de chaves
     st.markdown("""
         <style>
         .team-card {
@@ -94,19 +92,13 @@ if aba_selecionada == "🏠 Home (Equipe)":
             height: 420px; 
             display: flex; flex-direction: column; align-items: center; justify-content: start;
         }
-        
-        .photo-container {
-            position: relative; width: 140px; height: 140px; margin-bottom: 20px;
-        }
-
+        .photo-container { position: relative; width: 140px; height: 140px; margin-bottom: 20px; }
         .avatar-round {
             width: 140px; height: 140px; border-radius: 50%;
-            border: 4px solid #007bff;
-            object-fit: cover; 
+            border: 4px solid #007bff; object-fit: cover; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
-        /* AJUSTES INDIVIDUAIS PARA ENDIREITAR AS FOTOS */
+        /* Ajustes de posição das fotos */
         .photo-joao-vitor { object-position: center 20%; }
         .photo-ana { object-position: center center; }
         .photo-pedro { object-position: center center; }
@@ -122,7 +114,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
             border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
-
         .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
         .team-role { color: #666; font-size: 1.0em; margin-bottom: 15px; font-weight: 500; }
         </style>
@@ -142,9 +133,12 @@ if aba_selecionada == "🏠 Home (Equipe)":
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
-                user_key = f"st_{membro['nome'].split()[0].lower()}"
                 
-                # Busca a imagem (Base64)
+                # --- CHAVE ÚNICA CORRIGIDA ---
+                # Usamos o nome completo sem espaços para garantir que não haverá duplicatas
+                id_limpo = membro['nome'].replace(" ", "").lower()
+                user_key = f"status_{id_limpo}"
+                
                 caminho = membro['foto']
                 if Path(caminho).exists() and Path(caminho).stat().st_size > 0:
                     try:
@@ -158,7 +152,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 with cols[j]:
                     status_atual = st.session_state.daily_status.get(user_key, "✨")
 
-                    # Card Visual
                     st.markdown(f"""
                         <div class="team-card">
                             <div class="photo-container">
@@ -170,12 +163,13 @@ if aba_selecionada == "🏠 Home (Equipe)":
                         </div>
                     """, unsafe_allow_html=True)
 
-                    # Campo de digitação
+                    # O campo de texto agora usa a 'user_key' garantidamente única
                     novo = st.text_input(
-                        "Como estou hoje?", 
+                        "Status", 
                         value=status_atual, 
-                        key=f"in_{user_key}", 
-                        label_visibility="collapsed"
+                        key=f"input_{user_key}", # Adicionamos um prefixo extra
+                        label_visibility="collapsed",
+                        placeholder="Como você está hoje?"
                     )
                     
                     if novo != status_atual:
