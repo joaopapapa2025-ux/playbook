@@ -74,58 +74,76 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (EQUIPE - CORREÇÃO DE ERRO DE CHAVE DUPLICADA) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE COM FOTOS GRANDES E INPUT NO TOPO) ---
 ################################################################################
+from datetime import date
+from pathlib import Path
+
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    if 'daily_status' not in st.session_state:
+    # Lógica de reset diário (persiste o status enquanto o App estiver aberto)
+    if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
+        st.session_state.status_date = date.today()
         st.session_state.daily_status = {}
 
     st.markdown("""
         <style>
         .team-card {
-            background-color: white; padding: 25px; border-radius: 15px;
+            background-color: white; padding: 20px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 420px; 
+            height: 480px; /* Aumentado para acomodar a foto maior e o input no topo */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
         }
-        .photo-container { position: relative; width: 140px; height: 140px; margin-bottom: 20px; }
-        .avatar-round {
-            width: 140px; height: 140px; border-radius: 50%;
-            border: 4px solid #007bff; object-fit: cover; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        /* Ajustes de posição das fotos */
-        .photo-joao-vitor { object-position: center 20%; }
-        .photo-ana { object-position: center center; }
-        .photo-pedro { object-position: center center; }
-        .photo-joao-paulo { object-position: center 10%; }
-        .photo-thiago { object-position: center center; }
-        .photo-bernardo { object-position: center 15%; }
 
+        /* Container da Foto */
+        .photo-container {
+            position: relative;
+            width: 170px; /* Aumentado de 140px p/ 170px */
+            height: 170px; /* Aumentado de 140px p/ 170px */
+            margin-top: 15px; /* Espaço depois do input */
+            margin-bottom: 20px;
+        }
+
+        .photo-circle {
+            width: 170px; /* Foto Grande */
+            height: 170px; /* Foto Grande */
+            border-radius: 50%;
+            border: 5px solid #007bff; /* Borda um pouco mais grossa p/ destacar */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            
+            /* --- CORREÇÃO E ENDIREITAMENTO DAS FOTOS (O ZOOMZINHO) --- */
+            object-fit: cover; /* Preenche o círculo e mantém a proporção */
+            object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
+        }
+
+        /* A caixinha amarela (Badge) que reflete o input */
         .status-badge {
-            position: absolute; top: 5px; right: 5px;
+            position: absolute; top: 0px; right: 0px;
             background-color: #ffcf00; color: #333;
             padding: 2px 8px; border-radius: 8px;
-            font-size: 10px; font-weight: bold;
+            font-size: 11px; font-weight: bold;
             border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
-        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
-        .team-role { color: #666; font-size: 1.0em; margin-bottom: 15px; font-weight: 500; }
+
+        .team-name { font-weight: bold; font-size: 1.25em; color: #333; margin-bottom: 6px; }
+        .team-role { color: #666; font-size: 1.05em; font-weight: 500;}
+        
+        /* Estilização da barra de texto (Input no Topo) */
+        .stTextInput { margin-bottom: 0px; }
         </style>
         """, unsafe_allow_html=True)
 
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg", "classe": "photo-ana"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg", "classe": "photo-pedro"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg", "classe": "photo-joao-paulo"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": "photo-thiago"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "photo-bernardo"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg"},
+        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
     ]
     
     for i in range(0, len(equipe), 3):
@@ -133,48 +151,43 @@ if aba_selecionada == "🏠 Home (Equipe)":
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
+                user_key = f"bar_{membro['nome'].split()[0].lower()}"
                 
-                # --- CHAVE ÚNICA CORRIGIDA ---
-                # Usamos o nome completo sem espaços para garantir que não haverá duplicatas
-                id_limpo = membro['nome'].replace(" ", "").lower()
-                user_key = f"status_{id_limpo}"
-                
-                caminho = membro['foto']
-                if Path(caminho).exists() and Path(caminho).stat().st_size > 0:
-                    try:
-                        foto_b64 = get_base64_of_bin_file(caminho)
-                        ext = caminho.split('.')[-1].lower()
-                        if ext == 'jpg': ext = 'jpeg'
-                        img_src = f"data:image/{ext};base64,{foto_b64}"
-                    except: img_src = img_avatar_html
-                else: img_src = img_avatar_html
+                # Setup da Imagem
+                caminho_foto = membro['foto']
+                if Path(caminho_foto).exists():
+                    foto_b64 = get_base64_of_bin_file(caminho_foto)
+                    ext = caminho_foto.split('.')[-1].lower()
+                    if ext == 'jpg': ext = 'jpeg'
+                    img_html = f"data:image/{ext};base64,{foto_b64}"
+                else: img_html = img_avatar_html
 
                 with cols[j]:
+                    # Pegamos o valor atual da sessão
                     status_atual = st.session_state.daily_status.get(user_key, "✨")
-
-                    st.markdown(f"""
-                        <div class="team-card">
-                            <div class="photo-container">
-                                <img src="{img_src}" class="avatar-round {membro['classe']}">
-                                <div class="status-badge">{status_atual}</div>
-                            </div>
-                            <div class="team-name">{membro['nome']}</div>
-                            <div class="team-role">{membro['cargo']}</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-
-                    # O campo de texto agora usa a 'user_key' garantidamente única
-                    novo = st.text_input(
-                        "Status", 
-                        value=status_atual, 
-                        key=f"input_{user_key}", # Adicionamos um prefixo extra
-                        label_visibility="collapsed",
-                        placeholder="Como você está hoje?"
-                    )
                     
+                    # Abre o HTML do card
+                    st.write('<div class="team-card">', unsafe_allow_html=True)
+                    
+                    # 1. CAIXA DE TEXTO NO TOPO (Como você pediu)
+                    # Usei label_visibility="collapsed" para ele não criar espaço branco de título
+                    novo = st.text_input("Como estou me sentindo hoje?", value=status_atual, key=f"bar_{user_key}", label_visibility="collapsed", placeholder="Sua vibe de hoje...")
                     if novo != status_atual:
                         st.session_state.daily_status[user_key] = novo
                         st.rerun()
+
+                    # 2. CONTEÚDO VISUAL (FOTO GRANDE COM BADGE)
+                    st.markdown(f"""
+                        <div class="photo-container">
+                            <img src="{img_html}" class="photo-circle" alt="{membro['nome']}">
+                            <div class="status-badge">{novo}</div>
+                        </div>
+                        <div class="team-name">{membro['nome']}</div>
+                        <div class="team-role">{membro['cargo']}</div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Fecha o HTML do card
+                    st.write('</div>', unsafe_allow_html=True)
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
