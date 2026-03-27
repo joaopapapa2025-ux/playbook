@@ -173,7 +173,7 @@ elif aba_selecionada == "✍️ Templates & Scripts":
     
     # --- ABA 0: ABORDAGEM ---
     with tabs[0]:
-        st.subheader("📞 Primeiro Contato (Leads)")
+        st.subheader("📞 Primeiro contato (leads)")
         
         with st.expander("⭐ Opção 1: Abordagem Consultiva (Recomendada)", expanded=True):
             st.code("""Olá, tudo bem?
@@ -181,14 +181,14 @@ Aqui é [SEU NOME], da Papapá.
 Vi que você se cadastrou na nossa página e quis entrar em contato para entender um pouco melhor o seu perfil e te indicar as melhores opções do nosso portfólio.
 Você poderia me contar rapidamente que tipo de estabelecimento você tem?""", language=None)
 
-        with st.expander("🏢 Opção 2: Foco em Perfil de Negócio"):
+        with st.expander("🏢 Opção 2: Foco em perfil de negócio"):
             st.code("""Oi, tudo bem?
 Sou [SEU NOME], da Papapá.
 Que legal ver seu interesse em trabalhar com nossos produtos!
 Antes de te apresentar o portfólio completo, queria entender um pouco mais sobre o seu negócio, para te indicar as melhores opções e condições.
 Você pode me contar rapidamente como funciona hoje?""", language=None)
 
-        with st.expander("✅ Opção 3: Perguntas de Qualificação (Checklist)"):
+        with st.expander("✅ Opção 3: Perguntas de qualificação (checklist)"):
             st.code("""Antes de te indicar os produtos, queria entender rapidinho:
 • Que tipo de estabelecimento você tem?
 • Em qual cidade/bairro?
@@ -204,7 +204,7 @@ Posso te enviar o catálogo e as condições comerciais e, na sequência, entend
         st.subheader("🚀 Como explicar o Mix e Giro")
         st.info("Use estes scripts para converter clientes que estão em dúvida sobre o que comprar no primeiro pedido.")
         
-        with st.expander("💎 Script: A Força da Curva A", expanded=True):
+        with st.expander("💎 Script: A força da curva A", expanded=True):
             st.code("""Pra te orientar melhor, vou te explicar como funciona o nosso mix e por onde indicamos começar. 
 Hoje, a nossa Curva A (maior giro e recompra) é formada por:
 
