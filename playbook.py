@@ -620,19 +620,27 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.link_button("📍 Follow-up de Entregas (Sharepoint)", "https://papapacombr.sharepoint.com/:x:/r/sites/Papapa-Fileserver/_layouts/15/Doc.aspx?sourcedoc=%7B5cf28a24-1caa-4578-8641-a96b089efffa%7D&action=edit", use_container_width=True)
 
     st.write("**Portais das Transportadoras:**")
-    t1, t2, t3 = st.columns(3)
+    t1, t2, t3, t4 = st.columns(4) # Alterado para 4 colunas
+    
     with t1:
         st.markdown("**Translovato**")
-        st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento")
+        st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento", use_container_width=True)
         st.code("User: BABY\nPass: Papapa@123")
+        
     with t2:
         st.markdown("**Tecmar**")
-        st.link_button("Portal Tecmar", "https://smonet.tecmartransportes.com.br/smonet/#/notas-fiscais")
+        st.link_button("Portal Tecmar", "https://smonet.tecmartransportes.com.br/smonet/#/notas-fiscais", use_container_width=True)
         st.code("User: babyroo\nPass: babyroo1*")
+        
     with t3:
         st.markdown("**Rodovitor**")
-        st.link_button("Rastrear Rodovitor", "https://ssw.inf.br/2/rastreamento")
+        st.link_button("Rastrear Rodovitor", "https://ssw.inf.br/2/rastreamento", use_container_width=True)
         st.caption("Acesso via SSW")
+
+    with t4: # Nova coluna para Rodonaves
+        st.markdown("**Rodonaves**")
+        st.link_button("Portal Rodonaves", "https://rodonaves.com.br/rastreio-de-mercadoria", use_container_width=True)
+        st.caption("Rastreio via CNPJ/NF")
 
     st.markdown("---")
 
