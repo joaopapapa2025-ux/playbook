@@ -74,47 +74,116 @@ aba_selecionada = st.radio(
 st.divider()
 
 ################################################################################
-# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA E CORRIGIDA) ---
+# --- MÓDULO 1: HOME (EQUIPE COM AJUSTE DE FOTO INDIVIDUAL E STATUS) ---
 ################################################################################
+import streamlit as st
+import pandas as pd
+import base64
+from pathlib import Path
+from datetime import date
+
+# (Supondo que as funções auxiliares de imagem get_base64_of_bin_file e get_member_photo estão definidas antes)
+
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # CSS REFORMULADO: AUMENTADO E COM FOTO ANCORADA NO TOPO (CORREÇÃO DE POSIÇÃO)
+    # --- LÓGICA DE PERSISTÊNCIA DO STATUS DIÁRIO ---
+    if 'status_date' not in st.session_state or st.session_state.status_date != date.today():
+        st.session_state.status_date = date.today()
+        st.session_state.daily_status = {}
+
+    # --- CSS REFORMULADO: Aumentado e com suporte a Badge ---
     st.markdown(f"""
         <style>
         .team-card {{
             background-color: white; padding: 25px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 330px; /* Aumentado ligeiramente para comportar a foto maior */
+            height: 420px; /* Aumentado para caber o input embaixo */
             display: flex; flex-direction: column; align-items: center; justify-content: start;
         }}
-        .avatar-round {{
-            width: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
-            height: 140px; /* Foto ligeiramente maior para o "zoom" preencher bem */
-            border-radius: 50%;
-            border: 4px solid #007bff; /* Borda um pouco mais grossa para destacar */
+        
+        /* Container para a foto e o badge */
+        .photo-container {{
+            position: relative;
+            width: 140px;
+            height: 140px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            
-            /* --- AS DUAS LINHAS ABAIXO SÃO A CORREÇÃO DO PROBLEMA --- */
-            object-fit: cover; /* Mantém a proporção e preenche o círculo */
-            object-position: center top; /* ANCORA A FOTO NO TOPO (Sobe a cabeça e ganha espaço embaixo) */
         }}
+
+        .avatar-round {{
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 4px solid #007bff;
+            object-fit: cover; /* ESSENCIAL PARA O ZOOM */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* --- O PULO DO GATO: AJUSTES INDIVIDUAIS DE ENQUADRAMENTO --- */
+        
+        /* Ajuste para João Vitor: Centralizado, cabeça um pouco mais alta */
+        .photo-joao-vitor {{
+            object-position: center top; 
+        }}
+
+        /* Ajuste para Ana: Centralizado */
+        .photo-ana {{
+            object-position: center center;
+        }
+
+        /* Ajuste para Pedro: Centralizado */
+        .photo-pedro {{
+            object-position: center center;
+        }
+
+        /* Ajuste para João Paulo: Centralizado horizontalmente, cabeça no topo verticalmente */
+        .photo-joao-paulo {{
+            object-position: center top;
+        }
+
+        /* Ajuste para Bernardo: Centralizado horizontalmente, cabeça no topo verticalmente */
+        .photo-bernardo {{
+            object-position: center top;
+        }
+
+        /* O Badge Amarelo no canto da foto */
+        .status-badge {{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ffcf00;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            max-width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .team-name {{ font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }}
         .team-role {{ color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}}
+        
+        /* Ajuste fino no input do Streamlit */
+        .stTextInput > div > div > input {{
+            text-align: center;
+            border-radius: 10px;
+        }
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe com Cargos Corrigidos e nomes de arquivos exatos
+    # --- DADOS DA EQUIPE COM CLASSES CSS INDIVIDUAIS ---
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg"},
-        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista de Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista de Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
+        {"nome": "João Paulo Ferreira Alves", "cargo": "Analista de Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""}, # Sem classe de ajuste
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
     ]
     
     # Criação de colunas para os cards (máximo 3 por linha)
@@ -123,34 +192,49 @@ if aba_selecionada == "🏠 Home (Equipe)":
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
+                user_key = f"status_{membro['nome'].split()[0].lower()}" # Gera chave única p/ input
                 
-                # Lógica para carregar a foto específica ou o logo padrão
+                # Lógica de Imagem
                 caminho_foto = membro['foto']
+                classe_extra = membro['classe_foto']
                 
-                # Verifica se o arquivo existe e se tem conteúdo (size > 0)
                 if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
                     try:
                         foto_base64 = get_base64_of_bin_file(caminho_foto)
-                        # Identifica a extensão para o cabeçalho base64
                         ext = caminho_foto.split('.')[-1].lower()
-                        # Trata jpg como jpeg no cabeçalho
                         if ext == 'jpg': ext = 'jpeg'
                         img_html = f"data:image/{ext};base64,{foto_base64}"
-                    except:
-                        # Fallback se a conversão falhar
-                        img_html = img_avatar_html
-                else:
-                    # Se não achar a foto da pessoa (como Thiago), usa o logo Papapá
-                    img_html = img_avatar_html 
+                    except: img_html = img_avatar_html
+                else: img_html = img_avatar_html
 
                 with cols[j]:
+                    # Puxa o status do state ou deixa vazio (ou um emoji padrão)
+                    status_atual = st.session_state.daily_status.get(user_key, "✨")
+
+                    # Card com Foto + Badge + Info
                     st.markdown(f"""
                         <div class="team-card">
-                            <img src="{img_html}" class="avatar-round" alt="{membro['nome']}">
+                            <div class="photo-container">
+                                <img src="{img_html}" class="avatar-round {classe_extra}" alt="{membro['nome']}">
+                                <div class="status-badge">{status_atual}</div>
+                            </div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
+
+                    # Input de texto (na área rosa que você indicou)
+                    novo_status = st.text_input(
+                        "Como você está hoje?", 
+                        value=status_atual, 
+                        key=f"in_{user_key}", 
+                        label_visibility="collapsed",
+                        placeholder="Ex: 🚀 Focado"
+                    )
+                    
+                    if novo_status != status_atual:
+                        st.session_state.daily_status[user_key] = novo_status
+                        st.rerun()
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
