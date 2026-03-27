@@ -79,38 +79,68 @@ st.divider()
 if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     
-    # Lista da equipe com o nome exato do arquivo de imagem
-    # Se o arquivo não existir, o código usará o logo da Papapá automaticamente
+    # CSS AJUSTADO PARA O "ZOOMZINHO" (object-fit e tamanho maior)
+    st.markdown(f"""
+        <style>
+        .team-card {{
+            background-color: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center;
+            margin-bottom: 20px; border: 1px solid #eaeaea;
+            height: 320px; /* Aumentei a altura do card para acomodar a foto maior */
+        }}
+        .avatar-round {{
+            width: 140px; /* Aumentado de 110px */
+            height: 140px; /* Aumentado de 110px */
+            border-radius: 50%;
+            object-fit: cover; /* ESSA É A MÁGICA DO ZOOM QUE PREENCHE O CÍRCULO */
+            border: 3px solid #007bff; margin-bottom: 15px;
+        }}
+        .team-name {{ font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 5px; }}
+        .team-role {{ color: #666; font-size: 0.9em; margin-bottom: 15px; }}
+        </style>
+        """, unsafe_allow_html=True)
+
+    # Lista da equipe com os nomes EXATOS dos arquivos que você subiu
+    # Garanta que a extensão seja .jpeg (e não .jpg) como no seu print
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg"},
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista (Key Accounts)", "foto": "Ana.jpeg"},
         {"nome": "Pedro Henrique Born", "cargo": "Analista (Crescimento)", "foto": "Pedro.jpeg"},
-        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)", "foto": "Joao.jpeg"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"}
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista (Desenvolvimento)", "foto": "João Paulo.jpeg"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg"}, # Sem foto ainda
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg"} # Sem foto ainda
     ]
     
+    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
                 
-                # Lógica para carregar a foto específica ou o padrão
+                # Lógica para carregar a foto específica ou o logo padrão
                 caminho_foto = membro['foto']
-                if Path(caminho_foto).exists():
-                    foto_base64 = get_base64_of_bin_file(caminho_foto)
-                    # Detecta se é jpeg ou png para o cabeçalho do base64
-                    ext = caminho_foto.split('.')[-1].lower()
-                    img_html = f"data:image/{ext};base64,{foto_base64}"
+                
+                # Verifica se o arquivo existe e se tem conteúdo (size > 0)
+                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
+                    try:
+                        foto_base64 = get_base64_of_bin_file(caminho_foto)
+                        # Identifica a extensão para o cabeçalho base64
+                        ext = caminho_foto.split('.')[-1].lower()
+                        # Trata jpg como jpeg no cabeçalho
+                        if ext == 'jpg': ext = 'jpeg'
+                        img_html = f"data:image/{ext};base64,{foto_base64}"
+                    except:
+                        # Fallback se a conversão falhar
+                        img_html = img_avatar_html
                 else:
-                    # Se não achar a foto da pessoa, usa o logo azul da Papapá
+                    # Se não achar a foto da pessoa (como Thiago e Bernardo), usa o logo Papapá
                     img_html = img_avatar_html 
 
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
-                            <img src="{img_html}" class="avatar-round">
+                            <img src="{img_html}" class="avatar-round" alt="{membro['nome']}">
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
