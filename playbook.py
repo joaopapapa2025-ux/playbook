@@ -216,124 +216,61 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.title("📄 Biblioteca de Arquivos")
     st.write("Baixe aqui os materiais atualizados para suporte às vendas.")
 
-    # Criando colunas para organizar os arquivos por categoria
     col1, col2 = st.columns(2)
-
     with col1:
         st.subheader("📁 Materiais de Venda")
-        
-        # Arquivo: Catálogo Digital
         with open("catalogo-papapa-digital.pdf", "rb") as f:
-            st.download_button(
-                label="📖 Baixar Catálogo Digital (PDF)",
-                data=f,
-                file_name="catalogo-papapa-digital.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-
-        # Arquivo: Tabela de Preços
+            st.download_button("📖 Baixar Catálogo Digital (PDF)", f, file_name="catalogo-papapa-digital.pdf", mime="application/pdf", use_container_width=True)
         with open("Tabela de preços Papapá 0226 v2.xlsx", "rb") as f:
-            st.download_button(
-                label="💰 Baixar Tabela de Preços (Excel)",
-                data=f,
-                file_name="Tabela_de_Precos_Papapa_0226.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                use_container_width=True
-            )
+            st.download_button("💰 Baixar Tabela de Preços (Excel)", f, file_name="Tabela_de_Precos_Papapa_0226.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
 
     with col2:
         st.subheader("📋 Guias e Informações")
-        
-        # Arquivo: Informações de Produtos
         with open("Informações todos os produtos Papapá.pdf", "rb") as f:
-            st.download_button(
-                label="ℹ️ Ficha Técnica de Produtos",
-                data=f,
-                file_name="Informacoes_Produtos_Papapa.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-
-        # Arquivo: Estrutura Inside Sales
+            st.download_button("ℹ️ Ficha Técnica de Produtos", f, file_name="Informacoes_Produtos_Papapa.pdf", mime="application/pdf", use_container_width=True)
         with open("Estrutura de Operação e Metas - Inside Sales.pdf", "rb") as f:
-            st.download_button(
-                label="🎯 Estrutura de Metas e Operação",
-                data=f,
-                file_name="Estrutura_Metas_Inside_Sales.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
+            st.download_button("🎯 Estrutura de Metas e Operação", f, file_name="Estrutura_Metas_Inside_Sales.pdf", mime="application/pdf", use_container_width=True)
 
-# --- MANTENDO OS OUTROS PLACEHOLDERS ---
+# --- MÓDULO 4: LOGÍSTICA & SAC ---
 elif aba_selecionada == "🚚 Logística & SAC":
     st.title("🚚 Logística & SAC")
     with open("GUIA DE RECEBIMENTO DE MERCADORIAS.pdf", "rb") as f:
-        st.download_button(
-            label="📦 Baixar Guia de Recebimento (Avarias)",
-            data=f,
-            file_name="Guia_Recebimento_Mercadorias.pdf",
-            mime="application/pdf"
-        )
+        st.download_button("📦 Baixar Guia de Recebimento (Avarias)", f, file_name="Guia_Recebimento_Mercadorias.pdf", mime="application/pdf")
     st.info("As regras detalhadas de logística serão listadas aqui.")
 
+# --- MÓDULO 5: TEMPLATES & SCRIPTS ---
 elif aba_selecionada == "✍️ Templates & Scripts":
     st.title("✍️ Templates & Scripts")
     with open("Templates IS 2026.docx (2).pdf", "rb") as f:
-        st.download_button(
-            label="📝 Baixar Templates de Mensagens",
-            data=f,
-            file_name="Templates_Scripts_2026.pdf",
-            mime="application/pdf"
-        )
+        st.download_button("📝 Baixar Templates de Mensagens", f, file_name="Templates_Scripts_2026.pdf", mime="application/pdf")
     st.info("Os scripts de WhatsApp/Email serão formatados para cópia rápida em breve.")
 
-# --- MÓDULO 4, 5: PLACEHOLDERS (Para desenvolvimento futuro) ---
-
-elif aba_selecionada == "🚚 Logística & SAC":
-    st.title("🚚 Logística & SAC (Em Breve)")
-    st.info("Esta aba será preenchida com as regras de recebimento e avarias.")
-
-elif aba_selecionada == "✍️ Templates & Scripts":
-    st.title("✍️ Templates & Scripts (Em Breve)")
-    st.info("Esta aba será preenchida com os scripts de WhatsApp/Email.")
-
-# --- MÓDULO 6: Links Úteis ---
-
+# --- MÓDULO 6: LINKS ÚTEIS ---
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
     st.write("Acesse rapidamente as ferramentas e formulários da nossa operação.")
     
-    # --- SEÇÃO 1: CADASTRO E OPERAÇÃO ---
-with st.container():
-    st.subheader("📝 Cadastro e Operação")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
-        st.caption("Novo cadastro e atualização de cadastro de clientes")
-        
-    with col2:
-        st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
-        st.caption("Acompanhamento da realização dos cadastros")
+    # IMPORTANTE: Tudo abaixo daqui precisa estar indentado (com 4 espaços) para ficar dentro desta aba
+    with st.container():
+        st.subheader("📝 Cadastro e Operação")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
+            st.caption("Novo cadastro e atualização de cadastro de clientes")
+        with col2:
+            st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
+            st.caption("Acompanhamento da realização dos cadastros")
 
     st.markdown("---")
 
-# --- SEÇÃO 2: DASHBOARDS E INDICADORES ---
-with st.container():
-    st.subheader("📊 Dashboards de Gestão")
-    col_dash = st.columns(1)[0] # Coluna única para o dash principal
-    
-    with col_dash:
+    with st.container():
+        st.subheader("📊 Dashboards de Gestão")
         st.link_button("📈 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
         st.info("**Senha:** amamosnossosclientes")
 
     st.markdown("---")
 
-    # --- SEÇÃO 3: LOGÍSTICA ---
     st.subheader("🚚 Logística e Rastreamento")
-    
-    # Sub-bloco para Solicitações
     c1, c2 = st.columns(2)
     with c1:
         st.link_button("🚩 Solicitações Logísticas", "https://forms.office.com/Pages/ResponsePage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQpGwsStRQZMoYBHJmx0xW1UMDhXRkQwSEQxU0cwUklNNVVGWTZFRUhVNS4u", use_container_width=True)
@@ -342,20 +279,16 @@ with st.container():
     
     st.link_button("📍 Follow-up de Entregas (Sharepoint)", "https://papapacombr.sharepoint.com/:x:/r/sites/Papapa-Fileserver/_layouts/15/Doc.aspx?sourcedoc=%7B5cf28a24-1caa-4578-8641-a96b089efffa%7D&action=edit", use_container_width=True)
 
-    # Cards para Transportadoras
     st.write("**Portais das Transportadoras:**")
     t1, t2, t3 = st.columns(3)
-    
     with t1:
         st.markdown("**Translovato**")
         st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento")
         st.code("User: BABY\nPass: LOVATO")
-        
     with t2:
         st.markdown("**Tecmar**")
         st.link_button("Portal Tecmar", "https://smonet.tecmartransportes.com.br/smonet/#/notas-fiscais")
         st.code("User: babyroo\nPass: babyroo1*")
-        
     with t3:
         st.markdown("**Rodovitor**")
         st.link_button("Rastrear Rodovitor", "https://ssw.inf.br/2/rastreamento")
@@ -363,15 +296,11 @@ with st.container():
 
     st.markdown("---")
 
-    # --- SEÇÃO 4: MARKETING ---
     with st.container():
         st.subheader("🎨 Marketing e Divulgação")
         col_m1, col_m2 = st.columns([1, 2])
-        
         with col_m1:
             st.link_button("📂 Drive para Lojistas", "https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA", use_container_width=True)
-        
         with col_m2:
             st.warning("**Senha de acesso:** Papapa@2023")
-            st.write("Compartilhe este link com o cliente para fotos, logos e materiais de PDV.")
-
+            st.write("Compartilhe com o cliente para fotos, logos e materiais de PDV.")
