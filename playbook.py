@@ -487,18 +487,44 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.caption("❄️ Nenhuma linha necessita de refrigeração.")
 
         st.subheader("📦 Unidades por Caixa")
+        
+        # CSS para criar os cartões de unidades
         st.markdown("""
-        - **Yoguzinho:** 16 unidades
-        - **Palitinhos:** 16 unidades
-        - **La Chef:** 6 unidades
-        - **Sopinhas:** 6 unidades
-        - **Papinhas de Fruta:** 12 unidades
-        - **Papinhas de Carne:** 12 unidades
-        - **Dentição:** 12 unidades
-        - **Macarrão:** 12 unidades
-        - **Cereal:** 12 unidades
-        - **Biscotti:** 12 unidades
-        """)
+            <style>
+            .unidade-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 15px;
+                margin-bottom: 5px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                border-left: 4px solid #FF4B4B;
+            }
+            .unidade-nome {
+                font-weight: 500;
+                color: #31333F;
+            }
+            .unidade-valor {
+                font-weight: bold;
+                color: #FF4B4B;
+                background: #ffebeb;
+                padding: 2px 8px;
+                border-radius: 5px;
+            }
+            </style>
+            
+            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">6 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">12 un.</span></div>
+        """, unsafe_allow_html=True)
 
     with col_info2:
         # Colocando Prazos e Trocas na mesma coluna da direita para alinhar
