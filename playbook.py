@@ -22,7 +22,7 @@ def get_base64_of_bin_file(bin_file):
     except:
         return None
 
-# Carregamento do Logo (Papapa-azul.png)
+# Carregamento do Logo
 arquivo_logo = "Papapa-azul.png" 
 img_base64_oficial = get_base64_of_bin_file(arquivo_logo)
 
@@ -32,84 +32,76 @@ else:
     img_logo_html = "https://www.w3schools.com/howto/img_avatar.png" 
 
 ################################################################################
-# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO ESTILO "PILLS" (SEM BOLINHAS) ---
+# --- 2. CABEÇALHO GLOBAL E NAVEGAÇÃO MODERN PILLS (SEM BOLINHAS) ---
 ################################################################################
 
-# CSS Ninja para transformar o rádio em botões modernos
-st.markdown("""
+st.markdown(f"""
     <style>
     /* 1. Esconde a sidebar e limpa o topo */
-    [data-testid="stSidebar"] { display: none; }
-    
-    /* 2. Container do Logo e Título */
-    .main-header {
+    [data-testid="stSidebar"] {{ display: none; }}
+    .main .block-container {{ padding-top: 2rem; }}
+
+    /* 2. Container do Logo e Título centralizados */
+    .header-container {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        padding-bottom: 10px;
-    }
-    
-    /* 3. TRANSFORMAÇÃO DO RADIO EM BOTÕES (PILLS) */
-    div.row-widget.stRadio > div {
+        margin-bottom: 20px;
+    }}
+
+    /* 3. SUMIR COM AS BOLINHAS DE VEZ */
+    /* Esse seletor ataca a estrutura interna do rádio do Streamlit */
+    div.row-widget.stRadio div[role="radiogroup"] > label div:first-child {{
+        display: none !important;
+    }}
+
+    /* 4. TRANSFORMAR O MENU EM BOTÕES (PILLS) */
+    div.row-widget.stRadio > div {{
         display: flex;
         flex-direction: row; 
         justify-content: center; 
-        gap: 12px;
-        background-color: #f1f3f6; /* Fundo sutil do menu */
-        padding: 8px 15px;
-        border-radius: 50px;
-        width: fit-content;
-        margin: 0 auto;
-        border: 1px solid #e0e0e0;
-    }
-    
-    /* ESCONDE AS BOLINHAS E O INPUT PADRÃO */
-    div.row-widget.stRadio div[role="radiogroup"] label[data-baseweb="radio"] div:first-child {
-        display: none !important;
-    }
+        gap: 10px;
+        background-color: transparent;
+    }}
 
-    /* Estiliza os Labels como Botões Arredondados */
-    div.row-widget.stRadio div[role="radiogroup"] label {
+    div.row-widget.stRadio div[role="radiogroup"] label {{
+        background-color: #f0f2f6 !important;
+        border: 1px solid #d1d5db !important;
         padding: 8px 20px !important;
-        border-radius: 25px !important;
-        background-color: transparent !important;
-        color: #444 !important;
+        border-radius: 50px !important;
+        color: #31333F !important;
         font-weight: 600 !important;
-        font-size: 0.95em !important;
         cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        margin: 0 !important;
-        border: none !important;
-    }
+        transition: all 0.2s ease;
+    }}
 
-    /* Efeito de Hover */
-    div.row-widget.stRadio div[role="radiogroup"] label:hover {
-        background-color: #e2e6ea !important;
-        color: #007bff !important;
-    }
-
-    /* ESTILO DO BOTÃO SELECIONADO */
-    div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {
+    /* Botão Selecionado */
+    div.row-widget.stRadio div[role="radiogroup"] label[data-selected="true"] {{
         background-color: #007bff !important;
         color: white !important;
-        box-shadow: 0 4px 10px rgba(0,123,255,0.25);
-    }
+        border-color: #0056b3 !important;
+        box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+    }}
+
+    /* Efeito Hover */
+    div.row-widget.stRadio div[role="radiogroup"] label:hover {{
+        border-color: #007bff !important;
+        color: #007bff !important;
+        background-color: #eef6ff !important;
+    }}
     </style>
+
+    <div class="header-container">
+        <img src="{img_logo_html}" width="280">
+        <h1 style='color: #004a99; font-family: sans-serif; margin-top: 10px; font-weight: 800;'>
+            Hub Inside Sales
+        </h1>
+    </div>
     """, unsafe_allow_html=True)
 
-# Exibição do Cabeçalho
-st.markdown('<div class="main-header">', unsafe_allow_html=True)
-# Centralização do logo
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    st.image(img_logo_html, width=280)
-
-st.markdown(f"""
-    <h2 style='text-align: center; color: #004a99; font-family: sans-serif; margin-top: -15px; font-weight: 700;'>
-        Hub Inside Sales
-    </h2>
-""", unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# O Menu de Navegação - Agora como botões modernos
+# O Menu de Navegação - Limpo e sem bolinhas
 aba_selecionada = st.radio(
     "Menu",
     ["🏠 Home (Equipe)", "💰 Simulador de Bonificação", "📄 Biblioteca de Arquivos", "✍️ Templates & Scripts", "📊 Políticas Comerciais", "🔗 Links Úteis"],
@@ -118,7 +110,6 @@ aba_selecionada = st.radio(
 )
 
 st.divider()
-
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
