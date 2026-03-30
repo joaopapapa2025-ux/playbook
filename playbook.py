@@ -936,9 +936,134 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
 
     st.divider()
     st.success("**Dica de Ouro:** Transforme a objeção em uma oportunidade de educar o cliente sobre o valor da marca.")
+
+################################################################################
+# --- MÓDULO 8: IMPACTOS NO RESULTADO ---
+################################################################################
+elif aba_selecionada == "📈 Impactos no resultado":
+    st.header("📈 Impactos no Resultado")
+    
+    import base64
+    import pytz
+    from datetime import datetime
+    from google.cloud import firestore
+    from google.oauth2 import service_account
+
+    # --- CONEXÃO COM O BANCO (FIRESTORE) ---
+    if "db" not in st.session_state:
+        creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+        st.session_state.db = firestore.Client(credentials=creds)
+
+    # Funções específicas para a coleção "impactos"
+    def carregar_impactos_nuvem():
+        try:
+            # Busca na coleção 'impactos'
+            docs = st.session_state.db.collection("impactos").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
+            return [doc.to_dict() for doc in docs]
+        except Exception as e:
+            st.error(f"Erro ao carregar impactos: {e}")
+            return []
+
+    def salvar_impacto_nuvem(novo_registro):
+        try:
+            st.session_state.db.collection("impactos").add(novo_registro)
+            return True
+        except Exception as e:
+            st.error(f"Erro ao salvar impacto: {e}")
+            return False
+
+    # Inicializa o histórico desta aba
+    if "historico_impactos" not in st.session_state:
+        st.session_state.historico_impactos = carregar_impactos_nuvem()
+
+    if "uploader_impacto_key" not in st.session_state:
+        st.session_state.uploader_impacto_key = 100 # Chave diferente para não conflitar
+
+    col_info, col_form = st.columns([1, 1.2])
+
+    with col_info:
+        st.subheader("O que registramos aqui?")
+        st.write("""
+        Nesta seção, o time deve registrar ações ou eventos que alteraram os indicadores (positiva ou negativamente).
+        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio.
+        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita.
+        """)
+        st.image("https://img.freepik.com/vetores-gratis/ilustracao-do-conceito-de-analise-de-dados_114360-4748.jpg", width=300)
+
+    with col_form:
+        st.subheader("🚀 Novo Registro de Impacto")
+
+        def salvar_impacto_callback():
+            autor = st.session_state.get("user_impacto")
+            tipo = st.session_state.get("tipo_impacto")
+            descricao = st.session_state.get("desc_impacto", "").strip()
+            
+            if autor and tipo and descricao:
+                fuso_br = pytz.timezone('America/Sao_Paulo')
+                agora = datetime.now(fuso_br)
+                mes_atual = f"{['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][agora.month - 1]}/2026"
+
+                novo_impacto = {
+                    "id_unico": agora.timestamp(),
+                    "autor": autor,
+                    "tipo": tipo, # Positivo ou Negativo
+                    "descricao": descricao,
+                    "data": agora.strftime("%d/%m/%Y %H:%M"),
+                    "mes_referencia": mes_atual
+                }
+                
+                if salvar_impacto_nuvem(novo_impacto):
+                    st.session_state.historico_impactos = carregar_impactos_nuvem()
+                    # Limpa campos
+                    st.session_state["desc_impacto"] = ""
+                    st.toast(f"✅ Impacto {tipo} registrado!")
+            else:
+                st.error("Por favor, preencha todos os campos.")
+
+        with st.expander("📝 Abrir Formulário", expanded=True):
+            lista_time = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
+            st.selectbox("Responsável:", lista_time, index=None, key="user_impacto")
+            
+            # Botão de Seleção do Tipo de Impacto
+            st.radio("Tipo do Impacto:", ["🟢 Positivo", "🔴 Negativo"], key="tipo_impacto", horizontal=True)
+            
+            st.text_area("Descrição do impacto no resultado:", placeholder="Explique o que aconteceu e qual KPI foi afetado...", key="desc_impacto")
+            st.button("Registrar Impacto", use_container_width=True, on_click=salvar_impacto_callback)
+
+    st.divider()
+
+    # --- LISTAGEM DOS IMPACTOS ---
+    st.subheader("📋 Histórico de Impactos")
+    
+    # Filtro simples por tipo
+    filtro_tipo = st.multiselect("Filtrar por tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
+    
+    impactos_filtrados = [i for i in st.session_state.historico_impactos if i.get("tipo") in filtro_tipo]
+
+    if not impactos_filtrados:
+        st.info("Nenhum registro encontrado com esses filtros.")
+    
+    for idx, imp in enumerate(impactos_filtrados):
+        with st.container():
+            c1, c2 = st.columns([0.9, 0.1])
+            with c1:
+                # Cor do card baseada no tipo
+                cor = "green" if "Positivo" in imp.get("tipo") else "red"
+                st.markdown(f"**{imp.get('tipo')}** | {imp.get('autor')} em {imp.get('data')}")
+                st.info(imp.get("descricao"))
+            
+            with c2:
+                if st.button("🗑️", key=f"del_imp_{imp.get('id_unico')}"):
+                    # Deletar da nuvem
+                    docs = st.session_state.db.collection("impactos").where("id_unico", "==", imp.get("id_unico")).stream()
+                    for doc in docs:
+                        doc.reference.delete()
+                    st.session_state.historico_impactos = carregar_impactos_nuvem()
+                    st.rerun()
+            st.markdown("---")
     
 ################################################################################
-# --- MÓDULO 8: LINKS ÚTEIS ---
+# --- MÓDULO 9: LINKS ÚTEIS ---
 ################################################################################
 elif aba_selecionada == "🔗 Links Úteis":
     st.title("🔗 Central de Links Úteis")
