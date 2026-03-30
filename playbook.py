@@ -541,7 +541,7 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
         st.caption("Utilize estes scripts para reativar parceiros que já conhecem a Papapá.")
 
         # Exemplo 1: Focado aumentar o mix Completo
-        with st.expander("📱 Whatsapp: foco em ticket médio"):
+        with st.expander("📱 Whatsapp: foco em ticket médio", expanded=True):
             st.code("""Bom dia {{Nome_lead}}!
 Passando para compartilhar um ponto estratégico com você: notamos que lojas que trabalham o mix completo (papinhas + cereais + snacks) conseguem elevar o ticket médio, pois o cliente encontra a solução total de introdução alimentar em um só lugar.
 Pequenos ajustes no mix evitam que o cliente procure a rede vizinha por falta de opção. Podemos conversar sobre essa estratégia de aumento do ticket médio?""", language=None)
