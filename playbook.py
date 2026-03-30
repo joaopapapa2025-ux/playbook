@@ -205,12 +205,12 @@ if aba_selecionada == "🏠 Home (Equipe)":
     # Lista da equipe com os nomes dos arquivos. Garanta que as extensões sejam .jpeg
     # Mantenha os arquivos antigos, mas use os arquivos novos de foco em rostos para obter o melhor resultado.
     equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista - Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro"},
-        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista - Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": ""},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
+    {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana", "telefone": "(41) 3797-6554", "email": "comercial3@papapa.com.br"},
+    {"nome": "Pedro Henrique Born", "cargo": "Analista - Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro", "telefone": "(41) 3797-6885", "email": "comercial5@papapa.com.br"},
+    {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista - Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo", "telefone": "(41) 99247-4213", "email": "comercial2@papapa.com.br"},
+    {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
+    {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
     ]
     
     # Criação de colunas para os cards (máximo 3 por linha)
