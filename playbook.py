@@ -367,9 +367,10 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         arquivos_fiscais = {
             "📄 Ata AGE 2025 (Sede/Matriz)": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
             "✅ CND - Débitos Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
-            "💳 Cartão CNPJ Baby Roo": "CARTÃO CNPJ BABY ROO.pdf",
+            "🏙️ CND - Débitos Municipais": "CND MUNICIPAL - BABY ROO.pdf",
+            "💳 Cartão CNPJ": "CARTÃO CNPJ BABY ROO.pdf",
             "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
-            "📑 Sintegra Papapá": "SINTEGRA PAPAPÁ.pdf",
+            "📑 Sintegra": "SINTEGRA PAPAPÁ.pdf",
             "💰 Comprovante Bancário": "COMPROVANTE BANCÁRIO (1).png"
         }
         for label, path in arquivos_fiscais.items():
