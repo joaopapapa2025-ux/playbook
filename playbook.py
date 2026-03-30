@@ -938,7 +938,7 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
     st.success("**Dica de Ouro:** Transforme a objeção em uma oportunidade de educar o cliente sobre o valor da marca.")
 
 ################################################################################
-# --- MÓDULO 8: IMPACTOS NO RESULTADO ---
+# --- MÓDULO 8: 📈 IMPACTOS NO RESULTADO (VERSÃO COMPLETA) ---
 ################################################################################
 elif aba_selecionada == "📈 Impactos no resultado":
     st.header("📈 Impactos no Resultado")
@@ -954,113 +954,155 @@ elif aba_selecionada == "📈 Impactos no resultado":
         creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
         st.session_state.db = firestore.Client(credentials=creds)
 
-    # Funções específicas para a coleção "impactos"
     def carregar_impactos_nuvem():
         try:
-            # Busca na coleção 'impactos'
-            docs = st.session_state.db.collection("impactos").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
+            # Busca na coleção 'impactos_v2' ordenando por data
+            docs = st.session_state.db.collection("impactos_v2").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
             return [doc.to_dict() for doc in docs]
         except Exception as e:
-            st.error(f"Erro ao carregar impactos: {e}")
+            st.error(f"Erro ao carregar dados: {e}")
             return []
 
     def salvar_impacto_nuvem(novo_registro):
         try:
-            st.session_state.db.collection("impactos").add(novo_registro)
+            st.session_state.db.collection("impactos_v2").add(novo_registro)
             return True
         except Exception as e:
-            st.error(f"Erro ao salvar impacto: {e}")
+            st.error(f"Erro ao salvar: {e}")
             return False
 
-    # Inicializa o histórico desta aba
     if "historico_impactos" not in st.session_state:
         st.session_state.historico_impactos = carregar_impactos_nuvem()
 
     if "uploader_impacto_key" not in st.session_state:
-        st.session_state.uploader_impacto_key = 100 # Chave diferente para não conflitar
+        st.session_state.uploader_impacto_key = 200
 
-    col_info, col_form = st.columns([1, 1.2])
-
-    with col_info:
-        st.subheader("O que registramos aqui?")
-        st.write("""
-        Nesta seção, o time deve registrar ações ou eventos que alteraram os indicadores (positiva ou negativamente).
-        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio.
-        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita.
-        """)
-        st.image("https://img.freepik.com/vetores-gratis/ilustracao-do-conceito-de-analise-de-dados_114360-4748.jpg", width=300)
+    col_form, col_stats = st.columns([1.5, 1])
 
     with col_form:
         st.subheader("🚀 Novo Registro de Impacto")
 
         def salvar_impacto_callback():
-            autor = st.session_state.get("user_impacto")
-            tipo = st.session_state.get("tipo_impacto")
-            descricao = st.session_state.get("desc_impacto", "").strip()
+            autor = st.session_state.get("imp_autor")
+            tipo = st.session_state.get("imp_tipo")
+            descricao = st.session_state.get("imp_desc", "").strip()
+            valor = st.session_state.get("imp_valor", 0.0)
+            doc_cliente = st.session_state.get("imp_doc", "").strip()
+            
+            chave_u = f"midia_imp_{st.session_state.uploader_impacto_key}"
+            arquivos = st.session_state.get(chave_u)
             
             if autor and tipo and descricao:
                 fuso_br = pytz.timezone('America/Sao_Paulo')
                 agora = datetime.now(fuso_br)
-                mes_atual = f"{['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][agora.month - 1]}/2026"
+                mes_ref = f"{['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][agora.month - 1]}/2026"
 
-                novo_impacto = {
+                lista_midias = []
+                if arquivos:
+                    for arq in arquivos:
+                        ext = arq.name.lower()
+                        tipo_m = "video" if ext.endswith(('mp4','mov','avi')) else "audio" if ext.endswith(('mp3','wav','ogg')) else "foto"
+                        b64 = base64.b64encode(arq.getvalue()).decode('utf-8')
+                        lista_midias.append({"nome": arq.name, "bytes": b64, "tipo": tipo_m})
+
+                novo_item = {
                     "id_unico": agora.timestamp(),
                     "autor": autor,
-                    "tipo": tipo, # Positivo ou Negativo
+                    "tipo": tipo,
+                    "valor_impacto": valor,
+                    "documento": doc_cliente,
                     "descricao": descricao,
+                    "midias": lista_midias,
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
-                    "mes_referencia": mes_atual
+                    "mes_referencia": mes_ref
                 }
                 
-                if salvar_impacto_nuvem(novo_impacto):
+                if salvar_impacto_nuvem(novo_item):
                     st.session_state.historico_impactos = carregar_impactos_nuvem()
-                    # Limpa campos
-                    st.session_state["desc_impacto"] = ""
-                    st.toast(f"✅ Impacto {tipo} registrado!")
+                    # Limpeza de campos
+                    st.session_state["imp_desc"] = ""
+                    st.session_state["imp_doc"] = ""
+                    st.session_state["imp_valor"] = 0.0
+                    st.session_state.uploader_impacto_key += 1
+                    st.toast("✅ Impacto registrado com sucesso!")
             else:
-                st.error("Por favor, preencha todos os campos.")
+                st.error("Preencha Responsável, Tipo e Descrição.")
 
-        with st.expander("📝 Abrir Formulário", expanded=True):
-            lista_time = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
-            st.selectbox("Responsável:", lista_time, index=None, key="user_impacto")
+        with st.expander("📝 Abrir Formulário de Impacto", expanded=True):
+            c1, c2 = st.columns(2)
+            with c1:
+                st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="imp_autor")
+                st.radio("Tipo do Impacto:", ["🟢 Positivo", "🔴 Negativo"], key="imp_tipo", horizontal=True)
+            with c2:
+                st.text_input("NF / Pedido / CNPJ:", placeholder="Identificação...", key="imp_doc")
+                st.number_input("Estimativa de Valor (R$):", min_value=0.0, step=100.0, key="imp_valor")
             
-            # Botão de Seleção do Tipo de Impacto
-            st.radio("Tipo do Impacto:", ["🟢 Positivo", "🔴 Negativo"], key="tipo_impacto", horizontal=True)
+            st.text_area("Descrição do ocorrido:", placeholder="Como isso afetou o resultado da Papapá?", key="imp_desc")
+            st.file_uploader("Anexar Provas (Fotos, Vídeos, Áudios):", 
+                             type=["png","jpg","jpeg","mp4","mov","avi","mp3","wav"], 
+                             accept_multiple_files=True, 
+                             key=f"midia_imp_{st.session_state.uploader_impacto_key}")
             
-            st.text_area("Descrição do impacto no resultado:", placeholder="Explique o que aconteceu e qual KPI foi afetado...", key="desc_impacto")
-            st.button("Registrar Impacto", use_container_width=True, on_click=salvar_impacto_callback)
+            st.button("Salvar Impacto no Resultado", use_container_width=True, on_click=salvar_impacto_callback)
+
+    with col_stats:
+        st.subheader("📊 Resumo Financeiro")
+        total_pos = sum(i.get('valor_impacto', 0) for i in st.session_state.historico_impactos if "Positivo" in i.get('tipo', ''))
+        total_neg = sum(i.get('valor_impacto', 0) for i in st.session_state.historico_impactos if "Negativo" in i.get('tipo', ''))
+        
+        st.metric("Total Impacto Positivo", f"R$ {total_pos:,.2f}")
+        st.metric("Total Impacto Negativo", f"R$ {total_neg:,.2f}", delta=f"-R$ {total_neg:,.2f}", delta_color="inverse")
 
     st.divider()
 
-    # --- LISTAGEM DOS IMPACTOS ---
-    st.subheader("📋 Histórico de Impactos")
-    
-    # Filtro simples por tipo
-    filtro_tipo = st.multiselect("Filtrar por tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
-    
-    impactos_filtrados = [i for i in st.session_state.historico_impactos if i.get("tipo") in filtro_tipo]
+    # --- FILTROS ---
+    st.subheader("🔍 Filtros de Consulta")
+    f_c1, f_c2 = st.columns(2)
+    with f_c1:
+        meses_lista = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
+        filtro_mes = st.selectbox("Filtrar por Mês:", meses_lista)
+    with f_c2:
+        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
 
-    if not impactos_filtrados:
-        st.info("Nenhum registro encontrado com esses filtros.")
-    
-    for idx, imp in enumerate(impactos_filtrados):
+    # --- LISTAGEM ---
+    dados_exibidos = st.session_state.historico_impactos
+    if filtro_mes != "Todos":
+        dados_exibidos = [d for d in dados_exibidos if d.get('mes_referencia') == filtro_mes]
+    dados_exibidos = [d for d in dados_exibidos if d.get('tipo') in filtro_tipo]
+
+    for idx, item in enumerate(dados_exibidos):
         with st.container():
-            c1, c2 = st.columns([0.9, 0.1])
-            with c1:
-                # Cor do card baseada no tipo
-                cor = "green" if "Positivo" in imp.get("tipo") else "red"
-                st.markdown(f"**{imp.get('tipo')}** | {imp.get('autor')} em {imp.get('data')}")
-                st.info(imp.get("descricao"))
+            c_info, c_del = st.columns([0.9, 0.1])
+            with c_info:
+                cor_texto = "green" if "Positivo" in item.get('tipo') else "red"
+                st.markdown(f"### {item.get('tipo')} - R$ {item.get('valor_impacto', 0):,.2f}")
+                st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')} | 👤 {item.get('autor')}")
+                
+                if item.get('documento'):
+                    st.markdown(f"**📄 Ref:** `{item.get('documento')}`")
+                
+                st.info(item.get("descricao"))
+                
+                # Exibição de Mídias (Fotos, Vídeos, Áudios)
+                midias = item.get("midias", [])
+                if midias:
+                    m_cols = st.columns(len(midias) if len(midias) < 5 else 5)
+                    for i, m in enumerate(midias):
+                        with m_cols[i % 5]:
+                            icon = "🖼️" if m["tipo"] == "foto" else "🎥" if m["tipo"] == "video" else "🎵"
+                            with st.popover(f"{icon} Ver", use_container_width=True):
+                                b_data = base64.b64decode(m["bytes"])
+                                if m["tipo"] == "video": st.video(b_data)
+                                elif m["tipo"] == "audio": st.audio(b_data)
+                                else: st.image(b_data, use_container_width=True)
             
-            with c2:
-                if st.button("🗑️", key=f"del_imp_{imp.get('id_unico')}"):
-                    # Deletar da nuvem
-                    docs = st.session_state.db.collection("impactos").where("id_unico", "==", imp.get("id_unico")).stream()
-                    for doc in docs:
-                        doc.reference.delete()
+            with c_del:
+                if st.button("🗑️", key=f"del_v2_{item.get('id_unico')}"):
+                    docs = st.session_state.db.collection("impactos_v2").where("id_unico", "==", item.get("id_unico")).stream()
+                    for doc in docs: doc.reference.delete()
                     st.session_state.historico_impactos = carregar_impactos_nuvem()
                     st.rerun()
-            st.markdown("---")
+            st.markdown("<hr style='margin:10px 0; opacity:0.2'>", unsafe_allow_html=True)
     
 ################################################################################
 # --- MÓDULO 9: LINKS ÚTEIS ---
