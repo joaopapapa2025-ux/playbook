@@ -926,6 +926,27 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             st.file_uploader("Anexar fotos/vídeos:", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True, key=f"input_midia_prob_{st.session_state.uploader_key}")
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
+        # --- NOVA SEÇÃO: EXIBIÇÃO DO HISTÓRICO ---
+        st.write("---")
+        st.subheader("📋 Histórico Recente")
+        if st.session_state.historico_problemas:
+            for nota in st.session_state.historico_problemas[:10]: # Mostra as últimas 10
+                with st.expander(f"📌 {nota.get('nf_pedido', 'S/ NF')} - {nota.get('autor')} ({nota.get('data')})"):
+                    st.write(nota.get("texto"))
+                    if nota.get("midias"):
+                        cols = st.columns(len(nota["midias"]))
+                        for i, midia in enumerate(nota["midias"]):
+                            with cols[i]:
+                                try:
+                                    if midia["tipo"] == "foto":
+                                        st.image(base64.b64decode(midia["bytes"]))
+                                    else:
+                                        st.video(base64.b64decode(midia["bytes"]))
+                                except:
+                                    st.warning("Mídia indisponível")
+        else:
+            st.write("Nenhuma ocorrência registrada.")
+
     st.divider()
 
     # --- SEÇÃO: GLOSSÁRIO ---
@@ -954,7 +975,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 {item_g("Markup", "Percentual adicionado ao custo para formar o preço.")}
                 {item_g("Sell-in / Sell-out", "Venda para o canal vs. Venda para o consumidor.")}
             </div>
-            <div class="glossary-card">
+            <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">🔍 Prospecção</div>
                 {item_g("SDR / BDR", "Profissionais de prospecção e expansão.")}
                 {item_g("BANT", "Qualificação: Budget, Authority, Need, Timeline.")}
@@ -968,7 +989,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 {item_g("SKU", "Código único para cada produto.")}
                 {item_g("EAN / DUN-14", "Códigos de barras de unidade e caixa.")}
             </div>
-            <div class="glossary-card">
+            <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">📊 Métricas</div>
                 {item_g("SPIN Selling", "Método de perguntas consultivas.")}
                 {item_g("Churn", "Taxa de perda de clientes.")}
