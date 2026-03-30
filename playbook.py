@@ -983,8 +983,8 @@ elif aba_selecionada == "📈 Impactos no resultado":
         st.subheader("O que registramos aqui?")
         st.write("""
         Nesta seção, o time deve registrar ações ou eventos que alteraram os indicadores (positiva ou negativamente).
-        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio.
-        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita.
+        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio / Cliente conseguiu aumentar as vendas e consequentemente vai comprar mais por conta de uma ideia nossa.
+        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita / Entrega atrasou significativamente e cliente não fez nenhum pedido no mês.
         """)
         st.image("https://img.freepik.com/vetores-gratis/ilustracao-do-conceito-de-analise-de-dados_114360-4748.jpg", width=300)
 
@@ -1063,7 +1063,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
         meses_lista = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
         filtro_mes = st.selectbox("Filtrar por Mês:", meses_lista)
     with f_c2:
-        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
+        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"])
 
     # --- PROCESSAMENTO DOS DADOS FILTRADOS ---
     dados_exibidos = st.session_state.historico_impactos
