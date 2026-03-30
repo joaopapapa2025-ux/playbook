@@ -664,6 +664,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     import json
     import os
     import base64
+    from datetime import datetime
 
     # Configuração do Banco de Dados Local
     ARQUIVO_BANCO = "banco_problemas.json"
@@ -672,7 +673,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if os.path.exists(ARQUIVO_BANCO):
             try:
                 with open(ARQUIVO_BANCO, "r", encoding="utf-8") as f:
-                    return json.load(f)
+                    conteudo = f.read()
+                    if not conteudo:
+                        return []
+                    return json.loads(conteudo)
             except:
                 return []
         return []
@@ -681,7 +685,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
             json.dump(dados, f, ensure_ascii=False, indent=4)
 
-    # Inicialização do estado
+    # Inicialização do estado (Garante que carrega do arquivo se o session_state resetar)
     if "historico_problemas" not in st.session_state:
         st.session_state.historico_problemas = carregar_dados()
 
@@ -707,7 +711,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             arquivos_anexos = st.session_state.get(chave_atual)
             
             if autor and texto:
-                from datetime import datetime
                 agora = datetime.now()
                 meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
@@ -717,7 +720,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 if arquivos_anexos:
                     for arq in arquivos_anexos:
                         tipo = "video" if arq.name.lower().endswith(('mp4', 'mov', 'avi')) else "foto"
-                        # Transformação em Base64 para suportar JSON
                         conteudo_base64 = base64.b64encode(arq.getvalue()).decode('utf-8')
                         lista_arquivos.append({
                             "nome": arq.name,
@@ -735,7 +737,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "mes_referencia": mes_atual
                 }
                 
-                # Salva no estado e no arquivo físico
+                # Salva no estado e força a gravação no arquivo físico
                 st.session_state.historico_problemas.insert(0, nova_nota)
                 salvar_dados(st.session_state.historico_problemas)
                 
@@ -781,7 +783,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     # --- EXIBIÇÃO COMPACTA (POPOVER) ---
                     midias = item.get("midias", [])
                     if midias:
-                        # Cria colunas pequenas para os botões de anexo
                         cols_m = st.columns(len(midias) if len(midias) < 4 else 4)
                         for i, m in enumerate(midias):
                             with cols_m[i % 4]:
@@ -794,7 +795,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                                         st.image(raw_bytes, use_container_width=True, caption=m.get("nome", "Anexo"))
                 
                 with c_del:
-                    # Botão de excluir atualiza o arquivo físico também
                     if st.button("🗑️", key=f"del_{item.get('id_unico')}_{idx}"):
                         st.session_state.historico_problemas.remove(item)
                         salvar_dados(st.session_state.historico_problemas)
