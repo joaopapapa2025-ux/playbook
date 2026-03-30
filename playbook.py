@@ -464,7 +464,7 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 - Lote do produto.""", language=None)
 
 # --- ABA RECUPERAÇÃO ---
-    with tabs[4]:
+with tabs[4]:
     st.subheader("🔄 Estratégias de Recuperação de Clientes")
     st.caption("Utilize estes scripts para reativar parceiros que já conhecem a Papapá.")
 
