@@ -843,31 +843,28 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     from google.oauth2 import service_account
 
     # --- CONEXÃO COM O BANCO DE DADOS (FIRESTORE) ---
-    # Usa as credenciais salvas nos Secrets do Streamlit Cloud
     if "db" not in st.session_state:
-        creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
-        st.session_state.db = firestore.Client(credentials=creds)
+        try:
+            creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+            st.session_state.db = firestore.Client(credentials=creds)
+        except Exception as e:
+            st.error(f"Erro de conexão com o banco: {e}")
 
     def carregar_dados_nuvem():
-        """Puxa as ocorrências do Google Cloud Firestore"""
         try:
-            # Busca na coleção 'ocorrencias' ordenando pelas mais recentes
             docs = st.session_state.db.collection("ocorrencias").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
             return [doc.to_dict() for doc in docs]
-        except Exception as e:
-            st.error(f"Erro ao carregar dados da nuvem: {e}")
+        except Exception:
             return []
 
     def salvar_dados_nuvem(nova_nota):
-        """Salva a ocorrência permanentemente no Google Cloud"""
         try:
             st.session_state.db.collection("ocorrencias").add(nova_nota)
             return True
         except Exception as e:
-            st.error(f"Erro ao salvar na nuvem: {e}")
+            st.error(f"Erro ao salvar: {e}")
             return False
 
-    # Inicializa o histórico no session_state se estiver vazio
     if "historico_problemas" not in st.session_state:
         st.session_state.historico_problemas = carregar_dados_nuvem()
 
@@ -883,34 +880,25 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
 
-        # --- FUNÇÃO CALLBACK ATUALIZADA PARA CLOUD ---
         def salvar_nota_callback():
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
             nf_pedido = st.session_state.get("input_nf_problema", "").strip()
-            
             chave_atual = f"input_midia_prob_{st.session_state.uploader_key}"
             arquivos_anexos = st.session_state.get(chave_atual)
             
             if autor and texto:
-                # --- AJUSTE DE FUSO HORÁRIO BRASÍLIA ---
                 fuso_br = pytz.timezone('America/Sao_Paulo')
                 agora = datetime.now(fuso_br)
-                
-                meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
-                            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-                mes_atual = f"{meses_pt[agora.month - 1]}/2026"
+                mes_ref = f"{['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][agora.month - 1]}/2026"
                 
                 lista_arquivos = []
                 if arquivos_anexos:
                     for arq in arquivos_anexos:
-                        tipo = "video" if arq.name.lower().endswith(('mp4', 'mov', 'avi')) else "foto"
-                        conteudo_base64 = base64.b64encode(arq.getvalue()).decode('utf-8')
-                        lista_arquivos.append({
-                            "nome": arq.name,
-                            "bytes": conteudo_base64,
-                            "tipo": tipo
-                        })
+                        ext = arq.name.lower()
+                        tipo = "video" if ext.endswith(('mp4', 'mov', 'avi')) else "foto"
+                        b64 = base64.b64encode(arq.getvalue()).decode('utf-8')
+                        lista_arquivos.append({"nome": arq.name, "bytes": b64, "tipo": tipo})
                 
                 nova_nota = {
                     "id_unico": agora.timestamp(),
@@ -919,137 +907,71 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "nf_pedido": nf_pedido,
                     "midias": lista_arquivos, 
                     "data": agora.strftime("%d/%m/%Y %H:%M"),
-                    "mes_referencia": mes_atual
+                    "mes_referencia": mes_ref
                 }
                 
-                # Salva no Google Cloud
                 if salvar_dados_nuvem(nova_nota):
-                    # Recarrega a lista local para exibir a nova nota
                     st.session_state.historico_problemas = carregar_dados_nuvem()
-                    
-                    # Limpa os campos
                     st.session_state["input_area_problemas"] = "" 
                     st.session_state["input_nf_problema"] = ""    
                     st.session_state.uploader_key += 1            
                     st.toast("✅ Registro salvo com sucesso!")
             else:
-                st.error("Preencha o nome e o texto antes de salvar.")
+                st.error("Preencha Responsável e Descrição.")
 
-        # 1. Formulário de Cadastro
         with st.expander("➕ Registrar Ocorrência", expanded=True):
-            lista_pessoas = ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"]
-            st.selectbox("Quem está registrando?", lista_pessoas, index=None, placeholder="Seu nome...", key="nome_usuario_log")
-            st.text_input("Número da NF ou Pedido:", placeholder="Ex: NF 123456...", key="input_nf_problema")
-            st.text_area("Descreva a ocorrência:", placeholder="Detalhes do caso...", key="input_area_problemas", height=100)
+            st.selectbox("Quem está registrando?", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="nome_usuario_log")
+            st.text_input("Número da NF ou Pedido:", key="input_nf_problema")
+            st.text_area("Descreva a ocorrência:", key="input_area_problemas", height=100)
             st.file_uploader("Anexar fotos/vídeos:", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True, key=f"input_midia_prob_{st.session_state.uploader_key}")
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
-        st.divider()
+    st.divider()
 
-    # --- SEÇÃO: GLOSSÁRIO COMERCIAL (VISUALIZAÇÃO ABERTA) ---
+    # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
-    st.write("Consulte os termos e siglas essenciais da operação Inside Sales da Papapá.")
-
-    # CSS para os mini-cards do glossário
+    
     st.markdown("""
         <style>
-        .glossary-card {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            margin-bottom: 15px;
-            height: 100%;
-        }
-        .glossary-category {
-            color: #007bff;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .glossary-item {
-            margin-bottom: 8px;
-            font-size: 0.92em;
-        }
-        .glossary-term {
-            font-weight: bold;
-            color: #333;
-        }
+        .glossary-card { background-color: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; height: 100%; }
+        .glossary-category { color: #007bff; font-weight: bold; font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .glossary-item { margin-bottom: 8px; font-size: 0.92em; }
+        .glossary-term { font-weight: bold; color: #333; }
         </style>
     """, unsafe_allow_html=True)
 
-    # Função auxiliar para renderizar os itens
-    def item_glossario(termo, definicao):
+    def item_g(termo, definicao):
         return f'<div class="glossary-item"><span class="glossary-term">{termo}:</span> {definicao}</div>'
 
-    # Divisão em colunas para melhor aproveitamento da tela
     col1, col2 = st.columns(2)
 
     with col1:
-        # Mercado e Distribuição
         st.markdown(f"""
             <div class="glossary-card">
                 <div class="glossary-category">🛒 Mercado & Distribuição</div>
-                {item_glossario("PDV (Ponto de Venda)", "Loja ou varejista que revende produtos ao consumidor final.")}
-                {item_glossario("Shopper", "Cliente final que compra para uso pessoal (pessoa física).")}
-                {item_glossario("Markup", "Percentual adicionado ao custo para formar o preço de venda.")}
-                {item_glossario("Preço Sugerido", "Valor recomendado pelo fabricante para venda ao PDV ou consumidor.")}
-                {item_glossario("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")}
-                {item_glossario("Sell-out", "Vendas reais do PDV para o shopper final.")}
+                {item_g("PDV", "Loja ou varejista que revende ao consumidor final.")}
+                {item_g("Shopper", "Cliente final que compra para uso pessoal.")}
+                {item_g("Markup", "Percentual adicionado ao custo para formar o preço.")}
+                {item_g("Sell-in / Sell-out", "Venda para o canal vs. Venda para o consumidor.")}
             </div>
-        """, unsafe_allow_html=True)
-
-        # Prospecção e Qualificação
-        st.markdown(f"""
-            <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">🔍 Prospecção & Qualificação</div>
-                {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
-                {item_glossary("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
-                {item_glossary("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
-                {item_glossary("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Processo de Vendas
-        st.markdown(f"""
-            <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">⚙️ Processo de Vendas</div>
-                {item_glossario("MQL / SQL / SAL", "Estágios de qualificação do lead (Marketing, Vendas e Aceito).")}
-                {item_glossary("Pipeline", "Visão das etapas do funil (prospecção até fechamento).")}
-                {item_glossary("Ramp-up", "Período para um vendedor atingir produtividade plena.")}
+            <div class="glossary-card">
+                <div class="glossary-category">🔍 Prospecção</div>
+                {item_g("SDR / BDR", "Profissionais de prospecção e expansão.")}
+                {item_g("BANT", "Qualificação: Budget, Authority, Need, Timeline.")}
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
-        # Logística e Identificação (Importante para o dia a dia)
         st.markdown(f"""
             <div class="glossary-card">
-                <div class="glossary-category">📦 Logística & Identificação</div>
-                {item_glossario("SKU (Stock Keeping Unit)", "Código interno alfanumérico único para gerenciar estoque.")}
-                {item_glossary("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")}
-                {item_glossary("DUN (ou DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")}
+                <div class="glossary-category">📦 Logística</div>
+                {item_g("SKU", "Código único para cada produto.")}
+                {item_g("EAN / DUN-14", "Códigos de barras de unidade e caixa.")}
             </div>
-        """, unsafe_allow_html=True)
-
-        # Técnicas e Métricas
-        st.markdown(f"""
-            <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">📊 Técnicas & Métricas</div>
-                {item_glossario("SPIN Selling", "Método de perguntas sobre Situação, Problema, Implicação e Necessidade.")}
-                {item_glossary("Cross / Upselling", "Oferecer produtos complementares ou versões superiores.")}
-                {item_glossary("Churn", "Taxa de perda de clientes ou cancelamentos.")}
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Outros Relevantes
-        st.markdown(f"""
-            <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">🤝 Outros Relevantes</div>
-                {item_glossary("Account", "Conta empresarial (cliente B2B recorrente).")}
-                {item_glossary("Closer/Rep", "Vendedor responsável pelo fechamento final.")}
+            <div class="glossary-card">
+                <div class="glossary-category">📊 Métricas</div>
+                {item_g("SPIN Selling", "Método de perguntas consultivas.")}
+                {item_g("Churn", "Taxa de perda de clientes.")}
             </div>
         """, unsafe_allow_html=True)
                     
