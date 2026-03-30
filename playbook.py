@@ -114,49 +114,6 @@ for i, label in enumerate(opcoes_menu):
 
 aba_selecionada = st.session_state.aba_atual
 st.divider()
-
-################################################################################
-# --- MÓDULO 1: HOME (COM TERMÔMETRO DE MOOD) ---
-################################################################################
-if aba_selecionada == "🏠 Home":
-    st.title("🚀 Central Inside Sales Papapá")
-    
-    # 1. Saudação Dinâmica
-    agora = datetime.now()
-    saudacao = "Bom dia" if agora.hour < 12 else "Boa tarde"
-    st.markdown(f"### {saudacao}, time! Qual é o mood para bater as metas de hoje?")
-
-    # 2. SEÇÃO DE MOOD (O QUE VOCÊ PEDIU)
-    # Criamos colunas para cada emoji de sentimento
-    col_mood, col_feedback = st.columns([1, 1.5])
-    
-    with col_mood:
-        st.write("Como você está se sentindo?")
-        # Usamos botões com emojis
-        m1, m2, m3, m4, m5 = st.columns(5)
-        
-        if m1.button("🔥", help="Foguete / Com tudo!"):
-            st.session_state.mood_escolhido = "Foguete"
-            st.toast("Bora pra cima! 🚀")
-        if m2.button("🎯", help="Focado"):
-            st.session_state.mood_escolhido = "Focado"
-            st.toast("Foco total no fechamento!")
-        if m3.button("☕", help="Calmo / Iniciando"):
-            st.session_state.mood_escolhido = "Café"
-            st.toast("Primeiro o café, depois o sucesso.")
-        if m4.button("⚡", help="Energizado"):
-            st.session_state.mood_escolhido = "Energizado"
-            st.toast("Energia lá no alto!")
-        if m5.button("🤯", help="Correria / Pressão"):
-            st.session_state.mood_escolhido = "Correria"
-            st.toast("Respira fundo e vai!")
-
-    with col_feedback:
-        # Se alguém clicou, mostra uma mensagem personalizada
-        if "mood_escolhido" in st.session_state:
-            st.info(f"Seu status atual: **{st.session_state.mood_escolhido}**")
-        else:
-            st.caption("Selecione um emoji para registrar seu clima atual.")
     
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
@@ -262,6 +219,49 @@ if aba_selecionada == "🏠 Home (Equipe)":
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
+
+################################################################################
+# --- MÓDULO 1: HOME (COM TERMÔMETRO DE MOOD) ---
+################################################################################
+if aba_selecionada == "🏠 Home":
+    st.title("🚀 Central Inside Sales Papapá")
+    
+    # 1. Saudação Dinâmica
+    agora = datetime.now()
+    saudacao = "Bom dia" if agora.hour < 12 else "Boa tarde"
+    st.markdown(f"### {saudacao}, time! Qual é o mood para bater as metas de hoje?")
+
+    # 2. SEÇÃO DE MOOD (O QUE VOCÊ PEDIU)
+    # Criamos colunas para cada emoji de sentimento
+    col_mood, col_feedback = st.columns([1, 1.5])
+    
+    with col_mood:
+        st.write("Como você está se sentindo?")
+        # Usamos botões com emojis
+        m1, m2, m3, m4, m5 = st.columns(5)
+        
+        if m1.button("🔥", help="Foguete / Com tudo!"):
+            st.session_state.mood_escolhido = "Foguete"
+            st.toast("Bora pra cima! 🚀")
+        if m2.button("🎯", help="Focado"):
+            st.session_state.mood_escolhido = "Focado"
+            st.toast("Foco total no fechamento!")
+        if m3.button("☕", help="Calmo / Iniciando"):
+            st.session_state.mood_escolhido = "Café"
+            st.toast("Primeiro o café, depois o sucesso.")
+        if m4.button("⚡", help="Energizado"):
+            st.session_state.mood_escolhido = "Energizado"
+            st.toast("Energia lá no alto!")
+        if m5.button("🤯", help="Correria / Pressão"):
+            st.session_state.mood_escolhido = "Correria"
+            st.toast("Respira fundo e vai!")
+
+    with col_feedback:
+        # Se alguém clicou, mostra uma mensagem personalizada
+        if "mood_escolhido" in st.session_state:
+            st.info(f"Seu status atual: **{st.session_state.mood_escolhido}**")
+        else:
+            st.caption("Selecione um emoji para registrar seu clima atual.")
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
