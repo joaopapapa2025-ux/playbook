@@ -464,8 +464,8 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 - Lote do produto.""", language=None)
 
 # --- ABA RECUPERAÇÃO ---
-with tabs[4]:
-    st.subheader("🔄 Recuperação de Clientes")
+    with tabs[4]:
+        st.subheader("🔄 Recuperação de Clientes")
     
     # Se você quiser adicionar algum script de recuperação antes, pode colocar aqui.
     
