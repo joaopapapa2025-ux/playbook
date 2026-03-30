@@ -463,6 +463,24 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 - Motivo da devolução;
 - Lote do produto.""", language=None)
 
+# --- ADICIONANDO O BOTÃO DE DOWNLOAD NA ABA RECUPERAÇÃO ---
+        st.markdown("---")
+        st.subheader("📊 Material de Apoio")
+        
+        nome_arquivo = "Central de Templates Comercial - PAPAPÁ.xlsx"
+        
+        try:
+            with open(nome_arquivo, "rb") as file:
+                st.download_button(
+                    label="📥 Baixar Central de Templates Comercial",
+                    data=file,
+                    file_name=nome_arquivo,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    help="Clique para baixar a planilha de templates completa."
+                )
+        except FileNotFoundError:
+            st.error(f"Arquivo '{nome_arquivo}' não encontrado no diretório.")
+
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
 ################################################################################
