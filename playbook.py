@@ -1134,7 +1134,6 @@ elif aba_selecionada == "📈 Impactos no resultado":
 
     def carregar_impactos_nuvem():
         try:
-            # Busca na coleção 'impactos_v2' ordenando por data
             docs = st.session_state.db.collection("impactos_v2").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
             return [doc.to_dict() for doc in docs]
         except Exception as e:
@@ -1161,8 +1160,8 @@ elif aba_selecionada == "📈 Impactos no resultado":
         st.subheader("O que registramos aqui?")
         st.write("""
         Nesta seção, o time deve registrar ações ou eventos que alteraram os indicadores (positiva ou negativamente).
-        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio / Cliente conseguiu aumentar as vendas e consequentemente vai comprar mais por conta de uma ideia nossa.
-        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita / Entrega atrasou significativamente e cliente não fez nenhum pedido no mês.
+        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio.
+        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta.
         """)
         st.image("https://img.freepik.com/free-vector/growth-arrow-concept-illustration_114360-1090.jpg", width=300)
 
@@ -1206,7 +1205,6 @@ elif aba_selecionada == "📈 Impactos no resultado":
                 
                 if salvar_impacto_nuvem(novo_item):
                     st.session_state.historico_impactos = carregar_impactos_nuvem()
-                    # Limpeza de campos
                     st.session_state["imp_desc"] = ""
                     st.session_state["imp_doc"] = ""
                     st.session_state["imp_valor"] = 0.0
@@ -1215,7 +1213,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
             else:
                 st.error("Preencha Responsável, Tipo e Descrição.")
 
-        with st.expander("📝 Abrir Formulário", expanded=True):
+        with st.expander("📝 Abrir Formulário", expanded=False):
             c1, c2 = st.columns(2)
             with c1:
                 st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="imp_autor")
@@ -1225,14 +1223,19 @@ elif aba_selecionada == "📈 Impactos no resultado":
                 st.number_input("Estimativa de Valor (R$):", min_value=0.0, step=100.0, key="imp_valor")
             
             st.text_area("Descrição do ocorrido:", placeholder="Explique o impacto no resultado...", key="imp_desc")
-            st.file_uploader("Anexar Provas (Fotos, Vídeos, Áudios):", 
-                             type=["png","jpg","jpeg","mp4","mov","avi","mp3","wav"], 
-                             accept_multiple_files=True, 
-                             key=f"midia_imp_{st.session_state.uploader_impacto_key}")
-            
+            st.file_uploader("Anexar Provas:", type=["png","jpg","jpeg","mp4","mov","avi","mp3","wav"], accept_multiple_files=True, key=f"midia_imp_{st.session_state.uploader_impacto_key}")
             st.button("Salvar Impacto no Resultado", use_container_width=True, on_click=salvar_impacto_callback)
 
     st.divider()
+
+    # --- FILTROS DE CONSULTA (Garantindo que as variáveis existam antes de usar) ---
+    st.subheader("🔍 Filtros de Consulta")
+    f_c1, f_c2 = st.columns(2)
+    with f_c1:
+        meses_lista = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
+        filtro_mes = st.selectbox("Filtrar por Mês:", meses_lista)
+    with f_c2:
+        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
 
     # --- PROCESSAMENTO DOS DADOS FILTRADOS ---
     dados_exibidos = st.session_state.historico_impactos
@@ -1249,13 +1252,10 @@ elif aba_selecionada == "📈 Impactos no resultado":
 
     # --- EXIBIÇÃO DAS MÉTRICAS ---
     m1, m2, m3 = st.columns(3)
-    
     with m1:
         st.metric("Ocorrências", len(dados_exibidos))
-    
     with m2:
         st.metric("Total Positivo", f"R$ {total_positivo:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
-    
     with m3:
         st.metric("Total Negativo", f"R$ {total_negativo:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), delta_color="inverse")
 
@@ -1268,13 +1268,9 @@ elif aba_selecionada == "📈 Impactos no resultado":
             with c_info:
                 st.markdown(f"### {item.get('tipo')} - R$ {item.get('valor_impacto', 0):,.2f}")
                 st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')} | 👤 {item.get('autor')}")
-                
-                if item.get('documento'):
-                    st.markdown(f"**📄 Ref:** `{item.get('documento')}`")
-                
+                if item.get('documento'): st.markdown(f"**📄 Ref:** `{item.get('documento')}`")
                 st.info(item.get("descricao"))
                 
-                # Exibição de Mídias
                 midias = item.get("midias", [])
                 if midias:
                     m_cols = st.columns(len(midias) if len(midias) < 5 else 5)
