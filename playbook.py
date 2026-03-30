@@ -118,7 +118,7 @@ st.divider()
 ################################################################################
 # --- MÓDULO 1: HOME (MOOD + EQUIPE COMPLETA) ---
 ################################################################################
-if aba_selecionada == "🏠 Home":
+if aba_selecionada == "🏠 Home (Equipe)":
     st.title("🚀 Central Inside Sales Papapá")
     
     # --- 1. TERMÔMETRO DE MOOD (INTERATIVO) ---
