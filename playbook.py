@@ -152,23 +152,33 @@ if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # ESTRUTURA CSS ATUALIZADA
+    # ESTRUTURA CSS CORRIGIDA
     st.markdown("""
         <style>
         .team-card {
-            background-color: white; padding: 20px; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
-            margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 440px; /* Ajustado para os novos links */
-            display: flex; flex-direction: column; align-items: center; justify-content: start;
+            background-color: white; 
+            padding: 20px; 
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
+            text-align: center;
+            margin-bottom: 20px; 
+            border: 1px solid #eaeaea;
+            height: 450px; /* Altura fixa para evitar bugs */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: start;
             transition: transform 0.3s;
         }
         
         .team-card:hover { transform: translateY(-5px); }
 
         .photo-circle {
-            width: 140px; height: 140px; border-radius: 50%;
-            border: 4px solid #007bff; margin-bottom: 15px;
+            width: 140px; 
+            height: 140px; 
+            border-radius: 50%;
+            border: 4px solid #007bff; 
+            margin-bottom: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             background-size: cover;
             background-position: center top;
@@ -181,37 +191,36 @@ if aba_selecionada == "🏠 Home (Equipe)":
         .photo-joao-paulo { background-position: center 10%; }
         .photo-bernardo { background-position: center 10%; }
 
-        .team-name { font-weight: bold; font-size: 1.15em; color: #333; margin-bottom: 4px; }
-        .team-role { color: #666; font-size: 0.95em; margin-bottom: 12px; font-weight: 500; font-style: italic; }
+        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 4px; }
+        .team-role { color: #666; font-size: 0.9em; margin-bottom: 12px; font-weight: 500; font-style: italic; }
         
-        /* ESTILO DOS LINKS DE CONTATO */
+        .contact-container {
+            width: 100%;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
         .contact-link {
-            text-decoration: none;
-            color: #007bff;
+            text-decoration: none !important;
+            color: #007bff !important;
             font-size: 0.85em;
-            margin-top: 8px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            transition: opacity 0.2s;
         }
-        .contact-link:hover { opacity: 0.7; color: #0056b3; }
         
         .whatsapp-icon {
             width: 18px;
             height: 18px;
-        }
-
-        .contact-divider {
-            width: 80%;
-            border: 0;
-            border-top: 1px solid #eee;
-            margin: 10px 0;
+            vertical-align: middle;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe (Mesmos dados)
+    # Lista da equipe com dados oficiais
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana", "telefone": "(41) 3797-6554", "email": "comercial3@papapa.com.br"},
@@ -221,7 +230,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
         {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
     ]
     
-    # URL do ícone do WhatsApp
     wa_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733585.png"
 
     for i in range(0, len(equipe), 3):
@@ -230,11 +238,12 @@ if aba_selecionada == "🏠 Home (Equipe)":
             if i + j < len(equipe):
                 membro = equipe[i + j]
                 
-                # Tratamento do número para o link wa.me (remove tudo que não é número)
+                # Limpeza do número para o link
                 numero_limpo = "".join(filter(str.isdigit, membro['telefone']))
                 link_whatsapp = f"https://wa.me/55{numero_limpo}"
                 
                 caminho_foto = membro['foto']
+                # Tenta carregar a imagem ou usa o avatar padrão
                 if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
                     try:
                         foto_base64 = get_base64_of_bin_file(caminho_foto)
@@ -252,15 +261,14 @@ if aba_selecionada == "🏠 Home (Equipe)":
                             <div class="photo-circle {membro['classe_foto']}" style="{estilo_foto}"></div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
-                            <hr class="contact-divider">
-                            
-                            <a href="{link_whatsapp}" target="_blank" class="contact-link">
-                                <img src="{wa_icon_url}" class="whatsapp-icon"> {membro['telefone']}
-                            </a>
-                            
-                            <a href="mailto:{membro['email']}" class="contact-link">
-                                ✉️ {membro['email']}
-                            </a>
+                            <div class="contact-container">
+                                <a href="{link_whatsapp}" target="_blank" class="contact-link">
+                                    <img src="{wa_icon_url}" class="whatsapp-icon"> {membro['telefone']}
+                                </a>
+                                <a href="mailto:{membro['email']}" class="contact-link">
+                                    ✉️ {membro['email']}
+                                </a>
+                            </div>
                         </div>
                     """, unsafe_allow_html=True)
 
