@@ -833,6 +833,56 @@ elif aba_selecionada == "🚫 Quebras de Excuses": # Você pode mudar a string d
         "10. 🍼 Minha categoria infantil já está completa": "Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o Clean Label (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?"
     }
 
+    # --- SEÇÃO PLUS: DIFERENCIAIS COMPETITIVOS ---
+    st.markdown("---")
+    st.markdown("### 🏆 Diferenciais Papapá (O seu 'Plus' nas vendas)")
+    st.caption("Argumentos técnicos e comerciais para encantar o cliente.")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        with st.expander("🍃 1. Comida de Verdade (Rótulo Limpo)"):
+            texto_v1 = """Diferente das papinhas ultraprocessadas tradicionais, nossos produtos são 100% naturais:
+• Zero adição de açúcar ou sal: Preserva o paladar do bebê.
+• Sem conservantes ou corantes: A durabilidade vem da tecnologia de envase e esterilização, zero aditivos químicos."""
+            st.code(texto_v1, language=None)
+
+        with st.expander("👶 2. Tecnologia Pouch (Praticidade)"):
+            texto_v2 = """Pioneiros no Brasil com embalagens flexíveis com bico:
+• Práticas e Seguras: Estimula a autonomia do bebê (método similar ao BLW).
+• Portáteis: Não precisam de refrigeração, perfeitas para viagens e passeios.
+• Segurança: Embalagem multicamadas que protege contra luz e oxigênio, mantendo nutrientes."""
+            st.code(texto_v2, language=None)
+
+    with col2:
+        with st.expander("🍎 3. Mix e Introdução Alimentar"):
+            texto_v3 = """Variedade pensada na janela de oportunidades do bebê:
+• Mix de Frutas e Legumes: Texturas e sabores variados.
+• Papinhas Salgadas: Equilíbrio de proteínas, carboidratos e fibras.
+• Snacks Saudáveis: Lanches que derretem na boca, ideais para a mastigação."""
+            st.code(texto_v3, language=None)
+
+        with st.expander("🤝 4. Rigor e Qualidade de Atendimento"):
+            texto_v4 = """Compromisso logístico e comercial:
+• Logística ágil para garantir produto fresco no PDV.
+• Política de transparência e suporte total aos parceiros.
+• Experiência positiva em todos os pontos de contato."""
+            st.code(texto_v4, language=None)
+
+    # Resumo Final "Matador"
+    with st.expander("✨ O Resumo: A essência da Papapá"):
+        resumo_texto = "A Papapá é a aliada de quem não quer escolher entre a saúde do filho e a agitação da rotina moderna. É nutrição de alto nível com a conveniência que o mundo atual exige."
+        st.code(resumo_texto, language=None)
+
+    # Reaplicando o CSS para garantir que esses novos blocos também quebrem linha
+    st.markdown("""
+        <style>
+        code {
+            white-space: pre-wrap !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     # CSS para forçar a quebra de linha no st.code
     st.markdown("""
         <style>
