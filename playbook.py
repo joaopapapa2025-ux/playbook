@@ -691,39 +691,39 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
     
-    import json
-    import os
     import base64
     from datetime import datetime
+    from google.cloud import firestore
+    from google.oauth2 import service_account
 
-    # Configuração do Banco de Dados Local
-    ARQUIVO_BANCO = "banco_problemas.json"
+    # --- CONEXÃO COM O BANCO DE DADOS (FIRESTORE) ---
+    # Usa as credenciais salvas nos Secrets do Streamlit Cloud
+    if "db" not in st.session_state:
+        creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+        st.session_state.db = firestore.Client(credentials=creds)
 
-    def carregar_dados():
-        if os.path.exists(ARQUIVO_BANCO):
-            try:
-                with open(ARQUIVO_BANCO, "r", encoding="utf-8") as f:
-                    conteudo = f.read().strip()
-                    if not conteudo: # Se o arquivo existir mas estiver vazio
-                        return []
-                    return json.loads(conteudo)
-            except Exception as e:
-                # Se der erro na leitura (ex: arquivo sendo usado), retorna o que já tem no state ou vazio
-                return st.session_state.get("historico_problemas", [])
-        return []
-
-    def salvar_dados(dados):
+    def carregar_dados_nuvem():
+        """Puxa as ocorrências do Google Cloud Firestore"""
         try:
-            with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
-                json.dump(dados, f, ensure_ascii=False, indent=4)
+            # Busca na coleção 'ocorrencias' ordenando pelas mais recentes
+            docs = st.session_state.db.collection("ocorrencias").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
+            return [doc.to_dict() for doc in docs]
         except Exception as e:
-            st.error(f"Erro ao salvar no banco físico: {e}")
+            st.error(f"Erro ao carregar dados da nuvem: {e}")
+            return []
 
-    # --- GARANTIA DE PERSISTÊNCIA ---
-    # Se o session_state sumiu mas o arquivo existe, recarrega agora.
-    if "historico_problemas" not in st.session_state or not st.session_state.historico_problemas:
-        dados_carregados = carregar_dados()
-        st.session_state.historico_problemas = dados_carregados
+    def salvar_dados_nuvem(nova_nota):
+        """Salva a ocorrência permanentemente no Google Cloud"""
+        try:
+            st.session_state.db.collection("ocorrencias").add(nova_nota)
+            return True
+        except Exception as e:
+            st.error(f"Erro ao salvar na nuvem: {e}")
+            return False
+
+    # Inicializa o histórico no session_state se estiver vazio
+    if "historico_problemas" not in st.session_state:
+        st.session_state.historico_problemas = carregar_dados_nuvem()
 
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
@@ -737,7 +737,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
 
-        # --- FUNÇÃO CALLBACK PARA SALVAR ---
+        # --- FUNÇÃO CALLBACK ATUALIZADA PARA CLOUD ---
         def salvar_nota_callback():
             autor = st.session_state.get("nome_usuario_log")
             texto = st.session_state.get("input_area_problemas", "").strip()
@@ -773,19 +773,16 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "mes_referencia": mes_atual
                 }
                 
-                # Salva primeiro no arquivo físico para garantir
-                atual = carregar_dados()
-                atual.insert(0, nova_nota)
-                salvar_dados(atual)
-                
-                # Atualiza o session_state
-                st.session_state.historico_problemas = atual
-                
-                # Limpa os campos
-                st.session_state["input_area_problemas"] = "" 
-                st.session_state["input_nf_problema"] = ""    
-                st.session_state.uploader_key += 1            
-                st.toast("✅ Registro salvo com sucesso!")
+                # Salva no Google Cloud
+                if salvar_dados_nuvem(nova_nota):
+                    # Recarrega a lista local para exibir a nova nota
+                    st.session_state.historico_problemas = carregar_dados_nuvem()
+                    
+                    # Limpa os campos
+                    st.session_state["input_area_problemas"] = "" 
+                    st.session_state["input_nf_problema"] = ""    
+                    st.session_state.uploader_key += 1            
+                    st.toast("✅ Registro salvo no Google Cloud!")
             else:
                 st.error("Preencha o nome e o texto antes de salvar.")
 
@@ -805,8 +802,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
         # 3. Listagem das Ocorrências
-        # Garante que as notas exibidas venham da fonte mais atualizada
-        notas_exibidas = st.session_state.historico_problemas if st.session_state.historico_problemas else carregar_dados()
+        notas_exibidas = st.session_state.historico_problemas
         
         if filtro_mes != "Todos":
             notas_exibidas = [n for n in notas_exibidas if n.get('mes_referencia') == filtro_mes]
@@ -836,10 +832,20 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                                         st.image(raw_bytes, use_container_width=True, caption=m.get("nome", "Anexo"))
                 
                 with c_del:
+                    # Lógica para deletar também da nuvem
                     if st.button("🗑️", key=f"del_{item.get('id_unico')}_{idx}"):
-                        st.session_state.historico_problemas.remove(item)
-                        salvar_dados(st.session_state.historico_problemas)
-                        st.rerun()
+                        try:
+                            # Busca o documento pelo ID único para deletar no Firestore
+                            docs = st.session_state.db.collection("ocorrencias").where("id_unico", "==", item.get("id_unico")).stream()
+                            for doc in docs:
+                                doc.reference.delete()
+                            
+                            st.session_state.historico_problemas.remove(item)
+                            st.success("Removido!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Erro ao deletar: {e}")
+
                 st.markdown("<hr style='margin:5px 0; opacity:0.1'>", unsafe_allow_html=True)
                     
 ################################################################################
