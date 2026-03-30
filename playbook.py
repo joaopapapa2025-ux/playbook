@@ -368,6 +368,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "📄 Ata AGE 2025 (Sede/Matriz)": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
             "✅ CND - Débitos Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
             "🏙️ CND - Débitos Municipais": "CND MUNICIPAL - BABY ROO.pdf",
+            "👨‍🚒 Alvará Bombeiro (Venc. 11/2026)": "BABY ROO - CVCB Bombeiro - venc 04.11.2026.pdf",
             "💳 Cartão CNPJ": "CARTÃO CNPJ BABY ROO.pdf",
             "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
             "📑 Sintegra": "SINTEGRA PAPAPÁ.pdf",
