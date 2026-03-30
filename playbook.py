@@ -826,7 +826,7 @@ elif aba_selecionada == "🚫 Quebras de Excuses": # Você pode mudar a string d
         
         "7. 📦 Não posso colocar muitos SKUs novos agora": "Perfeito. Podemos começar com 3 a 5 SKUs estratégicos de maior potencial e, conforme performance, evoluir o mix. A ideia é crescimento gradual e baseado em resultado, não entrada massiva.",
         
-        "8. 🧐 Não vejo diferencial tão claro": "A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, mas marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?",
+        "8. 🧐 Não vejo diferencial tão claro": "A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, somos um marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?",
         
         "9. 🗓️ Agora não é momento para novos fornecedores": "Entendo. Justamente por isso podemos começar pequeno, validando performance sem grande exposição. O objetivo não é gerar ruptura na operação, mas agregar incrementalmente.",
         
