@@ -1071,24 +1071,25 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
     st.markdown("### 💡 Guia de Contorno Estratégico")
     st.caption("Clique na objeção e use o botão à direita para copiar o texto rapidamente.")
 
-    # Dicionário com as 10 objeções
+    # Dicionário atualizado com a nova objeção no topo (Total 11)
     objecoes = {
-        "1. 🤝 Já trabalho com outra marca de papinha": "Perfeito, isso é ótimo. Mostra que a categoria já performa aí dentro. A nossa proposta não é substituir, mas complementar e ampliar o ticket da categoria. Hoje vocês trabalham a curva completa ou existe espaço para uma marca com posicionamento mais premium e foco em recorrência?",
-        "2. 📉 Não sei se tem giro para isso": "Faz sentido olhar com cautela. Por isso a entrada pode ser estratégica, com SKUs de maior giro e mix enxuto. A ideia não é aumentar risco de estoque, mas estruturar curva inteligente de produto. Posso te mostrar quais SKUs normalmente performam melhor nesse perfil de loja?",
-        "3. 💰 Está caro comparado às marcas tradicionais": "Entendo a comparação. A diferença é que não competimos apenas por preço, mas por posicionamento e margem absoluta. Muitas vezes o produto premium gera maior rentabilidade por unidade e atrai um público que já está disposto a pagar mais por qualidade. Faz sentido analisarmos margem real por SKU?",
-        "4. 🏢 Preciso falar com a central / diretoria": "Perfeito. Posso te apoiar com um resumo objetivo de potencial de giro, margem e proposta de mix inicial para facilitar essa validação interna. Se fizer sentido, também posso participar da apresentação para explicar rapidamente o racional da categoria.",
-        "5. ⏳ Tenho medo de produto parado / vencimento": "Essa é uma preocupação legítima. Por isso trabalhamos com entrada estratégica e análise de giro. Além disso, ajudamos a definir mix ideal por perfil de loja. O objetivo não é inflar estoque, mas estruturar reposição inteligente.",
-        "6. ⚠️ Já tive problema com fornecedor antes": "Entendo totalmente. O que normalmente gera problema é falta de acompanhamento e previsibilidade. Nossa proposta não é só vender produto, mas acompanhar giro e evolução de mix. Antes de avançar, posso entender o que aconteceu na experiência anterior para te mostrar como evitamos esse cenário?",
-        "7. 📦 Não posso colocar muitos SKUs novos agora": "Perfeito. Podemos começar com 3 a 5 SKUs estratégicos de maior potencial e, conforme performance, evoluir o mix. A ideia é crescimento gradual e baseado em resultado, não entrada massiva.",
-        "8. 🧐 Não vejo diferencial tão claro": "A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, mas marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?",
-        "9. 🗓️ Agora não é momento para novos fornecedores": "Entendo. Justamente por isso podemos começar pequeno, validando performance sem grande exposição. O objetivo não é gerar ruptura na operação, mas agregar incrementalmente.",
-        "10. 🍼 Minha categoria infantil já está completa": "Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o Clean Label (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?"
+        "1. 🏪 'Já tem muita loja vendendo Papapá (e mais barato)'": "Entendo perfeitamente, isso mostra que a demanda pelo produto é real e o cliente já busca a marca. O segredo aqui não é brigar por centavos, mas se diferenciar no PDV. Enquanto o grande mercado apenas 'empilha caixa', aqui você entrega uma venda consultiva, com atendimento técnico e especializado. Além disso, podemos trabalhar com Kits Personalizados (Ex: Kit Introdução Alimentar ou Kit Semana Prática) que aumentam o seu ticket médio e tiram a comparação direta de preço unitário. Faz sentido focarmos em valor agregado em vez de guerra de preço?",
+        "2. 🤝 Já trabalho com outra marca de papinha": "Perfeito, isso é ótimo. Mostra que a categoria já performa aí dentro. A nossa proposta não é substituir, mas complementar e ampliar o ticket da categoria. Hoje vocês trabalham a curva completa ou existe espaço para uma marca com posicionamento mais premium e foco em recorrência?",
+        "3. 📉 Não sei se tem giro para isso": "Faz sentido olhar com cautela. Por isso a entrada pode ser estratégica, com SKUs de maior giro e mix enxuto. A ideia não é aumentar risco de estoque, mas estruturar curva inteligente de produto. Posso te mostrar quais SKUs normalmente performam melhor nesse perfil de loja?",
+        "4. 💰 Está caro comparado às marcas tradicionais": "Entendo a comparação. A diferença é que não competimos apenas por preço, mas por posicionamento e margem absoluta. Muitas vezes o produto premium gera maior rentabilidade por unidade e atrai um público que já está disposto a pagar mais por qualidade. Faz sentido analisarmos margem real por SKU?",
+        "5. 🏢 Preciso falar com a central / diretoria": "Perfeito. Posso te apoiar com um resumo objetivo de potencial de giro, margem e proposta de mix inicial para facilitar essa validação interna. Se fizer sentido, também posso participar da apresentação para explicar rapidamente o racional da categoria.",
+        "6. ⏳ Tenho medo de produto parado / vencimento": "Essa é uma preocupação legítima. Por isso trabalhamos com entrada estratégica e análise de giro. Além disso, ajudamos a definir mix ideal por perfil de loja. O objetivo não é inflar estoque, mas estruturar reposição inteligente.",
+        "7. ⚠️ Já tive problema com fornecedor antes": "Entendo totalmente. O que normalmente gera problema é falta de acompanhamento e previsibilidade. Nossa proposta não é só vender produto, mas acompanhar giro e evolução de mix. Antes de avançar, posso entender o que aconteceu na experiência anterior para te mostrar como evitamos esse cenário?",
+        "8. 📦 Não posso colocar muitos SKUs novos agora": "Perfeito. Podemos começar com 3 a 5 SKUs estratégicos de maior potencial e, conforme performance, evoluir o mix. A ideia é crescimento gradual e baseado em resultado, não entrada massiva.",
+        "9. 🧐 Não vejo diferencial tão claro": "A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, mas marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?",
+        "10. 🗓️ Agora não é momento para novos fornecedores": "Entendo. Justamente por isso podemos começar pequeno, validando performance sem grande exposição. O objetivo não é gerar ruptura na operação, mas agregar incrementalmente.",
+        "11. 🍼 Minha categoria infantil já está completa": "Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o Clean Label (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?"
     }
 
     # Exibição das 10 Objeções
     for titulo, texto in objecoes.items():
         with st.expander(titulo):
-            st.code(texto, language=None)
+            st.write(texto)
 
     # --- DIVISOR ENTRE SEÇÕES ---
     st.markdown("---")
