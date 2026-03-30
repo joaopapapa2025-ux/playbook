@@ -4,9 +4,36 @@ import os
 from datetime import datetime
 import base64
 from pathlib import Path
+from google.cloud import firestore
+from google.oauth2 import service_account
 
-import streamlit as st
-import base64
+# ------------------------------------------------------------------------------
+# CONEXÃO COM O BANCO DE DADOS (FIRESTORE)
+# ------------------------------------------------------------------------------
+# Esta parte usa os "Secrets" que você salvou no Streamlit Cloud
+creds = service_account.Credentials.from_service_account_info(st.secrets["gcp_service_account"])
+db = firestore.Client(credentials=creds)
+
+def salvar_no_banco(nova_nota):
+    """Salva uma nova ocorrência diretamente na nuvem do Google"""
+    # Adiciona à coleção "ocorrencias" no Firestore
+    db.collection("ocorrencias").add(nova_nota)
+
+def carregar_do_banco():
+    """Puxa todas as ocorrências salvas na nuvem"""
+    # Busca os documentos e ordena pelo ID (data/hora de criação)
+    try:
+        docs = db.collection("ocorrencias").order_by("id_unico", direction=firestore.Query.DESCENDING).stream()
+        return [doc.to_dict() for doc in docs]
+    except Exception:
+        # Retorna lista vazia se ainda não houver dados
+        return []
+
+# ------------------------------------------------------------------------------
+# EXEMPLO DE USO NO MÓDULO DE OCORRÊNCIAS
+# ------------------------------------------------------------------------------
+# Quando você for salvar a nota, basta chamar:
+# salvar_no_banco(nova_entrada)
 
 ################################################################################
 # --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
