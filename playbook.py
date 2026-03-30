@@ -734,7 +734,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
     with col_conteudo:
         st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
-        st.image("https://img.freepik.com/free-vector/growth-arrow-concept-illustration_114360-1090.jpg", width=300)
+        st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
 
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
@@ -986,7 +986,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
         - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio / Cliente conseguiu aumentar as vendas e consequentemente vai comprar mais por conta de uma ideia nossa.
         - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita / Entrega atrasou significativamente e cliente não fez nenhum pedido no mês.
         """)
-        st.image("https://img.freepik.com/vetores-gratis/ilustracao-do-conceito-de-analise-de-dados_114360-4748.jpg", width=300)
+        st.image("https://img.freepik.com/free-vector/growth-arrow-concept-illustration_114360-1090.jpg", width=300)
 
     with col_form:
         st.subheader("🚀 Novo Registro de Impacto")
