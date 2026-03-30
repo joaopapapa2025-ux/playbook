@@ -836,8 +836,14 @@ elif aba_selecionada == "🚫 Quebras de Excuses": # Você pode mudar a string d
     # Renderização das objeções
     for titulo, texto in objecoes.items():
         with st.expander(titulo):
-            # O st.code já vem com o botão de copiar nativo do Streamlit
-            st.code(texto, language=None)
+            # text_area com altura dinâmica faz o texto quebrar linha automaticamente
+            st.text_area(
+                label="Sugestão de resposta:", 
+                value=texto, 
+                height=120, 
+                label_visibility="collapsed",
+                key=f"obj_{titulo}"
+            )
 
     st.divider()
     st.subheader("🚀 Dica de Ouro")
