@@ -1234,23 +1234,31 @@ elif aba_selecionada == "📈 Impactos no resultado":
 
     st.divider()
 
-    # --- FILTROS ---
-    st.subheader("🔍 Filtros de Consulta")
-    f_c1, f_c2 = st.columns(2)
-    with f_c1:
-        meses_lista = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
-        filtro_mes = st.selectbox("Filtrar por Mês:", meses_lista)
-    with f_c2:
-        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"])
-
     # --- PROCESSAMENTO DOS DADOS FILTRADOS ---
     dados_exibidos = st.session_state.historico_impactos
+    
     if filtro_mes != "Todos":
         dados_exibidos = [d for d in dados_exibidos if d.get('mes_referencia') == filtro_mes]
-    dados_exibidos = [d for d in dados_exibidos if d.get('tipo') in filtro_tipo]
+    
+    # Se o multiselect de tipo não estiver vazio, filtra. Se estiver vazio, decide se mostra tudo ou nada.
+    if filtro_tipo:
+        dados_exibidos = [d for d in dados_exibidos if d.get('tipo') in filtro_tipo]
 
-    # Métrica de quantidade (igual ao módulo de ocorrências)
-    st.metric("Impactos registrados no período", len(dados_exibidos))
+    # --- CÁLCULO DOS TOTAIS FINANCEIROS ---
+    total_positivo = sum(d.get('valor', 0.0) for d in dados_exibidos if d.get('tipo') == "🟢 Positivo")
+    total_negativo = sum(d.get('valor', 0.0) for d in dados_exibidos if d.get('tipo') == "🔴 Negativo")
+
+    # --- EXIBIÇÃO DAS MÉTRICAS ---
+    m1, m2, m3 = st.columns(3)
+    
+    with m1:
+        st.metric("Ocorrências", len(dados_exibidos))
+    
+    with m2:
+        st.metric("Total Positivo", f"R$ {total_positivo:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+    
+    with m3:
+        st.metric("Total Negativo", f"R$ {total_negativo:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), delta_color="inverse")
 
     # --- LISTAGEM ---
     for idx, item in enumerate(dados_exibidos):
