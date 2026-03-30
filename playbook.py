@@ -110,7 +110,7 @@ st.markdown(f"""
     }}
     </style>
 
-    <div style="text-align: center;">
+    <div class="header-container">
         <img src="{img_logo_html}" width="300">
         <h1 style='color: #004a99; font-family: sans-serif; font-weight: 850; margin-top: 10px;'>
             Hub Inside Sales
