@@ -330,7 +330,9 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 ################################################################################
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
-    col1, col2 = st.columns(2)
+    
+    # Criando 3 colunas para distribuir melhor os materiais
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         st.subheader("📁 Materiais de Venda")
@@ -359,6 +361,24 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
                 with open(path, "rb") as f:
                     st.download_button(label, f, file_name=path, use_container_width=True)
             except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
+
+    with col3:
+        st.subheader("🏦 Documentos Fiscais")
+        arquivos_fiscais = {
+            "📄 Ata AGE 2025 (Sede/Matriz)": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
+            "✅ CND - Débitos Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
+            "💳 Cartão CNPJ Baby Roo": "CARTÃO CNPJ BABY ROO.pdf",
+            "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
+            "📑 Sintegra Papapá": "SINTEGRA PAPAPÁ.pdf",
+            "💰 Comprovante Bancário": "COMPROVANTE BANCÁRIO (1).png"
+        }
+        for label, path in arquivos_fiscais.items():
+            try:
+                with open(path, "rb") as f:
+                    # O streamlit identifica automaticamente se é PNG ou PDF pelo nome do arquivo no path
+                    st.download_button(label, f, file_name=path, use_container_width=True)
+            except FileNotFoundError: 
+                st.error(f"Arquivo não encontrado: {path}")
 
 ################################################################################
 # --- MÓDULO 4: TEMPLATES & SCRIPTS ---
