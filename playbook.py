@@ -118,75 +118,64 @@ aba_selecionada = st.session_state.aba_atual
 st.divider()
     
 ################################################################################
-# --- MÓDULO 1: HOME (MOOD + EQUIPE COMPLETA) ---
+# --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
-    st.title("🚀 Central Inside Sales Papapá")
-    
-    # --- 1. TERMÔMETRO DE MOOD (INTERATIVO) ---
-    agora = datetime.now()
-    saudacao = "Bom dia" if agora.hour < 12 else "Boa tarde"
-    st.markdown(f"### {saudacao}, time! Qual é o mood de hoje?")
-
-    col_mood, col_feedback = st.columns([1, 1.5])
-    with col_mood:
-        st.write("Como você está se sentindo?")
-        m1, m2, m3, m4, m5 = st.columns(5)
-        if m1.button("🔥", help="Foguete / Com tudo!"):
-            st.session_state.mood_escolhido = "Foguete"
-            st.toast("Bora pra cima! 🚀")
-        if m2.button("🎯", help="Focado"):
-            st.session_state.mood_escolhido = "Focado"
-            st.toast("Foco total no fechamento!")
-        if m3.button("☕", help="Calmo / Iniciando"):
-            st.session_state.mood_escolhido = "Café"
-            st.toast("Primeiro o café...")
-        if m4.button("⚡", help="Energizado"):
-            st.session_state.mood_escolhido = "Energizado"
-            st.toast("Energia lá no alto!")
-        if m5.button("🤯", help="Correria / Pressão"):
-            st.session_state.mood_escolhido = "Correria"
-            st.toast("Respira fundo e vai!")
-
-    with col_feedback:
-        if "mood_escolhido" in st.session_state:
-            st.info(f"Seu status atual: **{st.session_state.mood_escolhido}**")
-        else:
-            st.caption("Selecione um emoji para registrar seu clima atual.")
-
-    st.divider()
-
-    # --- 2. VISUALIZAÇÃO DA EQUIPE (CARDS PROFISSIONAIS) ---
-    st.subheader("👥 Nossa Equipe")
+    st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # CSS REFORMULADO (Com todos os seus ajustes de posicionamento de rosto)
+    # NOVA ESTRUTURA CSS PARA CENTRALIZAR E PADRONIZAR AS FOTOS
     st.markdown("""
         <style>
         .team-card {
             background-color: white; padding: 20px; border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); text-align: center;
             margin-bottom: 20px; border: 1px solid #eaeaea;
-            height: 330px; display: flex; flex-direction: column; align-items: center; justify-content: start;
+            height: 330px; /* Mantém todos os cards com o mesmo tamanho vertical */
+            display: flex; flex-direction: column; align-items: center; justify-content: start;
         }
+
+        /* O CÍRCULO DA FOTO */
         .photo-circle {
             width: 140px; height: 140px; border-radius: 50%;
             border: 4px solid #007bff; margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            background-size: cover; background-repeat: no-repeat;
-            background-position: center top; 
+            background-size: cover; /* A mágica acontece aqui: centraliza e preenche */
+            background-position: center top; /* Centraliza a foto de todos */
+            background-repeat: no-repeat;
         }
-        /* Ajustes manuais de enquadramento que você definiu */
-        .photo-joao-vitor { background-position: center 20% !important; }
-        .photo-ana { background-position: center 10% !important; }
-        .photo-joao-paulo { background-position: center 10% !important; }
-        .photo-bernardo { background-position: center 10% !important; }
-        
-        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
-        .team-role { color: #666; font-size: 1.0em; font-weight: 500; }
-        </style>
-    """, unsafe_allow_html=True)
 
+        /* AJUSTE EXCLUSIVO PARA A FOTO DO JOÃO VITOR - POSICIONAMENTO MANUAL */
+        /* Para corrigir a posição da cabeça no card do João Vitor, adicionei esta classe. */
+        .photo-joao-vitor {
+            background-position: center 20%; /* Ajuste manual para subir a cabeça dele */
+        }
+        
+        /* AJUSTE EXCLUSIVO PARA A FOTO DA ANA - POSICIONAMENTO MANUAL */
+        /* Para centralizar o rosto da Ana, adicionei esta classe. */
+        .photo-ana {
+            background-position: center 10%; /* Ajuste manual para o rosto dela */
+        }
+
+        /* AJUSTE EXCLUSIVO PARA A FOTO DO JOÃO PAULO - POSICIONAMENTO MANUAL */
+        /* Para centralizar o rosto do João Paulo, adicionei esta classe. */
+        .photo-joao-paulo {
+            background-position: center 10%; /* Ajuste manual para o rosto dele */
+        }
+
+        /* AJUSTE EXCLUSIVO PARA A FOTO DO BERNARDO - POSICIONAMENTO MANUAL */
+        /* Para centralizar o rosto do Bernardo, adicionei esta classe. */
+        .photo-bernardo {
+            background-position: center 10%; /* Ajuste manual para o rosto dele */
+        }
+
+        .team-name { font-weight: bold; font-size: 1.2em; color: #333; margin-bottom: 6px; }
+        .team-role { color: #666; font-size: 1.0em; margin-bottom: 0px; font-weight: 500;}
+        </style>
+        """, unsafe_allow_html=True)
+
+    # Lista da equipe com os nomes dos arquivos. Garanta que as extensões sejam .jpeg
+    # Mantenha os arquivos antigos, mas use os arquivos novos de foco em rostos para obter o melhor resultado.
     equipe = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor"},
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana"},
@@ -196,35 +185,43 @@ if aba_selecionada == "🏠 Home (Equipe)":
         {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo"}
     ]
     
-    # Grid de 3 colunas
+    # Criação de colunas para os cards (máximo 3 por linha)
     for i in range(0, len(equipe), 3):
         cols = st.columns(3)
         for j in range(3):
             if i + j < len(equipe):
                 membro = equipe[i + j]
+                
+                # Lógica para carregar a foto específica ou o logo padrão
                 caminho_foto = membro['foto']
                 classe_extra = membro['classe_foto']
                 
-                # Lógica de carregamento de imagem
-                if os.path.exists(caminho_foto):
+                # Verifica se o arquivo existe e se tem conteúdo (size > 0)
+                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
                     try:
                         foto_base64 = get_base64_of_bin_file(caminho_foto)
+                        # Identifica a extensão para o cabeçalho base64
                         ext = caminho_foto.split('.')[-1].lower()
+                        # Trata jpg como jpeg no cabeçalho
                         if ext == 'jpg': ext = 'jpeg'
+                        # Define a imagem como plano de fundo (background-image)
                         estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
                     except:
+                        # Fallback se a conversão falhar
                         estilo_foto = f"background-image: url('{img_avatar_html}');"
                 else:
+                    # Se não achar a foto da pessoa (como Thiago e Bernardo), usa o logo Papapá
                     estilo_foto = f"background-image: url('{img_avatar_html}');"
 
                 with cols[j]:
                     st.markdown(f"""
                         <div class="team-card">
-                            <div class="photo-circle {classe_extra}" style="{estilo_foto}"></div>
+                            <div class="photo-circle {classe_extra}" style="{estilo_foto}" title="{membro['nome']}"></div>
                             <div class="team-name">{membro['nome']}</div>
                             <div class="team-role">{membro['cargo']}</div>
                         </div>
                     """, unsafe_allow_html=True)
+
                     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
