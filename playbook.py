@@ -938,7 +938,7 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
     st.success("**Dica de Ouro:** Transforme a objeção em uma oportunidade de educar o cliente sobre o valor da marca.")
 
 ################################################################################
-# --- MÓDULO 8: 📈 IMPACTOS NO RESULTADO (VERSÃO COMPLETA) ---
+# --- MÓDULO 8: 📈 IMPACTOS NO RESULTADO ---
 ################################################################################
 elif aba_selecionada == "📈 Impactos no resultado":
     st.header("📈 Impactos no Resultado")
@@ -977,7 +977,16 @@ elif aba_selecionada == "📈 Impactos no resultado":
     if "uploader_impacto_key" not in st.session_state:
         st.session_state.uploader_impacto_key = 200
 
-    col_form, col_stats = st.columns([1.5, 1])
+    col_info, col_form = st.columns([1, 1.2])
+
+    with col_info:
+        st.subheader("O que registramos aqui?")
+        st.write("""
+        Nesta seção, o time deve registrar ações ou eventos que alteraram os indicadores (positiva ou negativamente).
+        - **Exemplo Positivo:** Nova estratégia de abordagem que subiu o ticket médio.
+        - **Exemplo Negativo:** Ruptura de estoque que impediu a batida da meta de receita.
+        """)
+        st.image("https://img.freepik.com/vetores-gratis/ilustracao-do-conceito-de-analise-de-dados_114360-4748.jpg", width=300)
 
     with col_form:
         st.subheader("🚀 Novo Registro de Impacto")
@@ -1028,7 +1037,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
             else:
                 st.error("Preencha Responsável, Tipo e Descrição.")
 
-        with st.expander("📝 Abrir Formulário de Impacto", expanded=True):
+        with st.expander("📝 Abrir Formulário", expanded=True):
             c1, c2 = st.columns(2)
             with c1:
                 st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="imp_autor")
@@ -1037,21 +1046,13 @@ elif aba_selecionada == "📈 Impactos no resultado":
                 st.text_input("NF / Pedido / CNPJ:", placeholder="Identificação...", key="imp_doc")
                 st.number_input("Estimativa de Valor (R$):", min_value=0.0, step=100.0, key="imp_valor")
             
-            st.text_area("Descrição do ocorrido:", placeholder="Como isso afetou o resultado da Papapá?", key="imp_desc")
+            st.text_area("Descrição do ocorrido:", placeholder="Explique o impacto no resultado...", key="imp_desc")
             st.file_uploader("Anexar Provas (Fotos, Vídeos, Áudios):", 
                              type=["png","jpg","jpeg","mp4","mov","avi","mp3","wav"], 
                              accept_multiple_files=True, 
                              key=f"midia_imp_{st.session_state.uploader_impacto_key}")
             
             st.button("Salvar Impacto no Resultado", use_container_width=True, on_click=salvar_impacto_callback)
-
-    with col_stats:
-        st.subheader("📊 Resumo Financeiro")
-        total_pos = sum(i.get('valor_impacto', 0) for i in st.session_state.historico_impactos if "Positivo" in i.get('tipo', ''))
-        total_neg = sum(i.get('valor_impacto', 0) for i in st.session_state.historico_impactos if "Negativo" in i.get('tipo', ''))
-        
-        st.metric("Total Impacto Positivo", f"R$ {total_pos:,.2f}")
-        st.metric("Total Impacto Negativo", f"R$ {total_neg:,.2f}", delta=f"-R$ {total_neg:,.2f}", delta_color="inverse")
 
     st.divider()
 
@@ -1064,17 +1065,20 @@ elif aba_selecionada == "📈 Impactos no resultado":
     with f_c2:
         filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
 
-    # --- LISTAGEM ---
+    # --- PROCESSAMENTO DOS DADOS FILTRADOS ---
     dados_exibidos = st.session_state.historico_impactos
     if filtro_mes != "Todos":
         dados_exibidos = [d for d in dados_exibidos if d.get('mes_referencia') == filtro_mes]
     dados_exibidos = [d for d in dados_exibidos if d.get('tipo') in filtro_tipo]
 
+    # Métrica de quantidade (igual ao módulo de ocorrências)
+    st.metric("Impactos registrados no período", len(dados_exibidos))
+
+    # --- LISTAGEM ---
     for idx, item in enumerate(dados_exibidos):
         with st.container():
             c_info, c_del = st.columns([0.9, 0.1])
             with c_info:
-                cor_texto = "green" if "Positivo" in item.get('tipo') else "red"
                 st.markdown(f"### {item.get('tipo')} - R$ {item.get('valor_impacto', 0):,.2f}")
                 st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')} | 👤 {item.get('autor')}")
                 
@@ -1083,7 +1087,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
                 
                 st.info(item.get("descricao"))
                 
-                # Exibição de Mídias (Fotos, Vídeos, Áudios)
+                # Exibição de Mídias
                 midias = item.get("midias", [])
                 if midias:
                     m_cols = st.columns(len(midias) if len(midias) < 5 else 5)
@@ -1097,7 +1101,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
                                 else: st.image(b_data, use_container_width=True)
             
             with c_del:
-                if st.button("🗑️", key=f"del_v2_{item.get('id_unico')}"):
+                if st.button("🗑️", key=f"del_imp_v2_{item.get('id_unico')}"):
                     docs = st.session_state.db.collection("impactos_v2").where("id_unico", "==", item.get("id_unico")).stream()
                     for doc in docs: doc.reference.delete()
                     st.session_state.historico_impactos = carregar_impactos_nuvem()
