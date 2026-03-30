@@ -128,7 +128,7 @@ opcoes_menu = [
     "🛠️ Resolução de Problemas",
     "🚫 Quebras de Excuses",
     "📈 Impactos no resultado",
-    "🔗 Links Úteis,
+    "🔗 Links Úteis",
 ]
 
 if 'aba_atual' not in st.session_state:
