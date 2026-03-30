@@ -734,7 +734,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
     with col_conteudo:
         st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
-        st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
+        st.image("https://img.freepik.com/free-vector/growth-arrow-concept-illustration_114360-1090.jpg", width=300)
 
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
