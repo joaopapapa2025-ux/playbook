@@ -321,7 +321,8 @@ elif aba_selecionada == "✍️ Templates & Scripts":
         "🤝 Abordagem Inicial", 
         "🚀 Explicação de Mix (Curva A)", 
         "📝 Cadastro & Fechamento", 
-        "🚚 Pós-Venda & Financeiro"
+        "🚚 Pós-Venda & Financeiro",
+        "🔄 Recuperação"
     ])
     
     # --- ABA 0: ABORDAGEM ---
