@@ -1213,7 +1213,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
             else:
                 st.error("Preencha Responsável, Tipo e Descrição.")
 
-        with st.expander("📝 Abrir Formulário", expanded=False):
+        with st.expander("📝 Abrir Formulário", expanded=True):
             c1, c2 = st.columns(2)
             with c1:
                 st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="imp_autor")
@@ -1235,7 +1235,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
         meses_lista = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
         filtro_mes = st.selectbox("Filtrar por Mês:", meses_lista)
     with f_c2:
-        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"], default=["🟢 Positivo", "🔴 Negativo"])
+        filtro_tipo = st.multiselect("Filtrar por Tipo:", ["🟢 Positivo", "🔴 Negativo"])
 
     # --- PROCESSAMENTO DOS DADOS FILTRADOS ---
     dados_exibidos = st.session_state.historico_impactos
