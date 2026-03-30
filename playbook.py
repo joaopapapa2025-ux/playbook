@@ -1240,13 +1240,12 @@ elif aba_selecionada == "📈 Impactos no resultado":
     if filtro_mes != "Todos":
         dados_exibidos = [d for d in dados_exibidos if d.get('mes_referencia') == filtro_mes]
     
-    # Se o multiselect de tipo não estiver vazio, filtra. Se estiver vazio, decide se mostra tudo ou nada.
     if filtro_tipo:
         dados_exibidos = [d for d in dados_exibidos if d.get('tipo') in filtro_tipo]
 
     # --- CÁLCULO DOS TOTAIS FINANCEIROS ---
-    total_positivo = sum(d.get('valor', 0.0) for d in dados_exibidos if d.get('tipo') == "🟢 Positivo")
-    total_negativo = sum(d.get('valor', 0.0) for d in dados_exibidos if d.get('tipo') == "🔴 Negativo")
+    total_positivo = sum(d.get('valor_impacto', 0.0) for d in dados_exibidos if d.get('tipo') == "🟢 Positivo")
+    total_negativo = sum(d.get('valor_impacto', 0.0) for d in dados_exibidos if d.get('tipo') == "🔴 Negativo")
 
     # --- EXIBIÇÃO DAS MÉTRICAS ---
     m1, m2, m3 = st.columns(3)
@@ -1259,6 +1258,8 @@ elif aba_selecionada == "📈 Impactos no resultado":
     
     with m3:
         st.metric("Total Negativo", f"R$ {total_negativo:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), delta_color="inverse")
+
+    st.divider()
 
     # --- LISTAGEM ---
     for idx, item in enumerate(dados_exibidos):
