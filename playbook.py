@@ -833,17 +833,20 @@ elif aba_selecionada == "🚫 Quebras de Excuses": # Você pode mudar a string d
         "10. 🍼 Minha categoria infantil já está completa": "Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o Clean Label (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?"
     }
 
+    # CSS para forçar a quebra de linha no st.code
+    st.markdown("""
+        <style>
+        code {
+            white-space: pre-wrap !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Renderização das objeções
     for titulo, texto in objecoes.items():
         with st.expander(titulo):
-            # text_area com altura dinâmica faz o texto quebrar linha automaticamente
-            st.text_area(
-                label="Sugestão de resposta:", 
-                value=texto, 
-                height=120, 
-                label_visibility="collapsed",
-                key=f"obj_{titulo}"
-            )
+            # Usando st.code com o CSS acima, o texto quebra linha sozinho
+            st.code(texto, language=None)
 
     st.divider()
     st.subheader("🚀 Dica de Ouro")
