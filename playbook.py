@@ -692,6 +692,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     st.header("🛠️ Resolução de Problemas")
     
     import base64
+    import pytz
     from datetime import datetime
     from google.cloud import firestore
     from google.oauth2 import service_account
@@ -747,7 +748,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             arquivos_anexos = st.session_state.get(chave_atual)
             
             if autor and texto:
-                agora = datetime.now()
+                # --- AJUSTE DE FUSO HORÁRIO BRASÍLIA ---
+                fuso_br = pytz.timezone('America/Sao_Paulo')
+                agora = datetime.now(fuso_br)
+                
                 meses_pt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
                             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
                 mes_atual = f"{meses_pt[agora.month - 1]}/2026"
@@ -782,7 +786,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     st.session_state["input_area_problemas"] = "" 
                     st.session_state["input_nf_problema"] = ""    
                     st.session_state.uploader_key += 1            
-                    st.toast("✅ Registro salvo no Google Cloud!")
+                    st.toast("✅ Registro salvo com sucesso!")
             else:
                 st.error("Preencha o nome e o texto antes de salvar.")
 
