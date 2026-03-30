@@ -802,75 +802,46 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 st.markdown("<hr style='margin:5px 0; opacity:0.1'>", unsafe_allow_html=True)
                     
 ################################################################################
-# --- MÓDULO 7: QUEBRAS DE EXCUSES (OBJEÇÕES) ---
+# --- MÓDULO 7: ARSENAL DE OBJEÇÕES ---
 ################################################################################
-elif aba_selecionada == "🚫 Quebras de Excuses":
-    st.header("🚫 Quebras de Excuses")
+elif aba_selecionada == "🚫 Quebras de Excuses": # Você pode mudar a string do menu para "🚫 Arsenal de Objeções" no seu main
+    st.header("🚫 Arsenal de Objeções")
     
-    st.markdown("### 💡 Matriz de Objeções x Contorno (ICP)")
-    st.caption("Clique em cada objeção para visualizar o discurso de contorno estratégico.")
+    st.markdown("### 💡 Guia de Contorno Estratégico")
+    st.caption("Clique na objeção e use o botão à direita para copiar o texto rapidamente.")
 
-    # Estilo visual para manter o padrão
-    st.markdown("""
-        <style>
-        .obj-header { font-size: 16px; font-weight: bold; color: #FF4B4B; margin-bottom: 5px; }
-        </style>
-    """, unsafe_allow_html=True)
+    # Dicionário com as 10 objeções e seus textos limpos
+    objecoes = {
+        "1. 🤝 Já trabalho com outra marca de papinha": "Perfeito, isso é ótimo. Mostra que a categoria já performa aí dentro. A nossa proposta não é substituir, mas complementar e ampliar o ticket da categoria. Hoje vocês trabalham a curva completa ou existe espaço para uma marca com posicionamento mais premium e foco em recorrência?",
+        
+        "2. 📉 Não sei se tem giro para isso": "Faz sentido olhar com cautela. Por isso a entrada pode ser estratégica, com SKUs de maior giro e mix enxuto. A ideia não é aumentar risco de estoque, mas estruturar curva inteligente de produto. Posso te mostrar quais SKUs normalmente performam melhor nesse perfil de loja?",
+        
+        "3. 💰 Está caro comparado às marcas tradicionais": "Entendo a comparação. A diferença é que não competimos apenas por preço, mas por posicionamento e margem absoluta. Muitas vezes o produto premium gera maior rentabilidade por unidade e atrai um público que já está disposto a pagar mais por qualidade. Faz sentido analisarmos margem real por SKU?",
+        
+        "4. 🏢 Preciso falar com a central / diretoria": "Perfeito. Posso te apoiar com um resumo objetivo de potencial de giro, margem e proposta de mix inicial para facilitar essa validação interna. Se fizer sentido, também posso participar da apresentação para explicar rapidamente o racional da categoria.",
+        
+        "5. ⏳ Tenho medo de produto parado / vencimento": "Essa é uma preocupação legítima. Por isso trabalhamos com entrada estratégica e análise de giro. Além disso, ajudamos a definir mix ideal por perfil de loja. O objetivo não é inflar estoque, mas estruturar reposição inteligente.",
+        
+        "6. ⚠️ Já tive problema com fornecedor antes": "Entendo totalmente. O que normalmente gera problema é falta de acompanhamento e previsibilidade. Nossa proposta não é só vender produto, mas acompanhar giro e evolução de mix. Antes de avançar, posso entender o que aconteceu na experiência anterior para te mostrar como evitamos esse cenário?",
+        
+        "7. 📦 Não posso colocar muitos SKUs novos agora": "Perfeito. Podemos começar com 3 a 5 SKUs estratégicos de maior potencial e, conforme performance, evoluir o mix. A ideia é crescimento gradual e baseado em resultado, não entrada massiva.",
+        
+        "8. 🧐 Não vejo diferencial tão claro": "A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, mas marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?",
+        
+        "9. 🗓️ Agora não é momento para novos fornecedores": "Entendo. Justamente por isso podemos começar pequeno, validando performance sem grande exposição. O objetivo não é gerar ruptura na operação, mas agregar incrementalmente.",
+        
+        "10. 🍼 Minha categoria infantil já está completa": "Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o Clean Label (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?"
+    }
 
-    # 1. Já trabalho com outra marca
-    with st.expander("1. 🤝 'Já trabalho com outra marca de papinha'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Perfeito, isso é ótimo. Mostra que a categoria já performa aí dentro. A nossa proposta não é substituir, mas complementar e ampliar o ticket da categoria. Hoje vocês trabalham a curva completa ou existe espaço para uma marca com posicionamento mais premium e foco em recorrência?”")
-
-    # 2. Giro
-    with st.expander("2. 📉 'Não sei se tem giro para isso'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Faz sentido olhar com cautela. Por isso a entrada pode ser estratégica, com SKUs de maior giro e mix enxuto. A ideia não é aumentar risco de estoque, mas estruturar curva inteligente de produto. Posso te mostrar quais SKUs normalmente performam melhor nesse perfil de loja?”")
-
-    # 3. Preço
-    with st.expander("3. 💰 'Está caro comparado às marcas tradicionais'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Entendo a comparação. A diferença é que não competimos apenas por preço, mas por posicionamento e margem absoluta. Muitas vezes o produto premium gera maior rentabilidade por unidade e atrai um público que já está disposto a pagar mais por qualidade. Faz sentido analisarmos margem real por SKU?”")
-
-    # 4. Central/Diretoria
-    with st.expander("4. 🏢 'Preciso falar com a central / diretoria'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Perfeito. Posso te apoiar com um resumo objetivo de potencial de giro, margem e proposta de mix inicial para facilitar essa validação interna. Se fizer sentido, também posso participar da apresentação para explicar rapidamente o racional da categoria.”")
-
-    # 5. Produto Parado
-    with st.expander("5. ⏳ 'Tenho medo de produto parado / vencimento'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Essa é uma preocupação legítima. Por isso trabalhamos com entrada estratégica e análise de giro. Além disso, ajudamos a definir mix ideal por perfil de loja. O objetivo não é inflar estoque, mas estruturar reposição inteligente.”")
-
-    # 6. Problema com fornecedor anterior
-    with st.expander("6. ⚠️ 'Já tive problema com fornecedor antes'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Entendo totalmente. O que normalmente gera problema é falta de acompanhamento e previsibilidade. Nossa proposta não é só vender produto, mas acompanhar giro e evolução de mix. Antes de avançar, posso entender o que aconteceu na experiência anterior para te mostrar como evitamos esse cenário?”")
-
-    # 7. Limite de SKUs
-    with st.expander("7. 📦 'Não posso colocar muitos SKUs novos agora'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Perfeito. Podemos começar com 3 a 5 SKUs estratégicos de maior potencial e, conforme performance, evoluir o mix. A ideia é crescimento gradual e baseado em resultado, não entrada massiva.”")
-
-    # 8. Diferencial
-    with st.expander("8. 🧐 'Não vejo diferencial tão claro'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“A principal diferença está na construção de categoria e recorrência. Não é apenas produto saudável, mas marca com posicionamento claro, proposta nutricional consistente e potencial de fidelização. Posso te mostrar como isso impacta recompra e ticket médio?”")
-
-    # 9. Momento
-    with st.expander("9. 🗓️ 'Agora não é momento para novos fornecedores'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Entendo. Justamente por isso podemos começar pequeno, validando performance sem grande exposição. O objetivo não é gerar ruptura na operação, mas agregar incrementalmente.”")
-
-    # 10. Categoria já atendida
-    with st.expander("10. 🍼 'Minha categoria infantil já está completa'"):
-        st.markdown('<p class="obj-header">Discurso de Solução:</p>', unsafe_allow_html=True)
-        st.info("“Excelente que você já olha para esse público. A Papapá entra justamente para captar o consumidor que busca o 'Clean Label' (rótulo limpo), que hoje é a maior tendência de crescimento. Ter uma opção premium aumenta o ticket médio da sua categoria. Podemos testar o desempenho de 2 ou 3 itens específicos?”")
+    # Renderização das objeções
+    for titulo, texto in objecoes.items():
+        with st.expander(titulo):
+            # O st.code já vem com o botão de copiar nativo do Streamlit
+            st.code(texto, language=None)
 
     st.divider()
     st.subheader("🚀 Dica de Ouro")
     st.success("Lembre-se: Objeção é sinal de interesse oculto. O cliente só questiona o que ele está considerando comprar.")
-
 ################################################################################
 # --- MÓDULO 8: LINKS ÚTEIS ---
 ################################################################################
