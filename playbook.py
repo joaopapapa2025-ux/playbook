@@ -287,6 +287,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         arquivos_venda = {
             "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
             "💰 Tabela de Preços (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
+            "🌿 Tabela de Preços - Mundo Verde": "Tabela de preços Papapá 0625 Mundo Verde.xlsx",
             "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
         }
         for label, path in arquivos_venda.items():
@@ -300,7 +301,8 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         arquivos_proc = {
             "🎯 Estrutura de Operação e Metas": "Estrutura de Operação e Metas - Inside Sales.pdf",
             "📦 Guia de Recebimento de Mercadorias": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
-            "📝 Templates (PDF)": "Templates IS 2026.docx (2).pdf"
+            "📝 Templates (PDF)": "Templates IS 2026.docx (2).pdf",
+            "📊 Central de Templates Comercial": "Central de Templates Comercial - PAPAPÁ.xlsx"
         }
         for label, path in arquivos_proc.items():
             try:
