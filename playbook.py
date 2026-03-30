@@ -469,19 +469,19 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
         st.caption("Utilize estes scripts para reativar parceiros que já conhecem a Papapá.")
 
         # Exemplo 1: Focado aumentar o mix Completo
-        with st.expander("📱 Whatsapp: Foco em Ticket Médio"):
+        with st.expander("📱 Whatsapp: foco em ticket médio"):
             st.code("""Bom dia {{Nome_lead}}!
 Passando para compartilhar um ponto estratégico com você: notamos que lojas que trabalham o mix completo (papinhas + cereais + snacks) conseguem elevar o ticket médio, pois o cliente encontra a solução total de introdução alimentar em um só lugar.
 Pequenos ajustes no mix evitam que o cliente procure a rede vizinha por falta de opção. Podemos conversar sobre essa estratégia de aumento do ticket médio?""", language=None)
 
         # Exemplo 2: Focado em giro e ruptura
-        with st.expander("📞 Ligação: Reativação por Giro de Categoria"):
+        with st.expander("📞 Ligação: reativação por giro de categoria"):
             st.code("""Olá, tudo bem? Aqui é o {{seu_nome}}, da Papapá.
 Notei que a sua frequência de pedidos tem oscilado. No canal {{segmento do cliente}}, a ruptura na categoria infantil é crítica, pois os pais buscam confiança e conveniência. 
 Queria te mostrar como nossa estratégia de reposição evita que você perca venda por falta de produto e garanta a fidelidade do cliente. Podemos falar agora sobre isso?""", language=None)
 
         # Exemplo 3: Roteiro de Nova Oportunidade (Atualizado)
-        with st.expander("🎯 Script: Nova Oportunidade de Receita"):
+        with st.expander("🎯 Script: nova oportunidade de receita"):
             st.code("""Olá {{Nome_lead}}, tudo bem?
 Eu sou {{seu_nome}}, faço parte do time da Papapá.
 Estou retornado nosso contato pois quero lhe apresentar uma forma de deixar os produtos da Papapá dentro da sua operação e criar uma nova oportunidade de receita para você.
