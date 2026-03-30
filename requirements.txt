@@ -1,0 +1,7 @@
+streamlit
+pandas
+plotly
+xlsxwriter
+reportlab
+openpyxl
+google-cloud-firestore
