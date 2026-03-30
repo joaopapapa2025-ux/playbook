@@ -673,21 +673,27 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         if os.path.exists(ARQUIVO_BANCO):
             try:
                 with open(ARQUIVO_BANCO, "r", encoding="utf-8") as f:
-                    conteudo = f.read()
-                    if not conteudo:
+                    conteudo = f.read().strip()
+                    if not conteudo: # Se o arquivo existir mas estiver vazio
                         return []
                     return json.loads(conteudo)
-            except:
-                return []
+            except Exception as e:
+                # Se der erro na leitura (ex: arquivo sendo usado), retorna o que já tem no state ou vazio
+                return st.session_state.get("historico_problemas", [])
         return []
 
     def salvar_dados(dados):
-        with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
-            json.dump(dados, f, ensure_ascii=False, indent=4)
+        try:
+            with open(ARQUIVO_BANCO, "w", encoding="utf-8") as f:
+                json.dump(dados, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            st.error(f"Erro ao salvar no banco físico: {e}")
 
-    # Inicialização do estado (Garante que carrega do arquivo se o session_state resetar)
-    if "historico_problemas" not in st.session_state:
-        st.session_state.historico_problemas = carregar_dados()
+    # --- GARANTIA DE PERSISTÊNCIA ---
+    # Se o session_state sumiu mas o arquivo existe, recarrega agora.
+    if "historico_problemas" not in st.session_state or not st.session_state.historico_problemas:
+        dados_carregados = carregar_dados()
+        st.session_state.historico_problemas = dados_carregados
 
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
@@ -737,9 +743,13 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                     "mes_referencia": mes_atual
                 }
                 
-                # Salva no estado e força a gravação no arquivo físico
-                st.session_state.historico_problemas.insert(0, nova_nota)
-                salvar_dados(st.session_state.historico_problemas)
+                # Salva primeiro no arquivo físico para garantir
+                atual = carregar_dados()
+                atual.insert(0, nova_nota)
+                salvar_dados(atual)
+                
+                # Atualiza o session_state
+                st.session_state.historico_problemas = atual
                 
                 # Limpa os campos
                 st.session_state["input_area_problemas"] = "" 
@@ -765,9 +775,11 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
         filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
 
         # 3. Listagem das Ocorrências
-        notas_exibidas = st.session_state.historico_problemas
+        # Garante que as notas exibidas venham da fonte mais atualizada
+        notas_exibidas = st.session_state.historico_problemas if st.session_state.historico_problemas else carregar_dados()
+        
         if filtro_mes != "Todos":
-            notas_exibidas = [n for n in st.session_state.historico_problemas if n.get('mes_referencia') == filtro_mes]
+            notas_exibidas = [n for n in notas_exibidas if n.get('mes_referencia') == filtro_mes]
 
         st.metric("Ocorrências no período", len(notas_exibidas))
 
@@ -780,7 +792,6 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                         st.markdown(f"**🏷️ NF/Pedido:** `{item.get('nf_pedido')}`")
                     st.write(f"**{item.get('autor')}:** {item.get('texto')}")
                     
-                    # --- EXIBIÇÃO COMPACTA (POPOVER) ---
                     midias = item.get("midias", [])
                     if midias:
                         cols_m = st.columns(len(midias) if len(midias) < 4 else 4)
