@@ -871,56 +871,112 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
         st.divider()
 
-        # 2. Filtro de Visualização
-        meses_filtro = ["Todos"] + [f"{m}/2026" for m in ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]]
-        filtro_mes = st.selectbox("Filtrar por mês", meses_filtro)
+    # --- SEÇÃO: GLOSSÁRIO COMERCIAL (VISUALIZAÇÃO ABERTA) ---
+    st.subheader("📖 Glossário de Vendas & Distribuição")
+    st.write("Consulte os termos e siglas essenciais da operação Inside Sales da Papapá.")
 
-        # 3. Listagem das Ocorrências
-        notas_exibidas = st.session_state.historico_problemas
-        
-        if filtro_mes != "Todos":
-            notas_exibidas = [n for n in notas_exibidas if n.get('mes_referencia') == filtro_mes]
+    # CSS para os mini-cards do glossário
+    st.markdown("""
+        <style>
+        .glossary-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 15px;
+            height: 100%;
+        }
+        .glossary-category {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .glossary-item {
+            margin-bottom: 8px;
+            font-size: 0.92em;
+        }
+        .glossary-term {
+            font-weight: bold;
+            color: #333;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-        st.metric("Ocorrências no período", len(notas_exibidas))
+    # Função auxiliar para renderizar os itens
+    def item_glossario(termo, definicao):
+        return f'<div class="glossary-item"><span class="glossary-term">{termo}:</span> {definicao}</div>'
 
-        for idx, item in enumerate(notas_exibidas):
-            with st.container():
-                c_txt, c_del = st.columns([0.85, 0.15])
-                with c_txt:
-                    st.caption(f"📅 {item.get('data')} | 📂 {item.get('mes_referencia')}")
-                    if item.get('nf_pedido'): 
-                        st.markdown(f"**🏷️ NF/Pedido:** `{item.get('nf_pedido')}`")
-                    st.write(f"**{item.get('autor')}:** {item.get('texto')}")
-                    
-                    midias = item.get("midias", [])
-                    if midias:
-                        cols_m = st.columns(len(midias) if len(midias) < 4 else 4)
-                        for i, m in enumerate(midias):
-                            with cols_m[i % 4]:
-                                label = "🖼️ Foto" if m["tipo"] == "foto" else "🎥 Vídeo"
-                                with st.popover(label, use_container_width=True):
-                                    raw_bytes = base64.b64decode(m["bytes"])
-                                    if m["tipo"] == "video":
-                                        st.video(raw_bytes)
-                                    else:
-                                        st.image(raw_bytes, use_container_width=True, caption=m.get("nome", "Anexo"))
-                
-                with c_del:
-                    # Lógica para deletar também da nuvem
-                    if st.button("🗑️", key=f"del_{item.get('id_unico')}_{idx}"):
-                        try:
-                            # Busca o documento pelo ID único para deletar no Firestore
-                            docs = st.session_state.db.collection("ocorrencias").where("id_unico", "==", item.get("id_unico")).stream()
-                            for doc in docs:
-                                doc.reference.delete()
-                            
-                            st.session_state.historico_problemas.remove(item)
-                            st.success("Removido!")
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Erro ao deletar: {e}")
+    # Divisão em colunas para melhor aproveitamento da tela
+    col1, col2 = st.columns(2)
 
-                st.markdown("<hr style='margin:5px 0; opacity:0.1'>", unsafe_allow_html=True)
+    with col1:
+        # Mercado e Distribuição
+        st.markdown(f"""
+            <div class="glossary-card">
+                <div class="glossary-category">🛒 Mercado & Distribuição</div>
+                {item_glossario("PDV (Ponto de Venda)", "Loja ou varejista que revende produtos ao consumidor final.")}
+                {item_glossario("Shopper", "Cliente final que compra para uso pessoal (pessoa física).")}
+                {item_glossario("Markup", "Percentual adicionado ao custo para formar o preço de venda.")}
+                {item_glossario("Preço Sugerido", "Valor recomendado pelo fabricante para venda ao PDV ou consumidor.")}
+                {item_glossario("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")}
+                {item_glossario("Sell-out", "Vendas reais do PDV para o shopper final.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Prospecção e Qualificação
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">🔍 Prospecção & Qualificação</div>
+                {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
+                {item_glossary("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
+                {item_glossary("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
+                {item_glossary("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Processo de Vendas
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">⚙️ Processo de Vendas</div>
+                {item_glossario("MQL / SQL / SAL", "Estágios de qualificação do lead (Marketing, Vendas e Aceito).")}
+                {item_glossary("Pipeline", "Visão das etapas do funil (prospecção até fechamento).")}
+                {item_glossary("Ramp-up", "Período para um vendedor atingir produtividade plena.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        # Logística e Identificação (Importante para o dia a dia)
+        st.markdown(f"""
+            <div class="glossary-card">
+                <div class="glossary-category">📦 Logística & Identificação</div>
+                {item_glossario("SKU (Stock Keeping Unit)", "Código interno alfanumérico único para gerenciar estoque.")}
+                {item_glossary("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")}
+                {item_glossary("DUN (ou DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Técnicas e Métricas
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">📊 Técnicas & Métricas</div>
+                {item_glossario("SPIN Selling", "Método de perguntas sobre Situação, Problema, Implicação e Necessidade.")}
+                {item_glossary("Cross / Upselling", "Oferecer produtos complementares ou versões superiores.")}
+                {item_glossary("Churn", "Taxa de perda de clientes ou cancelamentos.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Outros Relevantes
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">🤝 Outros Relevantes</div>
+                {item_glossary("Account", "Conta empresarial (cliente B2B recorrente).")}
+                {item_glossary("Closer/Rep", "Vendedor responsável pelo fechamento final.")}
+            </div>
+        """, unsafe_allow_html=True)
                     
 ################################################################################
 # --- MÓDULO 7: ARSENAL DE OBJEÇÕES ---
