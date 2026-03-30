@@ -704,6 +704,56 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         """, unsafe_allow_html=True)
 
     st.divider()
+
+    # --- SEÇÃO: GLOSSÁRIO COMERCIAL ---
+    st.subheader("📖 Glossário de Vendas & Distribuição")
+    st.write("Consulte os principais termos utilizados na operação da Papapá.")
+
+    # Estilização básica para os termos
+    def exibir_termo(termo, definicao):
+        st.markdown(f"**{termo}**: {definicao}")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        with st.expander("🛒 Mercado & Distribuição"):
+            exibir_termo("PDV (Ponto de Venda)", "Loja ou varejista que revende produtos ao consumidor final.")
+            exibir_termo("Shopper", "Cliente final que compra para uso pessoal (pessoa física).")
+            exibir_termo("Markup", "Percentual adicionado ao custo para formar o preço de venda.")
+            exibir_termo("Preço Sugerido", "Valor recomendado pelo fabricante para venda ao PDV ou consumidor.")
+            exibir_termo("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")
+            exibir_termo("Sell-out", "Vendas reais do PDV para o shopper final.")
+
+        with st.expander("🔍 Prospecção & Qualificação"):
+            exibir_termo("SDR (Sales Development Rep)", "Profissional que prospecta e qualifica leads iniciais.")
+            exibir_termo("BDR (Business Development Rep)", "Foco em expansão de novos negócios e contas estratégicas.")
+            exibir_termo("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")
+            exibir_termo("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")
+
+        with st.expander("⚙️ Processo de Vendas"):
+            exibir_termo("MQL", "Lead com interesse inicial via Marketing.")
+            exibir_termo("SQL", "Lead validado pelas vendas com alta chance de conversão.")
+            exibir_termo("SAL", "Lead aceito pelo time de vendas após análise.")
+            exibir_termo("Pipeline", "Visão das etapas do funil (prospecção até fechamento).")
+
+    with col2:
+        with st.expander("📊 Técnicas & Métricas"):
+            exibir_termo("SPIN Selling", "Método de perguntas: Situação, Problema, Implicação e Necessidade.")
+            exibir_termo("Cross Selling", "Oferecer produtos complementares (aumentar ticket médio).")
+            exibir_termo("Upselling", "Vender versão premium ou maior quantidade.")
+            exibir_termo("Churn", "Taxa de perda de clientes ou cancelamentos.")
+
+        with st.expander("📦 Logística & Identificação"):
+            exibir_termo("SKU (Stock Keeping Unit)", "Código interno alfanumérico único para gerenciar estoque.")
+            exibir_termo("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")
+            exibir_termo("DUN (DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")
+            
+        with st.expander("🤝 Outros Relevantes"):
+            exibir_termo("Account", "Conta empresarial (cliente B2B recorrente).")
+            exibir_termo("Closer/Rep", "Vendedor responsável pelo fechamento final.")
+            exibir_termo("Ramp-up", "Período para um novo vendedor atingir produtividade plena.")
+
+    st.info("💡 Dica: Use o Glossário para alinhar a comunicação com o time e parceiros.")
     
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
