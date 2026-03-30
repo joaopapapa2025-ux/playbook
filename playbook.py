@@ -896,48 +896,108 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
     # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
-    
+    st.write("Consulte os termos e siglas essenciais da operação Inside Sales da Papapá.")
+
+    # CSS para os mini-cards do glossário
     st.markdown("""
         <style>
-        .glossary-card { background-color: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; height: 100%; }
-        .glossary-category { color: #007bff; font-weight: bold; font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .glossary-item { margin-bottom: 8px; font-size: 0.92em; }
-        .glossary-term { font-weight: bold; color: #333; }
+        .glossary-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            margin-bottom: 15px;
+            height: 100%;
+        }
+        .glossary-category {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .glossary-item {
+            margin-bottom: 8px;
+            font-size: 0.92em;
+        }
+        .glossary-term {
+            font-weight: bold;
+            color: #333;
+        }
         </style>
     """, unsafe_allow_html=True)
 
-    def item_g(termo, definicao):
+    # Função auxiliar para renderizar os itens
+    def item_glossario(termo, definicao):
         return f'<div class="glossary-item"><span class="glossary-term">{termo}:</span> {definicao}</div>'
 
+    # Divisão em colunas para melhor aproveitamento da tela
     col1, col2 = st.columns(2)
 
     with col1:
+        # Mercado e Distribuição
         st.markdown(f"""
             <div class="glossary-card">
                 <div class="glossary-category">🛒 Mercado & Distribuição</div>
-                {item_g("PDV", "Loja ou varejista que revende ao consumidor final.")}
-                {item_g("Shopper", "Cliente final que compra para uso pessoal.")}
-                {item_g("Markup", "Percentual adicionado ao custo para formar o preço.")}
-                {item_g("Sell-in / Sell-out", "Venda para o canal vs. Venda para o consumidor.")}
+                {item_glossario("PDV (Ponto de Venda)", "Loja ou varejista que revende produtos ao consumidor final.")}
+                {item_glossario("Shopper", "Cliente final que compra para uso pessoal (pessoa física).")}
+                {item_glossario("Markup", "Percentual adicionado ao custo para formar o preço de venda.")}
+                {item_glossario("Preço Sugerido", "Valor recomendado pelo fabricante para venda ao PDV ou consumidor.")}
+                {item_glossario("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")}
+                {item_glossario("Sell-out", "Vendas reais do PDV para o shopper final.")}
             </div>
+        """, unsafe_allow_html=True)
+
+        # Prospecção e Qualificação
+        st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">🔍 Prospecção</div>
-                {item_g("SDR / BDR", "Profissionais de prospecção e expansão.")}
-                {item_g("BANT", "Qualificação: Budget, Authority, Need, Timeline.")}
+                <div class="glossary-category">🔍 Prospecção & Qualificação</div>
+                {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
+                {item_glossario("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
+                {item_glossario("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
+                {item_glossario("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Processo de Vendas
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">⚙️ Processo de Vendas</div>
+                {item_glossario("MQL / SQL / SAL", "Estágios de qualificação do lead (Marketing, Vendas e Aceito).")}
+                {item_glossario("Pipeline", "Visão das etapas do funil (prospecção até fechamento).")}
+                {item_glossario("Ramp-up", "Período para um vendedor atingir produtividade plena.")}
             </div>
         """, unsafe_allow_html=True)
 
     with col2:
+        # Logística e Identificação
         st.markdown(f"""
             <div class="glossary-card">
-                <div class="glossary-category">📦 Logística</div>
-                {item_g("SKU", "Código único para cada produto.")}
-                {item_g("EAN / DUN-14", "Códigos de barras de unidade e caixa.")}
+                <div class="glossary-category">📦 Logística & Identificação</div>
+                {item_glossario("SKU (Stock Keeping Unit)", "Código interno alfanumérico único para gerenciar estoque.")}
+                {item_glossario("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")}
+                {item_glossario("DUN (ou DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")}
             </div>
+        """, unsafe_allow_html=True)
+
+        # Técnicas e Métricas
+        st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">📊 Métricas</div>
-                {item_g("SPIN Selling", "Método de perguntas consultivas.")}
-                {item_g("Churn", "Taxa de perda de clientes.")}
+                <div class="glossary-category">📊 Técnicas & Métricas</div>
+                {item_glossario("SPIN Selling", "Método de perguntas sobre Situação, Problema, Implicação e Necessidade.")}
+                {item_glossario("Cross / Upselling", "Oferecer produtos complementares ou versões superiores.")}
+                {item_glossario("Churn", "Taxa de perda de clientes ou cancelamentos.")}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Outros Relevantes
+        st.markdown(f"""
+            <div class="glossary-card" style="margin-top: 15px;">
+                <div class="glossary-category">🤝 Outros Relevantes</div>
+                {item_glossario("Account", "Conta empresarial (cliente B2B recorrente).")}
+                {item_glossario("Closer/Rep", "Vendedor responsável pelo fechamento final.")}
             </div>
         """, unsafe_allow_html=True)
                     
