@@ -728,8 +728,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     st.divider()
 
     # --- SEÇÃO: GLOSSÁRIO COMERCIAL (VISUALIZAÇÃO TOTALMENTE ABERTA) ---
-st.subheader("📖 Glossário de Vendas & Distribuição")
-st.write("Consulte os termos essenciais da operação da Papapá sem precisar clicar.")
+    st.subheader("📖 Glossário de Vendas & Distribuição")
+    st.write("Consulte os termos essenciais da operação da Papapá sem precisar clicar.")
 
 # Estilização para os blocos de glossário
 st.markdown("""
