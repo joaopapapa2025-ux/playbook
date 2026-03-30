@@ -465,26 +465,44 @@ Se a análise confirmar que o produto foi entregue com menos de 60% da sua valid
 
 # --- ABA RECUPERAÇÃO ---
     with tabs[4]:
-        st.subheader("🔄 Recuperação de Clientes")
-    
-    # Se você quiser adicionar algum script de recuperação antes, pode colocar aqui.
-    
+    st.subheader("🔄 Estratégias de Recuperação de Clientes")
+    st.caption("Utilize estes scripts para reativar parceiros que já conhecem a Papapá.")
+
+    # Exemplo 1: Focado aumentar o mix Completo (Baseado na Central de Templates)
+    with st.expander("📱 Whatsapp: Foco em Ticket Médio"):
+        st.code("""Bom dia {{Nome_lead}}!
+Passando para compartilhar um ponto estratégico com você: notamos que lojas que trabalham o mix completo (papinhas + cereais + snacks) conseguem elevar o ticket médio, pois o cliente encontra a solução total de introdução alimentar em um só lugar.
+Pequenos ajustes no mix evitam que o cliente procure a rede vizinha por falta de opção. Podemos conversar sobre essa estratégia de aumento do ticket médio?""", language=None)
+
+    # Exemplo 2: Focado em giro e ruptura (Baseado na Central de Templates)
+    with st.expander("📞 Ligação: Reativação por Giro de Categoria"):
+        st.code("""Olá, tudo bem? Aqui é o {{seu_nome}}, da Papapá.
+Notei que a sua frequência de pedidos tem oscilado. No canal {{segmento do cliente}}, a ruptura na categoria infantil é crítica, pois os pais buscam confiança e conveniência. 
+Queria te mostrar como nossa estratégia de reposição evita que você perca venda por falta de produto e garanta a fidelidade do cliente. Podemos falar agora sobre isso?""", language=None)
+
+    # Exemplo 3: Roteiro de Nova Oportunidade (Atualizado)
+    with st.expander("🎯 Script: Nova Oportunidade de Receita"):
+        st.code("""Olá {{Nome_lead}}, tudo bem?
+Eu sou {{seu_nome}}, faço parte do time da Papapá.
+Estou retornado nosso contato pois quero lhe apresentar uma forma de deixar os produtos da Papapá dentro da sua operação e criar uma nova oportunidade de receita para você.
+Posso te ligar para uma conversa rápida de 10 minutos?""", language=None)
+
     st.markdown("---")
-    st.subheader("📊 Material de Apoio")
+    st.subheader("📊 Material de Apoio Completo")
     
+    # O botão de download deve ficar apenas aqui, no final da aba de Recuperação
     nome_arquivo = "Central de Templates Comercial - PAPAPÁ.xlsx"
-    
     try:
         with open(nome_arquivo, "rb") as file:
             st.download_button(
-                label="📥 Baixar Central de Templates Comercial",
+                label="📥 Baixar Central de Templates Comercial (Completa)",
                 data=file,
                 file_name=nome_arquivo,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                help="Clique para baixar a planilha de templates completa."
+                help="Clique para baixar a planilha com todos os scripts de abordagem e recuperação."
             )
     except FileNotFoundError:
-        st.error(f"Arquivo '{nome_arquivo}' não encontrado no diretório.")
+        st.error("Arquivo de templates não encontrado no diretório do servidor.")
 
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
