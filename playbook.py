@@ -1089,7 +1089,7 @@ elif aba_selecionada == "🚫 Quebras de Excuses":
     # Exibição das 10 Objeções
     for titulo, texto in objecoes.items():
         with st.expander(titulo):
-            st.code(resumo_texto, language=None)
+            st.code(texto, language=None)
 
     # --- DIVISOR ENTRE SEÇÕES ---
     st.markdown("---")
