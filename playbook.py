@@ -733,38 +733,45 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
     st.markdown("""
         <style>
-        .glossary-section {
-            background-color: #ffffff; padding: 15px; border-radius: 12px;
-            border: 1px solid #e1e4e8; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .glossary-title {
-            color: #007bff; font-weight: bold; margin-bottom: 12px;
-            border-bottom: 2px solid #f0f2f6; padding-bottom: 5px;
-        }
-        .term-label { font-weight: bold; color: #333; background-color: #f0f7ff; padding: 2px 6px; border-radius: 4px; }
+        .glossary-card { background-color: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; height: 100%; }
+        .glossary-category { color: #007bff; font-weight: bold; font-size: 1.1em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .glossary-item { margin-bottom: 8px; font-size: 0.92em; }
+        .glossary-term { font-weight: bold; color: #333; }
         </style>
     """, unsafe_allow_html=True)
 
-    def formata_termo(termo, desc):
-        return f'<div style="margin-bottom:10px;"><span class="term-label">{termo}</span>: {desc}</div>'
+    def item_g(termo, definicao):
+        return f'<div class="glossary-item"><span class="glossary-term">{termo}:</span> {definicao}</div>'
 
-    col_g1, col_g2 = st.columns(2)
-    with col_g1:
+    col1, col2 = st.columns(2)
+
+    with col1:
         st.markdown(f"""
-            <div class="glossary-section">
-                <div class="glossary-title">🛒 Mercado & Distribuição</div>
-                {formata_termo("PDV", "Loja ou varejista que revende ao consumidor final.")}
-                {formata_termo("Sell-out", "Vendas reais do PDV para o shopper final.")}
-                {formata_termo("SDR", "Prospecta e qualifica leads iniciais.")}
+            <div class="glossary-card">
+                <div class="glossary-category">🛒 Mercado & Distribuição</div>
+                {item_g("PDV", "Loja ou varejista que revende ao consumidor final.")}
+                {item_g("Shopper", "Cliente final que compra para uso pessoal.")}
+                {item_g("Markup", "Percentual adicionado ao custo para formar o preço.")}
+                {item_g("Sell-in / Sell-out", "Venda para o canal vs. Venda para o consumidor.")}
+            </div>
+            <div class="glossary-card">
+                <div class="glossary-category">🔍 Prospecção</div>
+                {item_g("SDR / BDR", "Profissionais de prospecção e expansão.")}
+                {item_g("BANT", "Qualificação: Budget, Authority, Need, Timeline.")}
             </div>
         """, unsafe_allow_html=True)
-    with col_g2:
+
+    with col2:
         st.markdown(f"""
-            <div class="glossary-section">
-                <div class="glossary-title">📊 Técnicas & Métricas</div>
-                {formata_termo("SPIN Selling", "Método de perguntas consultivas.")}
-                {formata_termo("Churn", "Taxa de perda de clientes.")}
-                {formata_termo("SKU", "Código interno único do produto.")}
+            <div class="glossary-card">
+                <div class="glossary-category">📦 Logística</div>
+                {item_g("SKU", "Código único para cada produto.")}
+                {item_g("EAN / DUN-14", "Códigos de barras de unidade e caixa.")}
+            </div>
+            <div class="glossary-card">
+                <div class="glossary-category">📊 Métricas</div>
+                {item_g("SPIN Selling", "Método de perguntas consultivas.")}
+                {item_g("Churn", "Taxa de perda de clientes.")}
             </div>
         """, unsafe_allow_html=True)
     
