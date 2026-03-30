@@ -727,108 +727,46 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
     st.divider()
 
-    # --- SEÇÃO: GLOSSÁRIO COMERCIAL (VISUALIZAÇÃO TOTALMENTE ABERTA) ---
+# --- SEÇÃO: GLOSSÁRIO (AGORA DENTRO DO ELIF - IDENTADO) ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
-    st.write("Consulte os termos essenciais da operação da Papapá sem precisar clicar.")
+    st.write("Consulte os termos essenciais da operação sem precisar clicar.")
 
-# Estilização para os blocos de glossário
-st.markdown("""
-    <style>
-    .glossary-section {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid #e1e4e8;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .glossary-title {
-        color: #007bff;
-        font-size: 1.1em;
-        font-weight: bold;
-        margin-bottom: 12px;
-        border-bottom: 2px solid #f0f2f6;
-        padding-bottom: 5px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .glossary-entry {
-        margin-bottom: 10px;
-        line-height: 1.4;
-    }
-    .term-label {
-        font-weight: bold;
-        color: #333;
-        background-color: #f0f7ff;
-        padding: 2px 6px;
-        border-radius: 4px;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# Função para formatar cada linha de termo
-def formata_termo(termo, desc):
-    return f'<div class="glossary-entry"><span class="term-label">{termo}</span>: {desc}</div>'
-
-# Divisão em duas colunas
-col_g1, col_g2 = st.columns(2)
-
-with col_g1:
-    # Bloco 1: Mercado
-    st.markdown(f"""
-        <div class="glossary-section">
-            <div class="glossary-title">🛒 Mercado & Distribuição</div>
-            {formata_termo("PDV", "Loja ou varejista que revende ao consumidor final.")}
-            {formata_termo("Shopper", "Cliente final que compra para uso pessoal.")}
-            {formata_termo("Markup", "Percentual adicionado ao custo para formar o preço.")}
-            {formata_termo("Preço Sugerido", "Valor recomendado pelo fabricante para venda.")}
-            {formata_termo("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")}
-            {formata_termo("Sell-out", "Vendas reais do PDV para o shopper final.")}
-        </div>
-        
-        <div class="glossary-section">
-            <div class="glossary-title">🔍 Prospecção & Qualificação</div>
-            {formata_termo("SDR", "Prospecta e qualifica leads iniciais.")}
-            {formata_termo("BDR", "Foco em expansão de negócios e novas contas estratégicas.")}
-            {formata_termo("BANT", "Critério: Budget, Authority, Need, Timeline.")}
-            {formata_termo("Cold Call/Mail", "Contato inicial não solicitado.")}
-        </div>
-
-        <div class="glossary-section">
-            <div class="glossary-title">📦 Logística & Identificação</div>
-            {formata_termo("SKU", "Código interno único para gerenciar estoque.")}
-            {formata_termo("EAN", "Código de barras universal (13 dígitos) da unidade.")}
-            {formata_termo("DUN-14", "Código de barras (14 dígitos) para caixas/múltiplos.")}
-        </div>
+    st.markdown("""
+        <style>
+        .glossary-section {
+            background-color: #ffffff; padding: 15px; border-radius: 12px;
+            border: 1px solid #e1e4e8; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .glossary-title {
+            color: #007bff; font-weight: bold; margin-bottom: 12px;
+            border-bottom: 2px solid #f0f2f6; padding-bottom: 5px;
+        }
+        .term-label { font-weight: bold; color: #333; background-color: #f0f7ff; padding: 2px 6px; border-radius: 4px; }
+        </style>
     """, unsafe_allow_html=True)
 
-with col_g2:
-    # Bloco 2: Processo e Técnicas
-    st.markdown(f"""
-        <div class="glossary-section">
-            <div class="glossary-title">⚙️ Processo de Vendas</div>
-            {formata_termo("MQL", "Lead com interesse inicial via Marketing.")}
-            {formata_termo("SQL", "Lead validado com alta chance de conversão.")}
-            {formata_termo("SAL", "Lead aceito pelo time de vendas para fechamento.")}
-            {formata_termo("Pipeline", "Visão das etapas do funil de vendas.")}
-        </div>
+    def formata_termo(termo, desc):
+        return f'<div style="margin-bottom:10px;"><span class="term-label">{termo}</span>: {desc}</div>'
 
-        <div class="glossary-section">
-            <div class="glossary-title">📊 Técnicas & Métricas</div>
-            {formata_termo("SPIN Selling", "Perguntas de Situação, Problema, Implicação e Necessidade.")}
-            {formata_termo("Cross Selling", "Venda de produtos complementares.")}
-            {formata_termo("Upselling", "Venda de versões premium ou maior volume.")}
-            {formata_termo("Churn", "Taxa de perda de clientes ou cancelamentos.")}
-        </div>
-
-        <div class="glossary-section">
-            <div class="glossary-title">🤝 Outros Relevantes</div>
-            {formata_termo("Account", "Conta empresarial (cliente B2B recorrente).")}
-            {formata_termo("Closer", "Vendedor responsável pelo fechamento final.")}
-            {formata_termo("Ramp-up", "Tempo para o vendedor atingir produtividade plena.")}
-        </div>
-    """, unsafe_allow_html=True)
+    col_g1, col_g2 = st.columns(2)
+    with col_g1:
+        st.markdown(f"""
+            <div class="glossary-section">
+                <div class="glossary-title">🛒 Mercado & Distribuição</div>
+                {formata_termo("PDV", "Loja ou varejista que revende ao consumidor final.")}
+                {formata_termo("Sell-out", "Vendas reais do PDV para o shopper final.")}
+                {formata_termo("SDR", "Prospecta e qualifica leads iniciais.")}
+            </div>
+        """, unsafe_allow_html=True)
+    with col_g2:
+        st.markdown(f"""
+            <div class="glossary-section">
+                <div class="glossary-title">📊 Técnicas & Métricas</div>
+                {formata_termo("SPIN Selling", "Método de perguntas consultivas.")}
+                {formata_termo("Churn", "Taxa de perda de clientes.")}
+                {formata_termo("SKU", "Código interno único do produto.")}
+            </div>
+        """, unsafe_allow_html=True)
     
 ################################################################################
 # --- MÓDULO 6: RESOLUÇÃO DE PROBLEMAS ---
