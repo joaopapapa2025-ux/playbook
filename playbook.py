@@ -152,33 +152,33 @@ if aba_selecionada == "🏠 Home (Equipe)":
     st.header("👥 Nossa Equipe")
     st.write("Conheça o time Inside Sales da Papapá.")
 
-    # ESTRUTURA CSS CORRIGIDA
+    # ESTRUTURA CSS CORRIGIDA E COMPACTA
     st.markdown("""
         <style>
         .team-card {
             background-color: white; 
-            padding: 20px; 
+            padding: 15px; 
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08); 
             text-align: center;
             margin-bottom: 20px; 
             border: 1px solid #eaeaea;
-            height: 450px; /* Altura fixa para evitar bugs */
+            height: 350px; /* Altura reduzida para eliminar o espaço em branco */
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: start;
+            justify-content: center; /* Centraliza o conteúdo para evitar vácuo */
             transition: transform 0.3s;
         }
         
         .team-card:hover { transform: translateY(-5px); }
 
         .photo-circle {
-            width: 140px; 
-            height: 140px; 
+            width: 125px; 
+            height: 125px; 
             border-radius: 50%;
             border: 4px solid #007bff; 
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             background-size: cover;
             background-position: center top;
@@ -191,30 +191,29 @@ if aba_selecionada == "🏠 Home (Equipe)":
         .photo-joao-paulo { background-position: center 10%; }
         .photo-bernardo { background-position: center 10%; }
 
-        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 4px; }
-        .team-role { color: #666; font-size: 0.9em; margin-bottom: 12px; font-weight: 500; font-style: italic; }
+        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 2px; }
+        .team-role { color: #666; font-size: 0.9em; margin-bottom: 10px; font-weight: 500; font-style: italic; }
         
         .contact-container {
             width: 100%;
-            margin-top: auto;
-            padding-top: 10px;
+            padding-top: 8px;
             border-top: 1px solid #eee;
         }
 
         .contact-link {
             text-decoration: none !important;
             color: #007bff !important;
-            font-size: 0.85em;
-            margin-bottom: 8px;
+            font-size: 0.82em;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .whatsapp-icon {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             vertical-align: middle;
         }
         </style>
@@ -271,7 +270,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
 ################################################################################
