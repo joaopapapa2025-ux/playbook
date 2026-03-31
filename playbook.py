@@ -274,7 +274,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
 ################################################################################
 elif aba_selecionada == "💰 Simulador de Bonificação":
-    st.header("💰 Simulador de Comissionamento Individual")
+    st.header("💰 Simulador de Bonificação Individual")
     
     col_input, col_result = st.columns([1, 1.5])
     
