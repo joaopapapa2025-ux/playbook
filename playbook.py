@@ -875,11 +875,66 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
     if "uploader_key" not in st.session_state:
         st.session_state.uploader_key = 0
 
+    # Layout em colunas: Esquerda (Guia de Soluções) | Direita (Registro e Histórico)
     col_conteudo, col_notas = st.columns([1.5, 1])
 
     with col_conteudo:
-        st.info("🚧 **Em breve:** Fluxogramas de tratativa de avarias, faltas e devoluções logísticas.")
-        st.image("https://img.freepik.com/vetores-gratis/projeto-do-conceito-do-ajuste-da-ferramenta_24877-50608.jpg", width=300)
+        st.subheader("📖 Guia de Tratativas Rápidas")
+        st.write("Consulte como proceder em cada caso antes de registrar a ocorrência:")
+
+        # Dicionário de dados extraído da sua planilha
+        guia_problemas = {
+            "🚛 Prazo de Entrega / Atraso": {
+                "area": "LOGÍSTICA",
+                "responsavel": "RONALDO",
+                "contato": "logistica4@papapa.com.br",
+                "passo_a_passo": "Verificar no Follow Up e site da transportadora. Constatado o atraso, enviar solicitação à logística via formulário interno para entender o ocorrido e reportar ao cliente."
+            },
+            "📦 Avarias (Cargas molhadas/amassadas)": {
+                "area": "LOGÍSTICA / FINANCEIRO",
+                "responsavel": "RONALDO / MARCELLI",
+                "contato": "logistica4@papapa.com.br; contasareceber2@papapa.com.br",
+                "passo_a_passo": "1. Verificar ressalva no canhoto.\n2. Solicitar fotos das avarias.\n3. Se poucas unidades: propor bonificação ou desconto no próximo pedido (autorizar com João).\n4. Casos maiores: Cliente formaliza por e-mail com NFD para logística/financeiro."
+            },
+            "🍎 Validade do Produto (< 60%)": {
+                "area": "LOGÍSTICA",
+                "responsavel": "RONALDO",
+                "contato": "logistica4@papapa.com.br",
+                "passo_a_passo": "Solicitar lote e item ao cliente. Se confirmado erro interno, verificar abatimento no boleto ou bonificação no próximo pedido."
+            },
+            "❌ Extravio de Mercadoria": {
+                "area": "LOGÍSTICA / FINANCEIRO",
+                "responsavel": "RONALDO / GABI / MARCELLI",
+                "contato": "logistica4@papapa.com.br; operacoes@papapa.com.br; contasareceber2@papapa.com.br",
+                "passo_a_passo": "Confirmado extravio: explicar ao cliente e oferecer novo envio com 5% de desconto (sob aprovação do João). Copiar Marcelli para cancelamento de boletos antigos."
+            },
+            "📄 Guia Retida no SEFAZ": {
+                "area": "LOGÍSTICA",
+                "responsavel": "RONALDO",
+                "contato": "logistica4@papapa.com.br",
+                "passo_a_passo": "Verificar se a guia foi enviada por e-mail. Caso retida, acionar o Ronaldo imediatamente para regularização."
+            }
+        }
+
+        problema_selecionado = st.selectbox(
+            "Selecione o tipo de problema:",
+            list(guia_problemas.keys())
+        )
+
+        dados = guia_problemas[problema_selecionado]
+        
+        # Card de Solução Visual
+        with st.container(border=True):
+            st.markdown(f"### 🛠️ Solução: {problema_selecionado}")
+            c1, c2 = st.columns(2)
+            with c1:
+                st.markdown(f"**📍 Área:** {dados['area']}")
+                st.markdown(f"**👤 Responsável:** {dados['responsavel']}")
+            with c2:
+                st.markdown(f"**📧 E-mail:** `{dados['contato']}`")
+            
+            st.markdown("---")
+            st.markdown(f"**📝 Procedimento:**\n{dados['passo_a_passo']}")
 
     with col_notas:
         st.subheader("📝 Registro de Casos Críticos")
@@ -930,17 +985,16 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
             st.file_uploader("Anexar fotos/vídeos:", type=["png", "jpg", "jpeg", "mp4", "mov", "avi"], accept_multiple_files=True, key=f"input_midia_prob_{st.session_state.uploader_key}")
             st.button("Salvar Registro", use_container_width=True, on_click=salvar_nota_callback)
 
-        # --- NOVA SEÇÃO: EXIBIÇÃO DO HISTÓRICO ---
         st.write("---")
         st.subheader("📋 Histórico Recente")
         if st.session_state.historico_problemas:
-            for nota in st.session_state.historico_problemas[:10]: # Mostra as últimas 10
+            for nota in st.session_state.historico_problemas[:10]:
                 with st.expander(f"📌 {nota.get('nf_pedido', 'S/ NF')} - {nota.get('autor')} ({nota.get('data')})"):
                     st.write(nota.get("texto"))
                     if nota.get("midias"):
-                        cols = st.columns(len(nota["midias"]))
+                        cols_midia = st.columns(len(nota["midias"]))
                         for i, midia in enumerate(nota["midias"]):
-                            with cols[i]:
+                            with cols_midia[i]:
                                 try:
                                     if midia["tipo"] == "foto":
                                         st.image(base64.b64decode(midia["bytes"]))
