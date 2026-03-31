@@ -919,7 +919,7 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 "area": "LOGÍSTICA / FINANCEIRO",
                 "responsavel": "RONALDO / MARCELLI",
                 "contato": "logistica4@papapa.com.br; contasareceber2@papapa.com.br",
-                "passo_a_passo": "1. **Validação:** Confirmar a ocorrência (avaria, validade ou erro de envio) com a Logística.\n2. **Emissão do Cliente:** O cliente deve emitir a Nota Fiscal de Devolução (NFD).\n3. **Requisito Obrigatório:** A NFD deve conter o número da **NF de origem** e o **motivo da devolução** descritos nas observações.\n4. **Financeiro:** Enviar a NFD para a Marcelli solicitar o abatimento ou cancelamento do boleto."
+                "passo_a_passo": "1. **Validação:** Confirmar a ocorrência (avaria, validade ou erro de envio) com a Logística.\n2. **Emissão do Cliente:** O cliente deve emitir a Nota Fiscal de Devolução (NFD).\n3. **Requisito Obrigatório:** A NFD deve conter o número da **NF de origem** e o **motivo da devolução** descritos nas observações.\n4. **Financeiro:** Enviar a NFD para a Marcelli realizar o abatimento ou cancelamento do boleto."
             }
         }
 
