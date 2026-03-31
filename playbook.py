@@ -884,6 +884,12 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
 
         # Dicionário de dados extraído da sua planilha
         guia_problemas = {
+            "📝 Processo de NFD (Devolução)": {
+                "area": "LOGÍSTICA / FINANCEIRO",
+                "responsavel": "RONALDO / MARCELLI",
+                "contato": "logistica4@papapa.com.br; contasareceber2@papapa.com.br",
+                "passo_a_passo": "1. **Validação:** Confirmar a ocorrência (avaria, validade ou erro de envio) com a Logística.\n2. **Emissão do Cliente:** O cliente deve emitir a Nota Fiscal de Devolução (NFD).\n3. **Requisito Obrigatório:** A NFD deve conter o número da **NF de origem** e o **motivo da devolução** descritos nas observações.\n4. **Financeiro:** Enviar a NFD para a Marcelli realizar o abatimento ou cancelamento do boleto."
+             },
             "🚛 Prazo de Entrega / Atraso": {
                 "area": "LOGÍSTICA",
                 "responsavel": "RONALDO",
@@ -914,12 +920,22 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 "contato": "logistica4@papapa.com.br",
                 "passo_a_passo": "Verificar se a guia foi enviada por e-mail. Caso retida, acionar o Ronaldo imediatamente para regularização."
             },
-
-            "📝 Processo de NFD (Devolução)": {
-                "area": "LOGÍSTICA / FINANCEIRO",
-                "responsavel": "RONALDO / MARCELLI",
-                "contato": "logistica4@papapa.com.br; contasareceber2@papapa.com.br",
-                "passo_a_passo": "1. **Validação:** Confirmar a ocorrência (avaria, validade ou erro de envio) com a Logística.\n2. **Emissão do Cliente:** O cliente deve emitir a Nota Fiscal de Devolução (NFD).\n3. **Requisito Obrigatório:** A NFD deve conter o número da **NF de origem** e o **motivo da devolução** descritos nas observações.\n4. **Financeiro:** Enviar a NFD para a Marcelli realizar o abatimento ou cancelamento do boleto."
+            "🍎 Problema de Qualidade / Produto": {
+                "area": "QUALIDADE",
+                "responsavel": "LORENA",
+                "contato": "qualidade2@papapa.com.br",
+                "passo_a_passo": "Ao receber reclamação sobre a integridade do produto (sabor, textura, embalagem com defeito, etc):\n\n"
+                                 "1. **Coleta de Dados:** Solicitar ao cliente as informações abaixo.\n"
+                                 "2. **Envio:** Encaminhar e-mail para a Lorena com os seguintes dados:\n\n"
+                                 "   - **CNPJ do cliente:**\n"
+                                 "   - **Lote do produto:**\n"
+                                 "   - **Validade do produto:**\n"
+                                 "   - **Quantidade afetada:**\n"
+                                 "   - **Motivo principal:**\n"
+                                 "   - **Data da compra (NF):**\n"
+                                 "   - **E-mail do cliente:**\n"
+                                 "   - **Telefone do cliente:**\n\n"
+                                 "3. **Amostra:** Caso necessário, a Lorena solicitará o recolhimento da amostra para análise física."
             }
         }
 
