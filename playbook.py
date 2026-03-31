@@ -897,10 +897,10 @@ elif aba_selecionada == "🛠️ Resolução de Problemas":
                 "passo_a_passo": "1. Verificar ressalva no canhoto.\n2. Solicitar fotos das avarias.\n3. Se poucas unidades: propor bonificação ou desconto no próximo pedido (autorizar com João).\n4. Casos maiores: Cliente formaliza por e-mail com NFD para logística/financeiro."
             },
             "🍎 Validade do Produto (< 60%)": {
-                "area": "LOGÍSTICA",
-                "responsavel": "RONALDO",
-                "contato": "logistica4@papapa.com.br",
-                "passo_a_passo": "Solicitar lote e item ao cliente. Se confirmado erro interno, verificar abatimento no boleto ou bonificação no próximo pedido."
+                "area": "LOGÍSTICA / FINANCEIRO",
+                "responsavel": "RONALDO / MARCELLI",
+                "contato": "logistica4@papapa.com.br, contasareceber2@papapa.com.br",
+                "passo_a_passo": "Solicitar lote e item ao cliente. Se confirmado erro interno, solicitar NFD ao cliente a abatimento no boleto ao financeiro."
             },
             "❌ Extravio de Mercadoria": {
                 "area": "LOGÍSTICA / FINANCEIRO",
