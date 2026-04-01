@@ -270,23 +270,6 @@ if aba_selecionada == "🏠 Home (Equipe)":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-
-        st.divider()
-
-    # NOVO BLOCO: TELEFONES VEKTA
-    st.markdown("""
-        <div class="vekta-panel">
-            <div class="vekta-title">📞 Telefones cadastrados na Vekta</div>
-            <table class="vekta-table">
-                <tr><td><b>Pedro</b></td><td>554137976885</td></tr>
-                <tr><td><b>Ana</b></td><td>5541999029246</td></tr>
-                <tr><td><b>João Paulo</b></td><td>5541992474213</td></tr>
-                <tr><td><b>Thiago</b></td><td>5541985027025</td></tr>
-                <tr><td><b>Bernardo</b></td><td>5541996503745</td></tr>
-                <tr><td><b>João Tadra</b></td><td>5541998106275</td></tr>
-            </table>
-        </div>
-    """, unsafe_allow_html=True)
     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
@@ -399,6 +382,23 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
                     st.download_button(label, f, file_name=path, use_container_width=True)
             except FileNotFoundError: 
                 st.error(f"Arquivo não encontrado: {path}")
+
+        st.divider()
+
+    # NOVO BLOCO: TELEFONES VEKTA
+    st.markdown("""
+        <div class="vekta-panel">
+            <div class="vekta-title">📞 Telefones cadastrados na Vekta</div>
+            <table class="vekta-table">
+                <tr><td><b>Pedro</b></td><td>554137976885</td></tr>
+                <tr><td><b>Ana</b></td><td>5541999029246</td></tr>
+                <tr><td><b>João Paulo</b></td><td>5541992474213</td></tr>
+                <tr><td><b>Thiago</b></td><td>5541985027025</td></tr>
+                <tr><td><b>Bernardo</b></td><td>5541996503745</td></tr>
+                <tr><td><b>João Tadra</b></td><td>5541998106275</td></tr>
+            </table>
+        </div>
+    """, unsafe_allow_html=True)
 
 ################################################################################
 # --- MÓDULO 4: TEMPLATES & SCRIPTS ---
