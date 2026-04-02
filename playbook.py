@@ -711,28 +711,25 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.info("💡 **Dica:** Oriente o lojista a conferir a mercadoria com o transportador presente.")
 
         # --- CONSULTA DINÂMICA DE PRAZO (VIA PLANILHA) ---
-        st.write("") # Espaçador
+        st.write("") 
         st.markdown("#### ⏱️ Consulta de Prazo por Cidade")
 
         try:
             import pandas as pd
             
-            # Carrega a planilha (Certifique-se que o nome do arquivo está idêntico)
+            # Carrega a planilha
             df_prazos = pd.read_excel("Tabela lead time operacao e comercial.xlsx")
             
-            # Criamos uma coluna formatada "Cidade (UF)" para o usuário selecionar
+            # Criamos a coluna formatada
             df_prazos['Exibicao'] = df_prazos['Cidade'].astype(str) + " (" + df_prazos['UF'].astype(str) + ")"
-            
-            # Ordena por ordem alfabética de cidade
             opcoes_cidades = sorted(df_prazos['Exibicao'].unique())
             
-            # Caixa de seleção com todas as cidades da planilha
             cid_sel = st.selectbox("Selecione a Cidade:", opcoes_cidades, label_visibility="collapsed")
             
-            # Busca o valor correspondente na coluna 'Lead time total'
-            dias_est = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
+            # BUSCA O VALOR E CONVERTE PARA INTEIRO PARA TIRAR O .0
+            valor_raw = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
+            dias_est = int(valor_raw) # <--- A mágica acontece aqui
             
-            # Exibição estilizada (Mantendo seu layout original)
             st.markdown(f"""
                 <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
                     <span style="color: #1f77b4; font-size: 14px; font-weight: bold;">PREVISÃO TOTAL</span><br>
@@ -741,8 +738,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             """, unsafe_allow_html=True)
 
         except Exception as e:
-            # Caso o arquivo não seja encontrado ou a coluna tenha nome diferente
-            st.error("Erro ao carregar a tabela de prazos. Verifique se o arquivo Excel está na pasta do projeto.")
+            st.error("Erro ao carregar a tabela de prazos.")
             st.caption(f"Erro técnico: {e}")
 
 # --- SEÇÃO: GLOSSÁRIO ---
