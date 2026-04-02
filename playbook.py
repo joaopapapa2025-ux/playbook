@@ -724,22 +724,32 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             df_prazos['Exibicao'] = df_prazos['Cidade'].astype(str) + " (" + df_prazos['UF'].astype(str) + ")"
             opcoes_cidades = sorted(df_prazos['Exibicao'].unique())
             
-            cid_sel = st.selectbox("Selecione a Cidade:", opcoes_cidades, label_visibility="collapsed")
+            # SELECIONADOR: index=None faz começar vazio, placeholder define o texto inicial
+            cid_sel = st.selectbox(
+                "Selecione a Cidade:", 
+                opcoes_cidades, 
+                index=None, 
+                placeholder="Busque aqui a cidade...",
+                label_visibility="collapsed"
+            )
             
-            # BUSCA O VALOR E CONVERTE PARA INTEIRO PARA TIRAR O .0
-            valor_raw = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
-            dias_est = int(valor_raw) # <--- A mágica acontece aqui
-            
-            st.markdown(f"""
-                <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
-                    <span style="color: #1f77b4; font-size: 14px; font-weight: bold;">PREVISÃO TOTAL</span><br>
-                    <span style="font-size: 24px; font-weight: bold; color: #31333F;">{dias_est} dias úteis</span>
-                </div>
-            """, unsafe_allow_html=True)
+            # Só exibe o quadro de prazo se uma cidade for selecionada
+            if cid_sel:
+                valor_raw = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
+                dias_est = int(valor_raw)
+                
+                st.markdown(f"""
+                    <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
+                        <span style="color: #1f77b4; font-size: 14px; font-weight: bold;">PREVISÃO TOTAL</span><br>
+                        <span style="font-size: 24px; font-weight: bold; color: #31333F;">{dias_est} dias úteis</span>
+                    </div>
+                """, unsafe_allow_html=True)
+            else:
+                # Opcional: mensagem discreta enquanto não seleciona nada
+                st.caption("Aguardando seleção de cidade...")
 
         except Exception as e:
             st.error("Erro ao carregar a tabela de prazos.")
-            st.caption(f"Erro técnico: {e}")
 
 # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
