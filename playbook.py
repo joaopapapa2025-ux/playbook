@@ -710,41 +710,40 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         
         st.info("💡 **Dica:** Oriente o lojista a conferir a mercadoria com o transportador presente.")
 
-        # --- PREENCHIMENTO DO ESPAÇO EM BRANCO ---
+        # --- CONSULTA DINÂMICA DE PRAZO (VIA PLANILHA) ---
         st.write("") # Espaçador
-        st.markdown("#### ⏱️ Consulta Rápida de Prazo para Capitais")
-        
-        # Dados para a consulta (mesmos da tabela abaixo)
-        lista_capitais = ["Curitiba (PR)", "Florianópolis (SC)", "Porto Alegre (RS)", "São Paulo (SP)", 
-                          "Vitória (ES)", "Belo Horizonte (MG)", "Rio de Janeiro (RJ)", "Cuiabá (MT)", 
-                          "Campo Grande (MS)", "Goiânia (GO)", "Brasília (DF)", "Aracaju (SE)", 
-                          "Salvador (BA)", "Maceió (AL)", "João Pessoa (PB)", "Recife (PE)", 
-                          "Natal (RN)", "Fortaleza (CE)", "Teresina (PI)", "São Luís (MA)", 
-                          "Palmas (TO)", "Belém (PA)", "Porto Velho (RO)", "Manaus (AM)", 
-                          "Rio Branco (AC)", "Macapá (AP)", "Boa Vista (RR)"]
-        
-        prazos_dict = {
-            "Curitiba (PR)": 7, "Florianópolis (SC)": 8, "Porto Alegre (RS)": 8, "São Paulo (SP)": 7,
-            "Vitória (ES)": 9, "Belo Horizonte (MG)": 9, "Rio de Janeiro (RJ)": 9, "Cuiabá (MT)": 10,
-            "Campo Grande (MS)": 10, "Goiânia (GO)": 11, "Brasília (DF)": 11, "Aracaju (SE)": 13,
-            "Salvador (BA)": 14, "Maceió (AL)": 15, "João Pessoa (PB)": 16, "Recife (PE)": 16,
-            "Natal (RN)": 16, "Fortaleza (CE)": 16, "Teresina (PI)": 17, "São Luís (MA)": 18,
-            "Palmas (TO)": 13, "Belém (PA)": 18, "Porto Velho (RO)": 20, "Manaus (AM)": 23,
-            "Rio Branco (AC)": 25, "Macapá (AP)": 27, "Boa Vista (RR)": 28
-        }
+        st.markdown("#### ⏱️ Consulta de Prazo por Cidade")
 
-        cap_sel = st.selectbox("Selecione a Capital:", lista_capitais, label_visibility="collapsed")
-        dias_est = prazos_dict[cap_sel]
-        
-        # Exibição estilizada para combinar com o resto
-        st.markdown(f"""
-            <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
-                <span style="color: #1f77b4; font-size: 14px; font-weight: bold;">PREVISÃO TOTAL</span><br>
-                <span style="font-size: 24px; font-weight: bold; color: #31333F;">{dias_est} dias úteis</span>
-            </div>
-        """, unsafe_allow_html=True)
+        try:
+            import pandas as pd
+            
+            # Carrega a planilha (Certifique-se que o nome do arquivo está idêntico)
+            df_prazos = pd.read_excel("Tabela lead time operacao e comercial.xlsx")
+            
+            # Criamos uma coluna formatada "Cidade (UF)" para o usuário selecionar
+            df_prazos['Exibicao'] = df_prazos['Cidade'].astype(str) + " (" + df_prazos['UF'].astype(str) + ")"
+            
+            # Ordena por ordem alfabética de cidade
+            opcoes_cidades = sorted(df_prazos['Exibicao'].unique())
+            
+            # Caixa de seleção com todas as cidades da planilha
+            cid_sel = st.selectbox("Selecione a Cidade:", opcoes_cidades, label_visibility="collapsed")
+            
+            # Busca o valor correspondente na coluna 'Lead time total'
+            dias_est = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
+            
+            # Exibição estilizada (Mantendo seu layout original)
+            st.markdown(f"""
+                <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
+                    <span style="color: #1f77b4; font-size: 14px; font-weight: bold;">PREVISÃO TOTAL</span><br>
+                    <span style="font-size: 24px; font-weight: bold; color: #31333F;">{dias_est} dias úteis</span>
+                </div>
+            """, unsafe_allow_html=True)
 
-    st.divider()
+        except Exception as e:
+            # Caso o arquivo não seja encontrado ou a coluna tenha nome diferente
+            st.error("Erro ao carregar a tabela de prazos. Verifique se o arquivo Excel está na pasta do projeto.")
+            st.caption(f"Erro técnico: {e}")
 
 # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
