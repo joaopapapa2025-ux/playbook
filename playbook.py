@@ -717,14 +717,16 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         try:
             import pandas as pd
             
-            # Carrega a planilha
-            df_prazos = pd.read_excel("Tabela lead time operacao e comercial.xlsx")
+            # 1. Carrega especificando a aba correta: "tabela de lead time"
+            df_prazos = pd.read_excel("Tabela lead time operacao e comercial.xlsx", sheet_name="tabela de lead time")
             
-            # Criamos a coluna formatada
-            df_prazos['Exibicao'] = df_prazos['Cidade'].astype(str) + " (" + df_prazos['UF'].astype(str) + ")"
+            # 2. Remove linhas que estejam totalmente vazias (previne erro de conversão)
+            df_prazos = df_prazos.dropna(subset=['Cidade', 'UF', 'Lead time total'])
+            
+            # 3. Criamos a coluna formatada
+            df_prazos['Exibicao'] = df_prazos['Cidade'].astype(str).str.strip() + " (" + df_prazos['UF'].astype(str).str.strip() + ")"
             opcoes_cidades = sorted(df_prazos['Exibicao'].unique())
             
-            # SELECIONADOR: index=None faz começar vazio, placeholder define o texto inicial
             cid_sel = st.selectbox(
                 "Selecione a Cidade:", 
                 opcoes_cidades, 
@@ -733,10 +735,12 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 label_visibility="collapsed"
             )
             
-            # Só exibe o quadro de prazo se uma cidade for selecionada
             if cid_sel:
+                # Busca o valor
                 valor_raw = df_prazos[df_prazos['Exibicao'] == cid_sel]['Lead time total'].values[0]
-                dias_est = int(valor_raw)
+                
+                # Converte para inteiro (garante que remova o .0)
+                dias_est = int(float(valor_raw))
                 
                 st.markdown(f"""
                     <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; border-left: 5px solid #29b5e8; text-align: center;">
@@ -745,11 +749,11 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                     </div>
                 """, unsafe_allow_html=True)
             else:
-                # Opcional: mensagem discreta enquanto não seleciona nada
                 st.caption("Aguardando seleção de cidade...")
 
         except Exception as e:
-            st.error("Erro ao carregar a tabela de prazos.")
+            st.error(f"Erro ao carregar a tabela de prazos.")
+            # st.write(e) # Descomente esta linha se o erro persistir para ver o motivo técnico
 
 # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
