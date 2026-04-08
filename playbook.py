@@ -864,7 +864,15 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 <div class="glossary-category">📊 Técnicas & Métricas</div>
                 {item_glossario("SPIN Selling", "Método de perguntas sobre Situação, Problema, Implicação e Necessidade.")}
                 {item_glossario("Cross / Upselling", "Oferecer produtos complementares ou versões superiores.")}
-                {item_glossario("Churn", "Taxa de perda de clientes ou cancelamentos.")}
+                {item_glossario("LTV (Lifetime Value)", "O valor financeiro total que um cliente traz durante o tempo que consome a marca.")}
+                {item_glossario("Retenção", "A capacidade da empresa de manter os seus clientes ativos e fiéis.")}
+                {item_glossario("NPS (Net Promoter Score)", "Métrica de lealdade que avalia a probabilidade de um cliente recomendar a empresa.")}
+                {item_glossario("CSAT (Customer Satisfaction Score)", "Índice que mede o nível de satisfação do cliente com uma interação específica.")}
+                {item_glossario("FCR (First Contact Resolution)", "Percentual de problemas resolvidos logo no primeiro contacto com o suporte.")}
+                {item_glossario("TMR / FRT (Tempo Médio de Resposta / First Response Time)", "Tempo médio que a equipa demora a dar a primeira resposta ao cliente.")}
+                {item_glossario("TME (Tempo Médio de Espera)", "Tempo que o cliente passa a aguardar na fila antes de ser atendido.")}
+                {item_glossario("TMA (Tempo Médio de Atendimento)", "Duração média total de cada atendimento ou interação com o cliente.")}
+                {item_glossario("SLA (Service Level Agreement)", "Acordo que define prazos e níveis de qualidade prometidos no serviço.")}
             </div>
         """, unsafe_allow_html=True)
 
@@ -872,8 +880,10 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">🤝 Outros Relevantes</div>
+                {item_glossario("SDR (Sales Development Representative)", "Profissional que qualifica leads de entrada (Inbound) para a equipa de vendas.")}
+                {item_glossario("BDR (Business Development Representative)", "Especialista em prospecção ativa e estratégica de novos mercados (Outbound).")}
+                {item_glossario("Closer", "Vendedor responsável pelo fechamento final.")}
                 {item_glossario("Account", "Conta empresarial (cliente B2B recorrente).")}
-                {item_glossario("Closer/Rep", "Vendedor responsável pelo fechamento final.")}
             </div>
         """, unsafe_allow_html=True)
     
