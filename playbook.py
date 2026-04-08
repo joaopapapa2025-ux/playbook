@@ -831,7 +831,9 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
                 {item_glossario("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
                 {item_glossario("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
+                {item_glossario("Rapport", "Técnica de criar ligação, empatia e confiança mútua com o interlocutor.")}
                 {item_glossario("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
+                
             </div>
         """, unsafe_allow_html=True)
 
