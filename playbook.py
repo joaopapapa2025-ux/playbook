@@ -899,13 +899,14 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </div>
         """, unsafe_allow_html=True)
 
-        # Outros Relevantes
+        # Personagens de Vendas
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
-                <div class="glossary-category">🤝 Outros Relevantes</div>
+                <div class="glossary-category">🎭 Personagens de Vendas</div>
                 {item_glossario("SDR (Sales Development Representative)", "Profissional que qualifica leads de entrada (Inbound) para a equipa de vendas.")}
                 {item_glossario("BDR (Business Development Representative)", "Especialista em prospecção ativa e estratégica de novos mercados (Outbound).")}
                 {item_glossario("Closer", "Vendedor responsável pelo fechamento final.")}
+                {item_glossario("Farmer (Fazendeiro)", "Vendedor focado em cultivar e expandir a receita dentro da base de clientes que já existem.")}
                 {item_glossario("Account", "Conta empresarial (cliente B2B recorrente).")}
             </div>
         """, unsafe_allow_html=True)
