@@ -768,6 +768,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             st.error(f"Erro ao carregar a tabela de prazos.")
             # st.write(e) # Descomente esta linha se o erro persistir para ver o motivo técnico
 
+    st.divider()
+
 # --- SEÇÃO: GLOSSÁRIO ---
     st.subheader("📖 Glossário de Vendas & Distribuição")
     st.write("Consulte os termos e siglas essenciais da operação Inside Sales da Papapá.")
@@ -908,6 +910,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("Closer", "Vendedor responsável pelo fechamento final.")}
                 {item_glossario("Farmer (Fazendeiro)", "Vendedor focado em cultivar e expandir a receita dentro da base de clientes que já existem.")}
                 {item_glossario("Account", "Conta empresarial (cliente B2B recorrente).")}
+                {item_glossario("CS (Customer Success)", "Gestor focado em garantir que o cliente alcance o sucesso e os resultados esperados com o produto.")}
             </div>
         """, unsafe_allow_html=True)
     
