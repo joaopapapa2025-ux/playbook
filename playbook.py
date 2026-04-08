@@ -821,6 +821,9 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("Preço Sugerido", "Valor recomendado pelo fabricante para venda ao PDV ou consumidor.")}
                 {item_glossario("Sell-in", "Vendas da Papapá para o distribuidor ou PDV.")}
                 {item_glossario("Sell-out", "Vendas reais do PDV para o shopper final.")}
+                {item_glossario("Consumidor", "Aquele que efetivamente utiliza o produto, podendo ser diferente do Shopper que realizou a compra.")}
+                {item_glossario("Ruptura", "Falta de produto na gôndola ou no estoque do PDV, impedindo a venda ao shopper.")}
+                {item_glossario("Share de Gôndola", "Espaço que a marca ocupa na prateleira do PDV em relação aos concorrentes.")}
             </div>
         """, unsafe_allow_html=True)
 
@@ -828,11 +831,16 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">🔍 Prospecção & Qualificação</div>
+                {item_glossario("Inbound Marketing", "Estratégia de atração passiva baseada na criação de conteúdo para que o cliente chegue até a empresa.")}
+                {item_glossario("Outbound Sales", "Estratégia de prospecção ativa onde a empresa vai até o cliente através de abordagens diretas.")}
                 {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
                 {item_glossario("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
                 {item_glossario("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
                 {item_glossario("Rapport", "Técnica de criar ligação, empatia e confiança mútua com o interlocutor.")}
                 {item_glossario("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
+                {item_glossario("Lead", "Pessoa ou empresa que demonstrou interesse ou tem perfil para se tornar um cliente.")}
+                {item_glossario("ICP (Ideal Customer Profile)", "Perfil de Cliente Ideal; descrição da empresa ou pessoa que mais se beneficia da sua solução.")}
+                
                 
             </div>
         """, unsafe_allow_html=True)
@@ -841,8 +849,15 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">⚙️ Processo de Vendas</div>
-                {item_glossario("MQL / SQL / SAL", "Estágios de qualificação do lead (Marketing, Vendas e Aceito).")}
+                {item_glossario("CRM (Customer Relationship Management)", "Software utilizado para gerenciar todo o relacionamento e histórico com os clientes.")
+                {item_glossario("Ticket Médio", "Valor médio das vendas realizadas, calculado dividindo o faturamento pelo número de pedidos.")}
+                {item_glossario("Conversion Rate (Taxa de Conversão)", "Percentual de leads ou oportunidades que avançam de uma etapa para a próxima no funil.")}
+                {item_glossario("Win Rate (Taxa de Vitórias)", "Métrica que calcula o percentual de negócios fechados em relação ao total de oportunidades criadas.")}
+                {item_glossario("Lost Rate (Taxa de Perda)", "Percentual de oportunidades que foram descartadas ou perdidas durante o processo de venda.")}
+                {item_glossario("Forecast", "Previsão de vendas para um período futuro baseada nas oportunidades do pipeline.")}
+                {item_glossario("Follow-up", "Ação de manter contato com um lead após uma abordagem inicial para incentivar a conversão.")}
                 {item_glossario("Pipeline", "Visão das etapas do funil (prospecção até fechamento).")}
+                {item_glossario("MQL / SQL / SAL", "Estágios de qualificação do lead (Marketing, Vendas e Aceito).")}
                 {item_glossario("Ramp-up", "Período para um vendedor atingir produtividade plena.")}
             </div>
         """, unsafe_allow_html=True)
@@ -852,7 +867,15 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card">
                 <div class="glossary-category">📦 Logística & Identificação</div>
+                {item_glossario("Lead Time", "Tempo total entre o pedido do cliente e a entrega efetiva do produto.")}
                 {item_glossario("SKU (Stock Keeping Unit)", "Código interno alfanumérico único para gerenciar estoque.")}
+                {item_glossario("Last Mile (Última Milha)", "Etapa final do transporte, quando o produto sai do centro de distribuição para o destino final.")}
+                {item_glossario("Picking", "Processo de separação e coleta dos produtos no estoque para preparar um pedido.")}
+                {item_glossario("Packing", "Processo de embalagem e acomodação dos produtos para que sejam transportados com segurança.")}
+                {item_glossario("FIFO / PEPS", "Método de gestão de estoque onde o primeiro produto a entrar é o primeiro a sair (essencial para perecíveis).")}
+                {item_glossario("Paletização", "Agrupamento de mercadorias sobre paletes para facilitar a movimentação por empilhadeiras.")}
+                {item_glossario("Giro de Estoque", "Indicador que mede quantas vezes o capital investido em estoque se renovou em um período.")}
+                {item_glossario("Cross-docking", "Sistema de distribuição onde a mercadoria é transferida do recebimento direto para a expedição, sem armazenagem.")}
                 {item_glossario("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")}
                 {item_glossario("DUN (ou DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")}
             </div>
