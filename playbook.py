@@ -332,8 +332,8 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
     
-    # PRIMEIRA LINHA DE MATERIAIS
-    col1, col2, col3 = st.columns(3)
+    # Criando 4 colunas para colocar tudo na mesma linha
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         st.subheader("📁 Materiais de Venda")
@@ -365,12 +365,12 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
     with col3:
-        st.subheader("🏦 Documentos Fiscais")
+        st.subheader("🏦 Docs Fiscais") # Abreviei para não ocupar tanto espaço horizontal
         arquivos_fiscais = {
-            "📄 Ata AGE 2025 (Sede/Matriz)": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
-            "✅ CND - Débitos Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
-            "🏙️ CND - Débitos Municipais": "CND MUNICIPAL - BABY ROO.pdf",
-            "👨‍🚒 Alvará Bombeiro (Venc. 11/2026)": "BABY ROO - CVCB Bombeiro - venc 04.11.2026.pdf",
+            "📄 Ata AGE 2025": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
+            "✅ CND - Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
+            "🏙️ CND - Municipais": "CND MUNICIPAL - BABY ROO.pdf",
+            "👨‍🚒 Alvará Bombeiro": "BABY ROO - CVCB Bombeiro - venc 04.11.2026.pdf",
             "💳 Cartão CNPJ": "CARTÃO CNPJ BABY ROO.pdf",
             "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
             "📑 Sintegra": "SINTEGRA PAPAPÁ.pdf",
@@ -382,17 +382,10 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
                     st.download_button(label, f, file_name=path, use_container_width=True)
             except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
-    st.write("") # Espaçador entre as linhas
-    
-    # SEGUNDA LINHA DE MATERIAIS
-    col4, col5, col6 = st.columns(3)
-    
     with col4:
         st.subheader("🎓 Treinamentos")
-        # Dicionário pronto para quando você subir os arquivos
         arquivos_treinamento = {
             # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
-            # "🚀 Técnicas de Negociação": "treinamento_negociacao.pdf"
         }
         
         if not arquivos_treinamento:
@@ -406,7 +399,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
 
     st.divider()
 
-    # NOVO BLOCO: TELEFONES VEKTA
+    # BLOCO: TELEFONES VEKTA
     st.markdown("""
         <div class="vekta-panel">
             <div class="vekta-title">📞 Telefones cadastrados na Vekta</div>
