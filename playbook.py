@@ -332,7 +332,7 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
     
-    # Criando 3 colunas para distribuir melhor os materiais
+    # PRIMEIRA LINHA DE MATERIAIS
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -379,12 +379,32 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         for label, path in arquivos_fiscais.items():
             try:
                 with open(path, "rb") as f:
-                    # O streamlit identifica automaticamente se é PNG ou PDF pelo nome do arquivo no path
                     st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError: 
-                st.error(f"Arquivo não encontrado: {path}")
+            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
-        st.divider()
+    st.write("") # Espaçador entre as linhas
+    
+    # SEGUNDA LINHA DE MATERIAIS
+    col4, col5, col6 = st.columns(3)
+    
+    with col4:
+        st.subheader("🎓 Treinamentos")
+        # Dicionário pronto para quando você subir os arquivos
+        arquivos_treinamento = {
+            # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
+            # "🚀 Técnicas de Negociação": "treinamento_negociacao.pdf"
+        }
+        
+        if not arquivos_treinamento:
+            st.info("Nenhum treinamento disponível no momento.")
+        else:
+            for label, path in arquivos_treinamento.items():
+                try:
+                    with open(path, "rb") as f:
+                        st.download_button(label, f, file_name=path, use_container_width=True)
+                except FileNotFoundError: st.error(f"Pendente: {label}")
+
+    st.divider()
 
     # NOVO BLOCO: TELEFONES VEKTA
     st.markdown("""
