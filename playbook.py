@@ -849,7 +849,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">⚙️ Processo de Vendas</div>
-                {item_glossario("CRM (Customer Relationship Management)", "Software utilizado para gerenciar todo o relacionamento e histórico com os clientes.")
+                {item_glossario("CRM (Customer Relationship Management)", "Software utilizado para gerenciar todo o relacionamento e histórico com os clientes.")}
                 {item_glossario("Ticket Médio", "Valor médio das vendas realizadas, calculado dividindo o faturamento pelo número de pedidos.")}
                 {item_glossario("Conversion Rate (Taxa de Conversão)", "Percentual de leads ou oportunidades que avançam de uma etapa para a próxima no funil.")}
                 {item_glossario("Win Rate (Taxa de Vitórias)", "Métrica que calcula o percentual de negócios fechados em relação ao total de oportunidades criadas.")}
