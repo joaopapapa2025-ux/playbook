@@ -346,8 +346,8 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         for label, path in arquivos_venda.items():
             try:
                 with open(path, "rb") as f:
-                    st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
+                    st.download_button(label, f, file_name=path, use_container_width=True, key=f"venda_{path}")
+            except FileNotFoundError: st.error(f"Pendente: {label}")
 
     with col2:
         st.subheader("📋 Guias e Processos")
@@ -361,11 +361,11 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         for label, path in arquivos_proc.items():
             try:
                 with open(path, "rb") as f:
-                    st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
+                    st.download_button(label, f, file_name=path, use_container_width=True, key=f"proc_{path}")
+            except FileNotFoundError: st.error(f"Pendente: {label}")
 
     with col3:
-        st.subheader("🏦 Docs Fiscais") # Abreviei para não ocupar tanto espaço horizontal
+        st.subheader("🏦 Docs Fiscais")
         arquivos_fiscais = {
             "📄 Ata AGE 2025": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
             "✅ CND - Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
@@ -379,38 +379,21 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         for label, path in arquivos_fiscais.items():
             try:
                 with open(path, "rb") as f:
-                    st.download_button(label, f, file_name=path, use_container_width=True)
-            except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
+                    st.download_button(label, f, file_name=path, use_container_width=True, key=f"fisc_{path}")
+            except FileNotFoundError: st.error(f"Pendente: {label}")
 
-    # Verifique se a linha anterior é exatamente: with col4:
     with col4:
         st.subheader("🎓 Treinamentos")
-    
-        # Dicionário de arquivos
         arquivos_treinamento = {
             "📊 Atendimento ao Cliente": "Atendimento ao cliente.pptx",
-            # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
         }
-    
-    if not arquivos_treinamento:
-        st.info("Nenhum treinamento disponível no momento.")
-    else:
         for label, path in arquivos_treinamento.items():
             try:
-                # O bloco abaixo também precisa estar identado em relação ao 'try'
                 with open(path, "rb") as f:
-                    st.download_button(
-                        label=label,
-                        data=f,
-                        file_name=path,
-                        use_container_width=True,
-                        key=path  # Evita erro de chaves duplicadas
-                    )
-            except FileNotFoundError:
-                st.error(f"Pendente: {label}")
+                    st.download_button(label, f, file_name=path, use_container_width=True, key=f"treino_{path}")
+            except FileNotFoundError: st.error(f"Pendente: {label}")
 
-# O divider deve ficar fora do 'with col4' para pegar a largura total da página
-st.divider()
+    st.divider()
 
     # BLOCO: TELEFONES VEKTA
     st.markdown("""
