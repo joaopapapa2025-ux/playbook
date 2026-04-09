@@ -889,11 +889,13 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("Retenção", "A capacidade da empresa de manter os seus clientes ativos e fiéis.")}
                 {item_glossario("NPS (Net Promoter Score)", "Métrica de lealdade que avalia a probabilidade de um cliente recomendar a empresa.")}
                 {item_glossario("CSAT (Customer Satisfaction Score)", "Índice que mede o nível de satisfação do cliente com uma interação específica.")}
-                {item_glossario("FCR (First Contact Resolution)", "Percentual de problemas resolvidos logo no primeiro contacto com o suporte.")}
-                {item_glossario("TMR / FRT (Tempo Médio de Resposta / First Response Time)", "Tempo médio que a equipa demora a dar a primeira resposta ao cliente.")}
+                {item_glossario("FCR (First Contact Resolution)", "Percentual de problemas resolvidos logo no primeiro contato com o suporte.")}
+                {item_glossario("TMR / FRT (Tempo Médio de Resposta / First Response Time)", "Tempo médio que a equipe demora a dar a primeira resposta ao cliente.")}
                 {item_glossario("TME (Tempo Médio de Espera)", "Tempo que o cliente passa a aguardar na fila antes de ser atendido.")}
                 {item_glossario("TMA (Tempo Médio de Atendimento)", "Duração média total de cada atendimento ou interação com o cliente.")}
                 {item_glossario("SLA (Service Level Agreement)", "Acordo que define prazos e níveis de qualidade prometidos no serviço.")}
+                {item_glossario("CAC (Custo de Aquisição de Clientes)", "Soma de todos os investimentos em marketing e vendas dividida pelo número de novos clientes conquistados em um período.")}
+                
             </div>
         """, unsafe_allow_html=True)
 
@@ -905,7 +907,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("BDR (Business Development Representative)", "Especialista em prospecção ativa e estratégica de novos mercados (Outbound).")}
                 {item_glossario("Closer", "Vendedor responsável pelo fechamento final.")}
                 {item_glossario("Farmer (Fazendeiro)", "Vendedor focado em cultivar e expandir a receita dentro da base de clientes que já existem.")}
-                {item_glossario("Account", "Conta empresarial (cliente B2B recorrente).")}
                 {item_glossario("CS (Customer Success)", "Gestor focado em garantir que o cliente alcance o sucesso e os resultados esperados com o produto.")}
             </div>
         """, unsafe_allow_html=True)
