@@ -383,21 +383,31 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
     with col4:
-        st.subheader("🎓 Treinamentos")
-        arquivos_treinamento = {
-            # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
-        }
-        
-        if not arquivos_treinamento:
-            st.info("Nenhum treinamento disponível no momento.")
-        else:
-            for label, path in arquivos_treinamento.items():
-                try:
-                    with open(path, "rb") as f:
-                        st.download_button(label, f, file_name=path, use_container_width=True)
-                except FileNotFoundError: st.error(f"Pendente: {label}")
+    st.subheader("🎓 Treinamentos")
+    
+    # Adicionando o novo treinamento ao dicionário
+    arquivos_treinamento = {
+        "📊 Atendimento ao Cliente": "Atendimento ao cliente.pptx",
+        # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
+    }
+    
+    if not arquivos_treinamento:
+        st.info("Nenhum treinamento disponível no momento.")
+    else:
+        for label, path in arquivos_treinamento.items():
+            try:
+                with open(path, "rb") as f:
+                    st.download_button(
+                        label=label, 
+                        data=f, 
+                        file_name=path, 
+                        use_container_width=True,
+                        key=path # Chave única para evitar conflitos no Streamlit
+                    )
+            except FileNotFoundError:
+                st.error(f"Pendente: {label}")
 
-    st.divider()
+st.divider()
 
     # BLOCO: TELEFONES VEKTA
     st.markdown("""
