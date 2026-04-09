@@ -382,31 +382,34 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
                     st.download_button(label, f, file_name=path, use_container_width=True)
             except FileNotFoundError: st.error(f"Arquivo não encontrado: {path}")
 
+    # Verifique se a linha anterior é exatamente: with col4:
     with col4:
-    st.subheader("🎓 Treinamentos")
+        st.subheader("🎓 Treinamentos")
     
-    # Adicionando o novo treinamento ao dicionário
-    arquivos_treinamento = {
-        "📊 Atendimento ao Cliente": "Atendimento ao cliente.pptx",
-        # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
-    }
+        # Dicionário de arquivos
+        arquivos_treinamento = {
+            "📊 Atendimento ao Cliente": "Atendimento ao cliente.pptx",
+            # "📽️ Onboarding Inside Sales": "treinamento_onboarding.pptx",
+        }
     
     if not arquivos_treinamento:
         st.info("Nenhum treinamento disponível no momento.")
     else:
         for label, path in arquivos_treinamento.items():
             try:
+                # O bloco abaixo também precisa estar identado em relação ao 'try'
                 with open(path, "rb") as f:
                     st.download_button(
-                        label=label, 
-                        data=f, 
-                        file_name=path, 
+                        label=label,
+                        data=f,
+                        file_name=path,
                         use_container_width=True,
-                        key=path # Chave única para evitar conflitos no Streamlit
+                        key=path  # Evita erro de chaves duplicadas
                     )
             except FileNotFoundError:
                 st.error(f"Pendente: {label}")
 
+# O divider deve ficar fora do 'with col4' para pegar a largura total da página
 st.divider()
 
     # BLOCO: TELEFONES VEKTA
