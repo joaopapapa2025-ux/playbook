@@ -894,7 +894,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("TME (Tempo Médio de Espera)", "Tempo que o cliente passa a aguardar na fila antes de ser atendido.")}
                 {item_glossario("TMA (Tempo Médio de Atendimento)", "Duração média total de cada atendimento ou interação com o cliente.")}
                 {item_glossario("SLA (Service Level Agreement)", "Acordo que define prazos e níveis de qualidade prometidos no serviço.")}
-                {item_glossario("CAC (Custo de Aquisição de Clientes)", "Soma de todos os investimentos em marketing e vendas dividida pelo número de novos clientes conquistados em um período.")}
+                {item_glossario("CAC (Custo de Aquisição de Clientes)", "Investimento total em marketing e vendas dividido pelo número de novos clientes.")}
                 
             </div>
         """, unsafe_allow_html=True)
