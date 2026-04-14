@@ -1394,7 +1394,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📝 Cadastro e Operação")
-        col1, col2, col3 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
             st.caption("Novo cadastro e atualização de clientes")
