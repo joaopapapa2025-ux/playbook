@@ -707,6 +707,15 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             
         st.success("**Pagamento:** Pix ou Boleto")
 
+        st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.success("**Chave PIX (CNPJ)**")
+            st.code("34.282.307/0001-44")
+        with col_b2:
+            st.info("**Dados Itaú**")
+            st.code("Ag: 8931 | CC: 05510-0\nBABY ROO COMERCIO DE ALIMENTOS S/A")
+
         st.markdown("---")
 
         st.subheader("🔄 Trocas e Devoluções")
