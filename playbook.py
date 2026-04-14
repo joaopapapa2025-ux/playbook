@@ -832,8 +832,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 <div class="glossary-category">🔍 Prospecção & Qualificação</div>
                 {item_glossario("Inbound Marketing", "Estratégia de atração passiva baseada na criação de conteúdo para que o cliente chegue até a empresa.")}
                 {item_glossario("Outbound Sales", "Estratégia de prospecção ativa onde a empresa vai até o cliente através de abordagens diretas.")}
-                {item_glossario("SDR (Sales Development Rep)", "Profissional que prospecta leads iniciais e os qualifica.")}
-                {item_glossario("BDR (Business Development Rep)", "Foco em expansão de negócios e novas contas estratégicas.")}
                 {item_glossario("BANT", "Critério de qualificação (Budget, Authority, Need, Timeline).")}
                 {item_glossario("Rapport", "Técnica de criar ligação, empatia e confiança mútua com o interlocutor.")}
                 {item_glossario("Cold Call/Mail", "Contato inicial não solicitado para gerar interesse.")}
@@ -848,6 +846,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         st.markdown(f"""
             <div class="glossary-card" style="margin-top: 15px;">
                 <div class="glossary-category">⚙️ Processo de Vendas</div>
+                {item_glossario("B2C (Business to Consumer)", "Modelo de negócio focado na venda direta para o consumidor final.")}
+                {item_glossario("B2B (Business to Business)", "Modelo de negócio onde empresas vendem produtos ou serviços para outras empresas.")}
                 {item_glossario("CRM (Customer Relationship Management)", "Software utilizado para gerenciar todo o relacionamento e histórico com os clientes.")}
                 {item_glossario("Ticket Médio", "Valor médio das vendas realizadas, calculado dividindo o faturamento pelo número de pedidos.")}
                 {item_glossario("Conversion Rate (Taxa de Conversão)", "Percentual de leads ou oportunidades que avançam de uma etapa para a próxima no funil.")}
