@@ -874,7 +874,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 {item_glossario("FIFO / PEPS", "Método de gestão de estoque onde o primeiro produto a entrar é o primeiro a sair (essencial para perecíveis).")}
                 {item_glossario("Paletização", "Agrupamento de mercadorias sobre paletes para facilitar a movimentação por empilhadeiras.")}
                 {item_glossario("Giro de Estoque", "Indicador que mede quantas vezes o capital investido em estoque se renovou em um período.")}
-                {item_glossario("Cross-docking", "Sistema de distribuição onde a mercadoria é transferida do recebimento direto para a expedição, sem armazenagem.")}
                 {item_glossario("Código EAN", "Código de barras universal (13 dígitos) para a unidade.")}
                 {item_glossario("DUN (ou DUN-14)", "Código de barras (14 dígitos) para embalagens múltiplas/caixas.")}
             </div>
@@ -886,6 +885,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 <div class="glossary-category">📊 Técnicas & Métricas</div>
                 {item_glossario("SPIN Selling", "Método de perguntas sobre Situação, Problema, Implicação e Necessidade.")}
                 {item_glossario("Cross / Upselling", "Oferecer produtos complementares ou versões superiores.")}
+                {item_glossario("Taxa de Conversão", "Percentual de leads ou contatos que realizam uma ação desejada (ex: fechar venda).")}
                 {item_glossario("LTV (Lifetime Value)", "O valor financeiro total que um cliente traz durante o tempo que consome a marca.")}
                 {item_glossario("Retenção", "A capacidade da empresa de manter os seus clientes ativos e fiéis.")}
                 {item_glossario("NPS (Net Promoter Score)", "Métrica de lealdade que avalia a probabilidade de um cliente recomendar a empresa.")}
