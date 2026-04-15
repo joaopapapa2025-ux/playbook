@@ -591,14 +591,14 @@ Estou retornado nosso contato pois quero lhe apresentar uma forma de deixar os p
 Posso te ligar para uma conversa rápida de 10 minutos?""", language=None)
 
         st.markdown("---")
-        st.subheader("📊 Material de Apoio Completo")
+        st.subheader("📊 Material de Apoio - Reativação")
         
         # O botão de download agora está corretamente identado dentro da tabs[4]
         nome_arquivo = "Central de Templates Comercial - PAPAPÁ.xlsx"
         try:
             with open(nome_arquivo, "rb") as file:
                 st.download_button(
-                    label="📥 Baixar Central de Templates Comercial (Completa)",
+                    label="📥 Baixar Templates de Reativação",
                     data=file,
                     file_name=nome_arquivo,
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
