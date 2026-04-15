@@ -357,7 +357,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "📦 Guia de Recebimento de Mercadorias": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
             "📝 Templates (PDF)": "Templates IS 2026.docx (2).pdf",
             "📊 Central de Templates - Reativação": "Central de Templates Comercial - PAPAPÁ.xlsx",
-            "📄 Central de Templates - Recuperação": "[Atualizada ] Central de Templates Comercial Expansão de Carteira- PAPAPÁ.xlsx"
+            "📄 Central de Templates - Recuperação": "[Atualizada ] Central de Templates Comercial Expansão de Carteira- PAPAPÁ.xlsx",
             "🧩 Sales Planning Framework": "[PAPAPÁ] - Sales Planning Framework.xlsx"
         }
         for label, path in arquivos_proc.items():
