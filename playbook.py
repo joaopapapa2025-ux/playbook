@@ -421,10 +421,11 @@ elif aba_selecionada == "✍️ Templates & Scripts":
     
     tabs = st.tabs([
         "🤝 Abordagem Inicial", 
+        "📈 Expansão",
+        "🔄 Recuperação",
         "🚀 Explicação de Mix (Curva A)", 
         "📝 Cadastro & Fechamento", 
         "🚚 Pós-Venda & Financeiro",
-        "🔄 Recuperação"
     ])
     
     # --- ABA 0: ABORDAGEM ---
@@ -605,6 +606,50 @@ Posso te ligar para uma conversa rápida de 10 minutos?""", language=None)
                 )
         except FileNotFoundError:
             st.error("Arquivo de templates não encontrado no diretório do servidor.")
+
+          # --- ABA EXPANSÃO ---
+    with tabs[5]:
+        st.subheader("📈 Estratégias de Expansão de Carteira")
+        st.caption("Utilize estes scripts para aumentar frequência, giro e presença dentro dos clientes ativos.")
+
+        # Script 1
+        with st.expander("📦 Reposição com urgência (giro de final de semana)", expanded=True):
+            st.code("""Olá {Nome_lead}, tudo bem?
+Eu sou {seu_nome}, faço parte do time da Papapá.
+Estou acompanhando o calendário de reposição da {Empresa do lead} e vi que já faz {XX} dias desde o último lote, e não quero que falte produto para o fluxo do final de semana.
+Como está a saída nas prateleiras?""", language=None)
+
+        # Script 2
+        with st.expander("📊 Planejamento + novos lançamentos"):
+            st.code("""Assunto: Planejamento de Categoria e Futuros Lançamentos.
+
+Olá {Nome do lead}, tudo bem?
+Estou entrando em contato para confirmar se chegou tudo certinho no seu último pedido!
+Vou aproveitar para lhe enviar uma sugestão de reposição focada em manter o seu fluxo de caixa saudável, pois teremos lançamentos logo em breve!
+O que acha de darmos uma olhada nessa reposição para garantir que você não fique sem giro e perca vendas para a concorrência?""", language=None)
+
+        # Script 3
+        with st.expander("⚡ Fechamento rápido de reposição"):
+            st.code("""{Nome_lead}, tudo bem?
+Sobre seu último pedido aqui na Papapá, não deixe para a última hora sua reposição.
+Quero agilizar seu faturamento para você focar na gestão da loja, e enquanto isso eu cuido para que o seu mix infantil seja o mais completo da região.
+Vamos garantir esse pedido ainda hoje?""", language=None)
+
+        st.markdown("---")
+        st.subheader("📊 Material de Apoio - Expansão")
+
+        nome_arquivo_expansao = "[Atualizada ] Central de Templates Comercial Expansão de Carteira- PAPAPÁ.xlsx"
+        try:
+            with open(nome_arquivo_expansao, "rb") as file:
+                st.download_button(
+                    label="📥 Baixar Templates de Expansão",
+                    data=file,
+                    file_name=nome_arquivo_expansao,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    help="Clique para baixar a planilha com os scripts de expansão de carteira."
+                )
+        except FileNotFoundError:
+            st.error("Arquivo de expansão não encontrado no diretório do servidor.")      
 
 ################################################################################
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
