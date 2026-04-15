@@ -421,11 +421,11 @@ elif aba_selecionada == "✍️ Templates & Scripts":
     
     tabs = st.tabs([
         "🤝 Abordagem Inicial", 
-        "📈 Expansão",
-        "🔄 Recuperação",
         "🚀 Explicação de Mix (Curva A)", 
         "📝 Cadastro & Fechamento", 
         "🚚 Pós-Venda & Financeiro",
+        "🔄 Recuperação",
+        "📈 Expansão"
     ])
     
     # --- ABA 0: ABORDAGEM ---
