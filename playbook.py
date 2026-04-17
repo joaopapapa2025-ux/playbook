@@ -388,6 +388,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         st.subheader("🎓 Treinamentos")
         arquivos_treinamento = {
             "📊 Atendimento ao Cliente": "Atendimento ao cliente.pptx",
+            "🎯 CS & Vendas": "CS & Vendas.pptx",
         }
         for label, path in arquivos_treinamento.items():
             try:
