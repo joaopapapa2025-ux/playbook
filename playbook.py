@@ -346,10 +346,16 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "🍎 Guia de Produtos": "https://drive.google.com/file/d/1ulatv5WYZZJYubylJ_SfWoPsdbOVFgHR/view?usp=sharing"
         }
         for label, path in arquivos_venda.items():
-            try:
-                with open(path, "rb") as f:
-                    st.download_button(label, f, file_name=path, use_container_width=True, key=f"venda_{path}")
-            except FileNotFoundError: st.error(f"Pendente: {label}")
+            if path.startswith("http"):
+                # Se for link, usa link_button
+                st.link_button(label, path, use_container_width=True, key=f"link_{label}")
+            else:
+                # Se for arquivo, tenta o download_button
+                try:
+                    with open(path, "rb") as f:
+                        st.download_button(label, f, file_name=path, use_container_width=True, key=f"venda_{path}")
+                except FileNotFoundError: 
+                    st.error(f"Pendente: {label}")
 
     with col2:
         st.subheader("📋 Guias e Processos")
