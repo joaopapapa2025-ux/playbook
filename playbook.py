@@ -351,7 +351,7 @@ for nome, caminho in arquivos_proc.items():
             "💰 Tabela de Preços - Geral (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
             "🕸️ Tabela de Preços - Rede (Excel)": "Tabela de preços Papapá 0325ER v2 A (1).xlsx",
             "🌿 Tabela de Preços - Mundo Verde (Excel)": "Tabela de preços Papapá 0625 Mundo Verde.xlsx",
-            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
+            "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf",
             "🍎 Guia de Produtos": "https://drive.google.com/file/d/1ulatv5WYZZJYubylJ_SfWoPsdbOVFgHR/view?usp=sharing"
         }
         for label, path in arquivos_venda.items():
