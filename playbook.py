@@ -331,6 +331,15 @@ elif aba_selecionada == "💰 Simulador de Bonificação":
 ################################################################################
 elif aba_selecionada == "📄 Biblioteca de Arquivos":
     st.header("📄 Biblioteca de Arquivos")
+
+for nome, caminho in arquivos_proc.items():
+    if caminho.startswith("http"):
+        # Se for link do Drive
+        st.link_button(nome, caminho, use_container_width=True)
+    else:
+        # Se for arquivo local para baixar
+        with open(caminho, "rb") as f:
+            st.download_button(label=nome, data=f, file_name=caminho, use_container_width=True)
     
     # Criando 4 colunas para colocar tudo na mesma linha
     col1, col2, col3, col4 = st.columns(4)
@@ -343,6 +352,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "🕸️ Tabela de Preços - Rede (Excel)": "Tabela de preços Papapá 0325ER v2 A (1).xlsx",
             "🌿 Tabela de Preços - Mundo Verde (Excel)": "Tabela de preços Papapá 0625 Mundo Verde.xlsx",
             "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf"
+            "🍎 Guia de Produtos": "https://drive.google.com/file/d/1ulatv5WYZZJYubylJ_SfWoPsdbOVFgHR/view?usp=sharing"
         }
         for label, path in arquivos_venda.items():
             try:
