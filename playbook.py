@@ -386,7 +386,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
             "📑 Sintegra": "SINTEGRA PAPAPÁ.pdf",
             "💰 Comprovante Bancário": "COMPROVANTE BANCÁRIO (1).png"
-            "🏥 Licença sanitária": "COMPROVANTE BANCÁRIO (1).png"
+            "🏥 Licença sanitária": "Licença Sanitária_Baby Roo - Val 10.11.27.pdf"
         }
         for label, path in arquivos_fiscais.items():
             try:
