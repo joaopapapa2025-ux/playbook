@@ -1514,17 +1514,19 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     st.markdown("---")
 
-    with st.container():
+with st.container():
     st.subheader("🎨 Marketing e Divulgação")
+    
+    # Criando as colunas dentro do container
     col_m1, col_m2 = st.columns([1, 2])
     
     with col_m1:
-        # Novo Link (Sem senha)
+        # Novo Link (Sem senha) - Destaque em azul/cor primária
         st.link_button(
             "📂 Drive para Lojistas (Novo)", 
             "https://drive.google.com/drive/folders/137gBnZp7qFkDnQRTNyMfsBH4kO59XwTC", 
             use_container_width=True,
-            type="primary" # Destaque para o link novo
+            type="primary"
         )
         
         # Link Antigo
