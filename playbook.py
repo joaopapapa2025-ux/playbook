@@ -1516,7 +1516,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
 with st.container():
     st.subheader("🎨 Marketing e Divulgação")
-        st.write("Compartilhe com o cliente para fotos, logos, fichas cadastrais e materiais de PDV.")
+    st.markdown("##### Compartilhe com o cliente para fotos, logos, fichas cadastrais e materiais de PDV.")
     
     # Criando as colunas dentro do container
     col_m1, col_m2 = st.columns([1, 2])
