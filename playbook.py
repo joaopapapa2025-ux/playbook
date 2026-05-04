@@ -1538,5 +1538,5 @@ with st.container():
         )
         
     with col_m2:
-        st.info("💡 O **Link Novo** possui acesso livre.")
-        st.warning("**Senha do Link Antigo:** Papapa@2023")
+        st.info("💡 O **link novo** possui acesso livre.")
+        st.warning("**Senha do link antigo:** Papapa@2023")
