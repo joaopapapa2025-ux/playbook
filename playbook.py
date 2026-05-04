@@ -1518,25 +1518,26 @@ with st.container():
     st.subheader("🎨 Marketing e Divulgação")
     st.markdown("##### Compartilhe com o cliente para fotos, logos, fichas cadastrais e materiais de PDV.")
     
-    # Criando as colunas dentro do container
-    col_m1, col_m2 = st.columns([1, 2])
-    
-    with col_m1:
-        # Novo Link (Sem senha) - Destaque em azul/cor primária
+    # --- Linha do Link Novo ---
+    c1, c2 = st.columns([1, 2])
+    with c1:
         st.link_button(
             "📂 Drive para Lojistas (Novo)", 
             "https://drive.google.com/drive/folders/137gBnZp7qFkDnQRTNyMfsBH4kO59XwTC", 
             use_container_width=True,
             type="primary"
         )
-        
-        # Link Antigo
+    with c2:
+        # Usamos markdown com um leve ajuste para centralizar verticalmente com o botão
+        st.info("💡 O **link novo** possui acesso livre.")
+
+    # --- Linha do Link Antigo ---
+    c3, c4 = st.columns([1, 2])
+    with c3:
         st.link_button(
             "📂 Drive para Lojistas (Antigo)", 
             "https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA", 
             use_container_width=True
         )
-        
-    with col_m2:
-        st.info("💡 O **link novo** possui acesso livre.")
+    with c4:
         st.warning("**Senha do link antigo:** Papapa@2023")
