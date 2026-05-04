@@ -1515,10 +1515,26 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     with st.container():
-        st.subheader("🎨 Marketing e Divulgação")
-        col_m1, col_m2 = st.columns([1, 2])
-        with col_m1:
-            st.link_button("📂 Drive para Lojistas", "https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA", use_container_width=True)
-        with col_m2:
-            st.warning("**Senha de acesso:** Papapa@2023")
-            st.write("Compartilhe com o cliente para fotos, logos e materiais de PDV.")
+    st.subheader("🎨 Marketing e Divulgação")
+    col_m1, col_m2 = st.columns([1, 2])
+    
+    with col_m1:
+        # Novo Link (Sem senha)
+        st.link_button(
+            "📂 Drive para Lojistas (Novo)", 
+            "https://drive.google.com/drive/folders/137gBnZp7qFkDnQRTNyMfsBH4kO59XwTC", 
+            use_container_width=True,
+            type="primary" # Destaque para o link novo
+        )
+        
+        # Link Antigo
+        st.link_button(
+            "📂 Drive para Lojistas (Antigo)", 
+            "https://papapacombr-my.sharepoint.com/:f:/g/personal/bi_papapa_com_br/EkwEgijW7pNCm95ElhfbiHoBK4kVtHiWieDpIOmwFZwRgA", 
+            use_container_width=True
+        )
+        
+    with col_m2:
+        st.write("Compartilhe com o cliente para fotos, logos e materiais de PDV.")
+        st.info("💡 O **Link Novo** possui acesso livre.")
+        st.warning("**Senha do Link Antigo:** Papapa@2023")
