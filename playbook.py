@@ -1516,6 +1516,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
 with st.container():
     st.subheader("🎨 Marketing e Divulgação")
+        st.write("Compartilhe com o cliente para fotos, logos, fichas cadastrais e materiais de PDV.")
     
     # Criando as colunas dentro do container
     col_m1, col_m2 = st.columns([1, 2])
@@ -1537,6 +1538,5 @@ with st.container():
         )
         
     with col_m2:
-        st.write("Compartilhe com o cliente para fotos, logos e materiais de PDV.")
         st.info("💡 O **Link Novo** possui acesso livre.")
         st.warning("**Senha do Link Antigo:** Papapa@2023")
