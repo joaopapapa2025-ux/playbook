@@ -1514,7 +1514,6 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     st.markdown("---")
 
-with st.container():
     st.subheader("🎨 Marketing e Divulgação")
     st.markdown("##### Compartilhe com o cliente para fotos, logos, fichas cadastrais e materiais de PDV.")
     
