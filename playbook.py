@@ -1654,77 +1654,84 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-# --- NOVO BLOCO: GERADOR DE PDF ---
-        from fpdf import FPDF
+# --- NOVO BLOCO: GERADOR DE PDF (ATUALIZADO) ---
+        try:
+            from fpdf import FPDF
 
-        def gerar_pdf(dados_pedido, total, estado, tabela):
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", "B", 16)
-            
-            # Título
-            pdf.cell(200, 10, txt="Orçamento de Pedido - Era uma Vez", ln=True, align='C')
-            pdf.ln(10)
-            
-            # Cabeçalho do Orçamento
-            pdf.set_font("Arial", size=12)
-            pdf.cell(200, 10, txt=f"Tabela: {tabela}", ln=True)
-            pdf.cell(200, 10, txt=f"Estado: {estado}", ln=True)
-            pdf.cell(200, 10, txt=f"Data: {pd.to_datetime('today').strftime('%d/%m/%Y')}", ln=True)
-            pdf.ln(5)
-            
-            # Tabela de Itens
-            pdf.set_fill_color(200, 220, 255)
-            pdf.set_font("Arial", "B", 10)
-            pdf.cell(80, 10, "Produto", 1, 0, 'C', True)
-            pdf.cell(30, 10, "Qtd Cx", 1, 0, 'C', True)
-            pdf.cell(40, 10, "Preço Unit", 1, 0, 'C', True)
-            pdf.cell(40, 10, "Subtotal", 1, 1, 'C', True)
-            
-            pdf.set_font("Arial", size=10)
-            for item in dados_pedido:
-                pdf.cell(80, 10, item['nome'], 1)
-                pdf.cell(30, 10, str(item['qtd']), 1, 0, 'C')
-                pdf.cell(40, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                pdf.cell(40, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
-            
-            # Total
-            pdf.ln(5)
-            pdf.set_font("Arial", "B", 12)
-            pdf.cell(150, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-            pdf.cell(40, 10, f"R$ {total:,.2f}", 0, 1, 'C')
-            
-            return pdf.output(dest='S').encode('latin-1')
-
-        # Preparar dados para o PDF (apenas o que foi pedido)
-        itens_para_pdf = []
-        for nome_exibicao, config in produtos_config.items():
-            qtd = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-            if qtd > 0:
-                # Re-calcula preço unit para o PDF
-                try:
-                    col_planilha = config["coluna"]
-                    linha = df_precos[df_precos['Estado'] == estado_sel]
-                    p_unit = float(linha[col_planilha].values[0])
-                except:
-                    p_unit = 0.0
+            def gerar_pdf(dados_pedido, total, estado):
+                pdf = FPDF()
+                pdf.add_page()
                 
-                itens_para_pdf.append({
-                    "nome": nome_exibicao,
-                    "qtd": qtd,
-                    "preco": p_unit,
-                    "subtotal": (p_unit * config["un_cx"]) * qtd
-                })
+                # Título
+                pdf.set_font("Arial", "B", 16)
+                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Era uma Vez", ln=True, align='C')
+                pdf.ln(10)
+                
+                # Cabeçalho do Orçamento (Apenas Estado e Data)
+                pdf.set_font("Arial", size=12)
+                data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
+                pdf.cell(190, 10, txt=f"Estado: {estado} | Data: {data_atual}", ln=True)
+                pdf.ln(5)
+                
+                # Tabela de Itens
+                pdf.set_fill_color(240, 240, 240)
+                pdf.set_font("Arial", "B", 10)
+                pdf.cell(80, 10, "Produto", 1, 0, 'C', True)
+                pdf.cell(30, 10, "Qtd Cx", 1, 0, 'C', True)
+                pdf.cell(40, 10, "Preco Unit", 1, 0, 'C', True)
+                pdf.cell(40, 10, "Subtotal", 1, 1, 'C', True)
+                
+                pdf.set_font("Arial", size=10)
+                for item in dados_pedido:
+                    pdf.cell(80, 10, item['nome'].encode('latin-1', 'ignore').decode('latin-1'), 1)
+                    pdf.cell(30, 10, str(item['qtd']), 1, 0, 'C')
+                    pdf.cell(40, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                    pdf.cell(40, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                
+                # Total
+                pdf.ln(5)
+                pdf.set_font("Arial", "B", 12)
+                pdf.cell(150, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+                pdf.cell(40, 10, f"R$ {total:,.2f}", 0, 1, 'C')
 
-        # Exibir botão se houver itens
-        if total_pedido > 0:
-            pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, tabela_sel)
-            st.download_button(
-                label="📄 Gerar Orçamento em PDF",
-                data=pdf_bytes,
-                file_name=f"Orcamento_{estado_sel}.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
+                # Nota de Rodapé (Aviso Legal)
+                pdf.ln(20)
+                pdf.set_font("Arial", "I", 8)
+                pdf.multi_cell(190, 5, txt=u"* Este documento e apenas uma simulacao de valores (orcamento) e nao garante a reserva de estoque ou a efetivacao do pedido comercial. Este informativo nao possui validade fiscal.", align='C')
+                
+                return pdf.output(dest='S').encode('latin-1')
 
+            # Preparar dados para o PDF (apenas o que foi pedido)
+            itens_para_pdf = []
+            for nome_exibicao, config in produtos_config.items():
+                qtd = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
+                if qtd > 0:
+                    try:
+                        col_planilha = config["coluna"]
+                        linha = df_precos[df_precos['Estado'] == estado_sel]
+                        p_unit = float(linha[col_planilha].values[0])
+                        u_cx = config["un_cx"]
+                    except:
+                        p_unit = 0.0
+                        u_cx = 0
+                    
+                    itens_para_pdf.append({
+                        "nome": nome_exibicao,
+                        "qtd": qtd,
+                        "preco": p_unit,
+                        "subtotal": (p_unit * u_cx) * qtd
+                    })
+
+            # Exibir botão se houver itens
+            if total_pedido > 0:
+                pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel)
+                st.download_button(
+                    label="📄 Baixar Orçamento em PDF",
+                    data=pdf_bytes,
+                    file_name=f"Orcamento_{estado_sel}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+        except Exception as e:
+            st.error(f"Erro ao gerar PDF: {e}. Verifique se a biblioteca 'fpdf' está no seu requirements.txt")
             
