@@ -1592,6 +1592,7 @@ import os
 ################################################################################
 
 mapa_tabelas = {
+    "",
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
     "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
@@ -1739,7 +1740,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     with c1:
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
     with c2:
-        estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
+        estado_sel = st.selectbox("Selecione o Estado (UF):", ["","AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
 
     @st.cache_data
     def carregar_dados(nome_tabela):
