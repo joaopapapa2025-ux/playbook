@@ -1724,7 +1724,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-        # --- GERADOR DE PDF ATUALIZADO ---
+        # --- GERADOR DE PDF ATUALIZADO (COM COLUNA DE CÓDIGO) ---
         if total_pedido > 0:
             try:
                 from fpdf import FPDF
@@ -1742,7 +1742,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         pdf.ln(10)
                     
                     pdf.set_font("Arial", "B", 16)
-                    pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
+                    pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
                     pdf.ln(5)
                     
                     pdf.set_font("Arial", size=10)
@@ -1750,7 +1750,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
                     pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
                     
-                    # SÓ APARECE SE TIVER CONTEÚDO (CNPJ E PAGAMENTO):
                     if cnpj and cnpj.strip() != "":
                         pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
                     
@@ -1759,28 +1758,31 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     
                     pdf.ln(5)
                     
-                    # Tabela
+                    # --- TABELA COM COLUNA CÓDIGO ---
+                    # Ajustei as larguras para: Código(20), Produto(60), Qtd Cx(20), Qtd Itens(20), Preço(35), Subtotal(35) = 190
                     pdf.set_fill_color(240, 240, 240)
                     pdf.set_font("Arial", "B", 8)
-                    pdf.cell(70, 10, "Produto", 1, 0, 'C', True)
-                    pdf.cell(22, 10, "Qtd Cx", 1, 0, 'C', True)
-                    pdf.cell(22, 10, "Qtd Itens", 1, 0, 'C', True)
-                    pdf.cell(38, 10, "Preco Unit", 1, 0, 'C', True)
-                    pdf.cell(38, 10, "Subtotal", 1, 1, 'C', True)
+                    pdf.cell(20, 10, "Cod.", 1, 0, 'C', True)
+                    pdf.cell(60, 10, "Produto", 1, 0, 'C', True)
+                    pdf.cell(20, 10, "Qtd Cx", 1, 0, 'C', True)
+                    pdf.cell(20, 10, "Qtd Itens", 1, 0, 'C', True)
+                    pdf.cell(35, 10, "Preco Unit", 1, 0, 'C', True)
+                    pdf.cell(35, 10, "Subtotal", 1, 1, 'C', True)
                     
                     pdf.set_font("Arial", size=8)
                     for item in dados_pedido:
                         nome_prod = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                        pdf.cell(70, 10, nome_prod, 1)
-                        pdf.cell(22, 10, str(item['qtd_cx']), 1, 0, 'C')
-                        pdf.cell(22, 10, str(item['qtd_itens']), 1, 0, 'C')
-                        pdf.cell(38, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                        pdf.cell(38, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                        pdf.cell(20, 10, str(item['codigo']), 1, 0, 'C') # Nova coluna Código
+                        pdf.cell(60, 10, nome_prod, 1)
+                        pdf.cell(20, 10, str(item['qtd_cx']), 1, 0, 'C')
+                        pdf.cell(20, 10, str(item['qtd_itens']), 1, 0, 'C')
+                        pdf.cell(35, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                        pdf.cell(35, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
                     
                     pdf.ln(5)
                     pdf.set_font("Arial", "B", 11)
-                    pdf.cell(152, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                    pdf.cell(38, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+                    pdf.cell(155, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+                    pdf.cell(35, 10, f"R$ {total:,.2f}", 0, 1, 'C')
 
                     pdf.ln(15)
                     pdf.set_font("Arial", "I", 8)
@@ -1795,14 +1797,22 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
                     if q_cx > 0:
                         try:
-                            col_p = config["coluna"]
-                            l = df_precos[df_precos['Estado'] == estado_sel]
-                            p_u = float(l[col_p].values[0])
+                            # Tenta pegar o código da coluna 'SKU' ou 'Código' da sua planilha
+                            # Como você disse que está na coluna D, se o header=1, o pandas lê o nome dela.
+                            # Vou usar o config para garantir que o código venha certo:
+                            linha = df_precos[df_precos['Estado'] == estado_sel]
+                            
+                            # Se você não quiser mudar o dicionário produtos_config, 
+                            # podemos tentar pegar automaticamente a coluna 3 (índice da coluna D)
+                            cod_prod = linha.iloc[0, 2] # Pega o valor da 3ª coluna (D) da linha filtrada
+                            
+                            p_u = float(linha[config["coluna"]].values[0])
                             u_c = config["un_cx"]
                         except:
-                            p_u, u_c = 0.0, 0
+                            cod_prod, p_u, u_c = "N/A", 0.0, 0
                         
                         itens_para_pdf.append({
+                            "codigo": cod_prod,
                             "nome": nome_exibicao,
                             "qtd_cx": q_cx,
                             "qtd_itens": q_cx * u_c,
