@@ -1610,25 +1610,25 @@ mapa_tabelas = {
 categorias_produtos = {
     "PAPAPÁ": {
         "PAPINHA DE CARNE": {
-            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5313"},
-            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5320"},
+            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Papinhas", "un_cx": 12, "cod": "5313"},
+            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Papinhas", "un_cx": 12, "cod": "5320"},
         },
         "YOGUZINHO": {
-            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5563"},
-            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5570"},
+            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Papinhas", "un_cx": 16, "cod": "5563"},
+            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Papinhas", "un_cx": 16, "cod": "5570"},
         },
         "PAPINHA DE FRUTA": {
-            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908729"},
-            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908736"},
-            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908712"},
-            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908750"},
-            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "27898994908757"},
-            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "5306"},
+            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "17898994908729"},
+            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "17898994908736"},
+            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "17898994908712"},
+            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "17898994908750"},
+            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "27898994908757"},
+            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas Org", "un_cx": 12, "cod": "5306"},
         },
         "PALITINHO": {
-            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5085"},
-            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5078"},
-            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5061"},
+            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Bisc. Org 20g", "un_cx": 16, "cod": "5085"},
+            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Bisc. Org 20g", "un_cx": 16, "cod": "5078"},
+            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Bisc. Org 20g", "un_cx": 16, "cod": "5061"},
         },
         "DENTIÇÃO": {
             "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8774"},
@@ -1644,10 +1644,10 @@ categorias_produtos = {
             "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5252"},
         },
         "CEREAL": {
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5402"},
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5419"},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5429"},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "Cereais", "un_cx": 6, "cod": "5399"},
+            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "Cereais", "un_cx": 12, "cod": "5402"},
+            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "Cereais", "un_cx": 12, "cod": "5419"},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "Cereais", "un_cx": 12, "cod": "5429"},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "Cereais", "un_cx": 12, "cod": "5399"},
         },
         "BISCOTTI": {
             "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5375"},
