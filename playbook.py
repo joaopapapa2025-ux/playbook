@@ -1549,8 +1549,9 @@ import streamlit as st
 import pandas as pd
 
 ################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS ---
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
+# Mantenha os dicionários fora dos IFs para que o Python os reconheça sempre
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1565,8 +1566,6 @@ mapa_tabelas = {
     "Tabela C": "0325TABELA_C.xlsx"
 }
 
-# --- DICIONÁRIO DE PRODUTOS ---
-# Importante: O nome em "coluna" deve ser EXATAMENTE igual ao que está na linha 2 da aba PREÇOS
 produtos_config = {
     "Extrusdos Sabor Queijo 40g": {"coluna": "Salgadinhos", "un_cx": 18},
     "Extrusdos Sabor Cebola e Salsa 40g": {"coluna": "Salgadinhos", "un_cx": 18},
@@ -1580,17 +1579,17 @@ produtos_config = {
     "Achocolatado 200ml": {"coluna": "Achocolatado", "un_cx": 27},
     "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1},
     "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1},
-    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1}, # Ajustado para 'Bolw' conforme sua planilha
+    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1}, 
     "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
-# ... (seu código anterior: dicionários, etc)
+# --- LOGICA DE NAVEGAÇÃO ---
+# Certifique-se de que o elif abaixo está logo após o bloco do if anterior
 
-# ONDE EDITAR: Certifique-se de que o elif está alinhado com o if principal 
-# e que TUDO abaixo dele está com 4 espaços de recuo (indentado)
+if aba_selecionada == "🏠 Home": # Exemplo: ajuste para o nome da sua aba anterior
+    st.write("Bem-vindo ao Playbook")
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
-    # A partir daqui, tudo precisa ter 4 espaços na frente
     st.header("🛒 Simulador de Pedidos")
 
     # 1. Seleção
@@ -1600,7 +1599,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     with c2:
         estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
 
-    # 2. Carregamento (Mantenha a função aqui dentro ou defina antes do if)
+    # 2. Função de Carregamento
     @st.cache_data
     def carregar_dados(nome_tabela):
         arquivo = mapa_tabelas.get(nome_tabela)
@@ -1611,7 +1610,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 df['Estado'] = df['Estado'].astype(str).str.strip()
             return df
         except Exception as e:
-            st.error(f"Erro: {e}")
+            st.error(f"Erro ao carregar arquivo: {e}")
             return None
 
     df_precos = carregar_dados(tabela_sel)
@@ -1640,7 +1639,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.write(f"{un_cx} un")
                 
             with col_qtd:
-                # Importante: o key precisa ser único para não dar erro de widget
                 qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
                 
             with col_sub:
@@ -1655,5 +1653,3 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.success("✅ Pedido validado!")
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {500 - total_pedido:,.2f} para o mínimo.")
-
-# Se houver código depois daqui sem indentação, ele voltará a aparecer em todas as páginas!
