@@ -1546,10 +1546,10 @@ import streamlit as st
 import pandas as pd
 
 ################################################################################
-# --- CONFIGURAÇÕES E MAPEAMENTO ---
+# --- CONFIGURAÇÕES E MAPEAMENTO ATUALIZADO ---
 ################################################################################
 
-# Mapeamento exato dos nomes dos arquivos que você terá no Streamlit
+# Mapeamento dos arquivos
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1564,22 +1564,46 @@ mapa_tabelas = {
     "Tabela C": "0325TABELA_C.xlsx"
 }
 
-# Dicionário de Produtos: Nome Amigável -> (Nome da Coluna na Planilha, Unidades por Caixa)
-# Isso permite que você mude o nome na planilha sem quebrar a interface do usuário
+# Dicionário de Produtos Expandido
+# Estrutura: "Nome para o Usuário": {"coluna": "Nome na Aba PREÇOS", "un_cx": Quantidade}
 produtos_config = {
-    "🥣 Papinhas": {"coluna": "Papinhas", "un_cx": 12},
-    "🍢 Palitinhos": {"coluna": "Palitinhos", "un_cx": 12},
-    "🍪 Biscoitinhos": {"coluna": "Biscoitinhos", "un_cx": 16},
-    "🍝 Papapasta": {"coluna": "Papapasta", "un_cx": 12},
-    "👨‍🍳 La Chef": {"coluna": "La Chef", "un_cx": 12},
-    "🌾 Linha Cereais": {"coluna": "Linha Cerais", "un_cx": 12},
-    "🥨 Biscotti": {"coluna": "Biscotti", "un_cx": 12},
-    "🍗 Pouch Carne": {"coluna": "Pouch Carne", "un_cx": 12},
-    "🥤 Yoguzinho": {"coluna": "Yoguzinho", "un_cx": 16},
-    "🍿 Salgadinhos": {"coluna": "Salgadinhos", "un_cx": 18},
-    "🍩 Bisc. Recheados": {"coluna": "Bisc. Recheados", "un_cx": 8},
-    "🧃 Sucos": {"coluna": "Sucos", "un_cx": 27},
-    "🍫 Achocolatado": {"coluna": "Achocolatado", "un_cx": 27},
+    # SALGADINHOS
+    "Extrusdos Sabor Queijo 40g": {"coluna": "Salgadinhos", "un_cx": 18},
+    "Extrusdos Sabor Cebola e Salsa 40g": {"coluna": "Salgadinhos", "un_cx": 18},
+    "Extrusdos Sabor Churrasco 40g": {"coluna": "Salgadinhos", "un_cx": 18},
+    
+    # RECHEADOS
+    "Biscoito Rechado Frutas Amarelas 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
+    "Biscoito Rechaeado Morango 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
+    
+    # SUCOS
+    "Suco laranja e Acerola 200ml": {"coluna": "Sucos", "un_cx": 27},
+    "Suco de Uva 200ml": {"coluna": "Sucos", "un_cx": 27},
+    "Suco de Morango 200ml": {"coluna": "Sucos", "un_cx": 27},
+    "Suco de Maça 200ml": {"coluna": "Sucos", "un_cx": 27},
+    
+    # ACHOCOLATADO
+    "Achocolatado 200ml": {"coluna": "Achocolatado", "un_cx": 27},
+    
+    # PUERICULTURA (Talheres)
+    "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1},
+    "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "un_cx": 1},
+    "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "un_cx": 1},
+    
+    # PUERICULTURA (Babadores)
+    "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1},
+    "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "un_cx": 1},
+    "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "un_cx": 1},
+    
+    # PUERICULTURA (Bowls)
+    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1},
+    "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "un_cx": 1},
+    "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "un_cx": 1},
+    
+    # PUERICULTURA (Pratinhos)
+    "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
+    "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "un_cx": 1},
+    "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
 ################################################################################
