@@ -1790,19 +1790,25 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     
                     return pdf.output(dest='S').encode('latin-1')
 
-                # --- LÓGICA DE COLETA DOS DADOS (BUSCANDO O CÓDIGO NA COLUNA D) ---
+                # --- LÓGICA DE COLETA DOS DADOS (CORRIGIDA PARA CÓDIGOS LIMPOS) ---
                 itens_para_pdf = []
                 for nome_exibicao, config in produtos_config.items():
                     q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
                     if q_cx > 0:
                         try:
-                            # Filtra a linha do estado selecionado
                             linha_estado = df_precos[df_precos['Estado'] == estado_sel]
                             
-                            # Na imagem, 'Código' é a coluna D. No Pandas, é o índice 3.
-                            # Caso o Pandas tenha lido com nome, usamos: linha_estado['Código'].values[0]
-                            # Como segurança, vamos tentar pelo índice da coluna (iloc)
-                            cod_prod = str(linha_estado.iloc[0, 3]) 
+                            # Pega o valor bruto da coluna D (índice 3)
+                            valor_codigo = linha_estado.iloc[0, 3]
+                            
+                            # CORREÇÃO: Se for número, remove o .0 convertendo para int primeiro
+                            if pd.notnull(valor_codigo):
+                                try:
+                                    cod_prod = str(int(float(valor_codigo)))
+                                except:
+                                    cod_prod = str(valor_codigo)
+                            else:
+                                cod_prod = "N/A"
                             
                             p_u = float(linha_estado[config["coluna"]].values[0])
                             u_c = config["un_cx"]
