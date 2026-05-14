@@ -1604,17 +1604,16 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     
     with c_cnpj:
         cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números")
-        # Aplica a formatação automática
         cnpj_cliente = formatar_cnpj(cnpj_digitado)
-        
-        # Feedback visual para o vendedor
         if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
-            st.caption(":red[CNPJ incompleto (digite 14 números)]")
+            st.caption(":red[CNPJ incompleto]")
         elif cnpj_digitado:
             st.caption(f":green[Formatado: {cnpj_cliente}]")
 
     with c_pag:
+        # Adicionada opção vazia no início
         opcoes_pagamento = [
+            "", 
             "PIX",
             "boleto 1x - 30 dias da data do faturamento",
             "boleto 2x - 30/45 dias da data do faturamento",
@@ -1623,7 +1622,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             "boleto 2x - 45/60 dias da data do faturamento",
             "boleto 3x - 40/50/60 dias da data do faturamento"
         ]
-        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento)
+        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, help="Se deixado em branco, não aparecerá no PDF")
 
     st.divider()
 
@@ -1713,9 +1712,15 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
                     pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
                     pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
+                
+                # SÓ APARECE SE TIVER CONTEÚDO:
+                if cnpj and cnpj.strip() != "":
                     pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                
+                if pagto and pagto.strip() != "":
                     pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                    pdf.ln(5)
+                
+                pdf.ln(5)
                     
                     # Tabela
                     pdf.set_fill_color(240, 240, 240)
