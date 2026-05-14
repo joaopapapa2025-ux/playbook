@@ -1588,20 +1588,40 @@ if aba_selecionada == "🏠 Home":
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
 
-    # --- NOVO: SEÇÃO DE DADOS DO CLIENTE ---
+    # Função para formatar CNPJ automaticamente
+    def formatar_cnpj(cnpj):
+        # Remove qualquer caractere que não seja número
+        cnpj = "".join(filter(str.isdigit, cnpj))
+        
+        # Se tiver os 14 dígitos, aplica a máscara
+        if len(cnpj) == 14:
+            return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
+        return cnpj # Retorna como digitou se estiver incompleto
+
+    # --- SEÇÃO DE DADOS DO CLIENTE ---
     st.subheader("Dados do Cliente e Pagamento")
     c_cnpj, c_pag = st.columns(2)
+    
     with c_cnpj:
-        cnpj_cliente = st.text_input("CNPJ do Cliente:", placeholder="00.000.000/0000-00")
+        cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números")
+        # Aplica a formatação automática
+        cnpj_cliente = formatar_cnpj(cnpj_digitado)
+        
+        # Feedback visual para o vendedor
+        if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
+            st.caption(":red[CNPJ incompleto (digite 14 números)]")
+        elif cnpj_digitado:
+            st.caption(f":green[Formatado: {cnpj_cliente}]")
+
     with c_pag:
         opcoes_pagamento = [
             "PIX",
-            "Boleto 1x - 30 dias da data do faturamento",
-            "Boleto 2x - 30/45 dias da data do faturamento",
-            "Boleto 3x - 30/45/60 dias da data do faturamento",
-            "Boleto 1x - 45 dias da data do faturamento",
-            "Boleto 2x - 45/60 dias da data do faturamento",
-            "Boleto 3x - 40/50/60 dias da data do faturamento"
+            "boleto 1x - 30 dias da data do faturamento",
+            "boleto 2x - 30/45 dias da data do faturamento",
+            "boleto 3x - 30/45/60 dias da data do faturamento",
+            "boleto 1x - 45 dias da data do faturamento",
+            "boleto 2x - 45/60 dias da data do faturamento",
+            "boleto 3x - 40/50/60 dias da data do faturamento"
         ]
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento)
 
