@@ -1712,6 +1712,10 @@ if aba_selecionada == "🏠 Home":
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
+    
+    # IMPORTANTE: Inicializamos as variáveis aqui para evitar NameError no código do PDF
+    total_pedido = 0.0
+    df_precos = None
 
     # --- FUNÇÕES DE APOIO ---
     def formatar_cnpj(cnpj):
@@ -1761,25 +1765,22 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
         estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
 
-    # --- LÓGICA PRINCIPAL (TRAVA DE SEGURANÇA) ---
+    # --- LÓGICA PRINCIPAL ---
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         
         df_precos = carregar_dados(tabela_sel)
 
         if df_precos is not None:
-            total_pedido = 0.0
             st.subheader("Itens do Pedido")
             
-            # Iteração pelas categorias e subcategorias
             for cat_principal, subcategorias in categorias_produtos.items():
-                st.markdown(f"#### {cat_principal}") # Título da Categoria
+                st.markdown(f"#### {cat_principal}")
                 
                 for sub_cat, produtos in subcategorias.items():
-                    with st.expander(sub_cat, expanded=False): # Sub-subtítulo como Expander
+                    with st.expander(sub_cat, expanded=False):
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             
-                            # Busca o preço na planilha
                             try:
                                 col_planilha = config["coluna"]
                                 linha = df_precos[df_precos['Estado'] == estado_sel]
@@ -1813,11 +1814,78 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-            # --- ESPAÇO PARA O GERADOR DE PDF ---
+            # --- GERADOR DE PDF (DENTRO DA TRAVA) ---
             if total_pedido > 0:
-                # Aqui você pode inserir o bloco do PDF que enviei anteriormente
-                pass
+                try:
+                    from fpdf import FPDF
+                    import os
+
+                    def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
+                        pdf = FPDF()
+                        pdf.add_page()
+                        logo_path = "Papapa-azul.png"
+                        if os.path.exists(logo_path):
+                            pdf.image(logo_path, x=80, y=12, w=50)
+                            pdf.ln(35) 
+                        else:
+                            pdf.ln(10)
+                        
+                        pdf.set_font("Arial", "B", 16)
+                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
+                        pdf.ln(5)
+                        pdf.set_font("Arial", size=10)
+                        data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
+                        pdf.cell(190, 7, txt=f"Data: {data_atual} | Estado: {estado}", ln=True)
+                        if cnpj: pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                        if pagto: pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
+                        
+                        pdf.ln(5)
+                        pdf.set_fill_color(240, 240, 240)
+                        pdf.set_font("Arial", "B", 8)
+                        pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
+                        pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
+                        pdf.cell(15, 10, "Cx", 1, 0, 'C', True)
+                        pdf.cell(15, 10, "Un", 1, 0, 'C', True)
+                        pdf.cell(27, 10, "Preco Un", 1, 0, 'C', True)
+                        pdf.cell(28, 10, "Subtotal", 1, 1, 'C', True)
+                        
+                        pdf.set_font("Arial", size=7) 
+                        for item in dados_pedido:
+                            nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
+                            pdf.cell(30, 10, str(item['codigo']), 1, 0, 'C')
+                            pdf.cell(75, 10, nome_limpo, 1)
+                            pdf.cell(15, 10, str(item['qtd_cx']), 1, 0, 'C')
+                            pdf.cell(15, 10, str(item['qtd_itens']), 1, 0, 'C')
+                            pdf.cell(27, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                            pdf.cell(28, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                        
+                        pdf.ln(5)
+                        pdf.set_font("Arial", "B", 11)
+                        pdf.cell(162, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+                        pdf.cell(28, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+                        return pdf.output(dest='S').encode('latin-1')
+
+                    itens_para_pdf = []
+                    for cat_nome, subcats in categorias_produtos.items():
+                        for sub_n, prods in subcats.items():
+                            for nome_ex, cfg in prods.items():
+                                q_cx = st.session_state.get(f"sim_qtd_{nome_ex}", 0)
+                                if q_cx > 0:
+                                    try:
+                                        p_u = float(df_precos[df_precos['Estado'] == estado_sel][cfg["coluna"]].values[0])
+                                        itens_para_pdf.append({
+                                            "codigo": cfg["cod"], "nome": nome_ex, "qtd_cx": q_cx,
+                                            "qtd_itens": q_cx * cfg["un_cx"], "preco": p_u,
+                                            "subtotal": (p_u * cfg["un_cx"]) * q_cx
+                                        })
+                                    except: pass
+
+                    pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
+                    st.download_button(label="📄 Baixar Orçamento em PDF", data=pdf_bytes, file_name=f"Orcamento_{estado_sel}.pdf", mime="application/pdf", use_container_width=True)
+                except Exception as e:
+                    st.error(f"Erro ao gerar PDF: {e}")
     else:
+        # APENAS ESTA MENSAGEM APARECE AGORA
         st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
 
         # --- GERADOR DE PDF (VERSÃO FINAL COM CATEGORIAS E CÓDIGOS FIXOS) ---
