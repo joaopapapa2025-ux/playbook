@@ -1592,7 +1592,7 @@ import os
 ################################################################################
 
 mapa_tabelas = {
-    "",
+    "Selecione uma tabela": None,
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
     "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
@@ -1737,10 +1737,29 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.divider()
 
     c1, c2 = st.columns(2)
-    with c1:
-        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
-    with c2:
-        estado_sel = st.selectbox("Selecione o Estado (UF):", ["","AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
+with c1:
+    tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
+with c2:
+    lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
+    estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
+
+    # --- TRAVA DE SEGURANÇA ---
+# Só entra na lógica se o usuário escolheu uma tabela real E um estado real
+if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
+    
+    df_precos = carregar_dados(tabela_sel)
+
+    if df_precos is not None:
+        total_pedido = 0.0
+        st.subheader("Itens do Pedido")
+        
+        # Aqui continua o seu código de categorias (PAPAPÁ, ERA UMA VEZ...)
+        # for cat_principal, subcategorias in categorias_produtos.items():
+        # ...
+        
+else:
+    # Mensagem amigável enquanto nada é selecionado
+    st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos e valores.")
 
     @st.cache_data
     def carregar_dados(nome_tabela):
