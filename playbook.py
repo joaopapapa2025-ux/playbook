@@ -1551,7 +1551,6 @@ import pandas as pd
 ################################################################################
 # --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
-# Mantenha os dicionários fora dos IFs para que o Python os reconheça sempre
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1583,23 +1582,38 @@ produtos_config = {
     "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
-# --- LOGICA DE NAVEGAÇÃO ---
-# Certifique-se de que o elif abaixo está logo após o bloco do if anterior
-
-if aba_selecionada == "🏠 Home": # Exemplo: ajuste para o nome da sua aba anterior
+if aba_selecionada == "🏠 Home":
     st.write("Bem-vindo ao Playbook")
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
 
-    # 1. Seleção
+    # --- NOVO: SEÇÃO DE DADOS DO CLIENTE ---
+    st.subheader("Dados do Cliente e Pagamento")
+    c_cnpj, c_pag = st.columns(2)
+    with c_cnpj:
+        cnpj_cliente = st.text_input("CNPJ do Cliente:", placeholder="00.000.000/0000-00")
+    with c_pag:
+        opcoes_pagamento = [
+            "PIX",
+            "boleto 1x - 30 dias da data do faturamento",
+            "boleto 2x - 30/45 dias da data do faturamento",
+            "boleto 3x - 30/45/60 dias da data do faturamento",
+            "boleto 1x - 45 dias da data do faturamento",
+            "boleto 2x - 45/60 dias da data do faturamento",
+            "boleto 3x - 40/50/60 dias da data do faturamento"
+        ]
+        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento)
+
+    st.divider()
+
+    # 1. Seleção de Tabela e UF
     c1, c2 = st.columns(2)
     with c1:
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
     with c2:
         estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
 
-    # 2. Função de Carregamento
     @st.cache_data
     def carregar_dados(nome_tabela):
         arquivo = mapa_tabelas.get(nome_tabela)
@@ -1654,96 +1668,87 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-# --- NOVO BLOCO: GERADOR DE PDF (ATUALIZADO COM LOGO E NOVAS COLUNAS) ---
-        try:
-            from fpdf import FPDF
-            import os
+        # --- GERADOR DE PDF ATUALIZADO ---
+        if total_pedido > 0:
+            try:
+                from fpdf import FPDF
+                import os
 
-            def gerar_pdf(dados_pedido, total, estado):
-                pdf = FPDF()
-                pdf.add_page()
+                def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
+                    pdf = FPDF()
+                    pdf.add_page()
 
-                # 1. Inserir Logo (Melhorada e centralizada)
-                logo_path = "Papapa-azul.png"
-                if os.path.exists(logo_path):
-                    # Centralizando: (Largura da página 210 - largura da logo 50) / 2 = 80
-                    pdf.image(logo_path, x=80, y=12, w=50)
-                    pdf.ln(35) 
-                else:
-                    pdf.ln(10)
-                
-                # Título
-                pdf.set_font("Arial", "B", 16)
-                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
-                pdf.ln(5)
-                
-                # Cabeçalho do Orçamento (Data em cima, Estado embaixo)
-                pdf.set_font("Arial", size=11)
-                data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
-                pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True, align='L')
-                pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True, align='L')
-                pdf.ln(5)
-                
-                # Tabela de Itens (Adicionado coluna Qtd Itens)
-                pdf.set_fill_color(240, 240, 240)
-                pdf.set_font("Arial", "B", 9)
-                pdf.cell(70, 10, "Produto", 1, 0, 'C', True)
-                pdf.cell(22, 10, "Qtd Cx", 1, 0, 'C', True)
-                pdf.cell(22, 10, "Qtd Itens", 1, 0, 'C', True) # Nova Coluna
-                pdf.cell(38, 10, "Preco Unit", 1, 0, 'C', True)
-                pdf.cell(38, 10, "Subtotal", 1, 1, 'C', True)
-                
-                pdf.set_font("Arial", size=9)
-                for item in dados_pedido:
-                    # Ajuste para caracteres especiais
-                    nome_prod = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                    pdf.cell(70, 10, nome_prod, 1)
-                    pdf.cell(22, 10, str(item['qtd_cx']), 1, 0, 'C')
-                    pdf.cell(22, 10, str(item['qtd_itens']), 1, 0, 'C') # Valor calculado
-                    pdf.cell(38, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                    pdf.cell(38, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
-                
-                # Total
-                pdf.ln(5)
-                pdf.set_font("Arial", "B", 11)
-                pdf.cell(152, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                pdf.cell(38, 10, f"R$ {total:,.2f}", 0, 1, 'C')
-
-                # Nota de Rodapé (Aviso Legal)
-                pdf.ln(15)
-                pdf.set_font("Arial", "I", 8)
-                aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
-                pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
-                
-                return pdf.output(dest='S').encode('latin-1')
-
-            # Preparar dados para o PDF
-            itens_para_pdf = []
-            for nome_exibicao, config in produtos_config.items():
-                qtd_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-                if qtd_cx > 0:
-                    try:
-                        col_planilha = config["coluna"]
-                        linha = df_precos[df_precos['Estado'] == estado_sel]
-                        p_unit = float(linha[col_planilha].values[0])
-                        u_cx = config["un_cx"]
-                        qtd_itens = qtd_cx * u_cx # Cálculo da nova coluna
-                    except:
-                        p_unit = 0.0
-                        u_cx = 0
-                        qtd_itens = 0
+                    logo_path = "Papapa-azul.png"
+                    if os.path.exists(logo_path):
+                        pdf.image(logo_path, x=80, y=12, w=50)
+                        pdf.ln(35) 
+                    else:
+                        pdf.ln(10)
                     
-                    itens_para_pdf.append({
-                        "nome": nome_exibicao,
-                        "qtd_cx": qtd_cx,
-                        "qtd_itens": qtd_itens,
-                        "preco": p_unit,
-                        "subtotal": (p_unit * u_cx) * qtd_cx
-                    })
+                    pdf.set_font("Arial", "B", 16)
+                    pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
+                    pdf.ln(5)
+                    
+                    pdf.set_font("Arial", size=10)
+                    data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
+                    pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
+                    pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
+                    pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                    pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
+                    pdf.ln(5)
+                    
+                    # Tabela
+                    pdf.set_fill_color(240, 240, 240)
+                    pdf.set_font("Arial", "B", 8)
+                    pdf.cell(70, 10, "Produto", 1, 0, 'C', True)
+                    pdf.cell(22, 10, "Qtd Cx", 1, 0, 'C', True)
+                    pdf.cell(22, 10, "Qtd Itens", 1, 0, 'C', True)
+                    pdf.cell(38, 10, "Preco Unit", 1, 0, 'C', True)
+                    pdf.cell(38, 10, "Subtotal", 1, 1, 'C', True)
+                    
+                    pdf.set_font("Arial", size=8)
+                    for item in dados_pedido:
+                        nome_prod = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
+                        pdf.cell(70, 10, nome_prod, 1)
+                        pdf.cell(22, 10, str(item['qtd_cx']), 1, 0, 'C')
+                        pdf.cell(22, 10, str(item['qtd_itens']), 1, 0, 'C')
+                        pdf.cell(38, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                        pdf.cell(38, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                    
+                    pdf.ln(5)
+                    pdf.set_font("Arial", "B", 11)
+                    pdf.cell(152, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+                    pdf.cell(38, 10, f"R$ {total:,.2f}", 0, 1, 'C')
 
-            # Exibir botão se houver itens
-            if total_pedido > 0:
-                pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel)
+                    pdf.ln(15)
+                    pdf.set_font("Arial", "I", 8)
+                    aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                    pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
+                    
+                    return pdf.output(dest='S').encode('latin-1')
+
+                # Coletar dados para o PDF
+                itens_para_pdf = []
+                for nome_exibicao, config in produtos_config.items():
+                    q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
+                    if q_cx > 0:
+                        try:
+                            col_p = config["coluna"]
+                            l = df_precos[df_precos['Estado'] == estado_sel]
+                            p_u = float(l[col_p].values[0])
+                            u_c = config["un_cx"]
+                        except:
+                            p_u, u_c = 0.0, 0
+                        
+                        itens_para_pdf.append({
+                            "nome": nome_exibicao,
+                            "qtd_cx": q_cx,
+                            "qtd_itens": q_cx * u_c,
+                            "preco": p_u,
+                            "subtotal": (p_u * u_c) * q_cx
+                        })
+
+                pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
                 st.download_button(
                     label="📄 Baixar Orçamento em PDF",
                     data=pdf_bytes,
@@ -1751,6 +1756,5 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     mime="application/pdf",
                     use_container_width=True
                 )
-        except Exception as e:
-            st.error(f"Erro ao gerar PDF: {e}")
-            
+            except Exception as e:
+                st.error(f"Erro ao gerar PDF: {e}")
