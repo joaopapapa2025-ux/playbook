@@ -1603,20 +1603,74 @@ mapa_tabelas = {
 }
 
 produtos_config = {
-    "Extrusdos Sabor Queijo 40g": {"coluna": "Salgadinhos", "un_cx": 18},
-    "Extrusdos Sabor Cebola e Salsa 40g": {"coluna": "Salgadinhos", "un_cx": 18},
-    "Extrusdos Sabor Churrasco 40g": {"coluna": "Salgadinhos", "un_cx": 18},
-    "Biscoito Rechado Frutas Amarelas 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
-    "Biscoito Rechaeado Morango 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
-    "Suco laranja e Acerola 200ml": {"coluna": "Sucos", "un_cx": 27},
-    "Suco de Uva 200ml": {"coluna": "Sucos", "un_cx": 27},
-    "Suco de Morango 200ml": {"coluna": "Sucos", "un_cx": 27},
-    "Suco de Maça 200ml": {"coluna": "Sucos", "un_cx": 27},
-    "Achocolatado 200ml": {"coluna": "Achocolatado", "un_cx": 27},
-    "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1},
-    "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1},
-    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1}, 
-    "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
+    # --- SALGADINHOS (18 un/cx) ---
+    "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5670"},
+    "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5671"},
+    "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5673"},
+
+    # --- BISCOITOS RECHEADOS (8 un/cx) ---
+    "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5677"},
+    "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5678"},
+
+    # --- BEBIDAS E SUCOS (27 un/cx) ---
+    "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5680"},
+    "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5681"},
+    "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5682"},
+    "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5683"},
+    "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "un_cx": 27, "cod": "5310"},
+
+    # --- PUERICULTURA (1 un/cx) ---
+    "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5641"},
+    "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5658"},
+    "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5665"},
+    "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5733"},
+    "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5740"},
+    "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5757"},
+    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5702"},
+    "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5719"},
+    "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5726"},
+    "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5675"},
+    "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5689"},
+    "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5696"},
+
+    # --- PAPINHAS E SOPINHAS (6 un/cx) ---
+    "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5313"},
+    "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5320"},
+    "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5563"},
+    "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5570"},
+    "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908729"},
+    "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908736"},
+    "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908712"},
+    "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908750"},
+    "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "27898994908757"},
+    "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "5306"},
+    "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5276"},
+    "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5269"},
+    "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5252"},
+    "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5610"},
+    "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5634"},
+    "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5627"},
+    "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5603"},
+
+    # --- BISCOITOS INFANTIS E DENTIÇÃO (12 un/cx) ---
+    "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5085"},
+    "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5078"},
+    "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5061"},
+    "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8774"},
+    "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8767"},
+    "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5375"},
+    "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5351"},
+    "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5368"},
+    "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5597"},
+    "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5580"},
+
+    # --- MASSAS E CEREAIS ---
+    "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5290"},
+    "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5283"},
+    "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5402"},
+    "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5419"},
+    "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5429"},
+    "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "Cereais", "un_cx": 6, "cod": "5399"},
 }
 
 if aba_selecionada == "🏠 Home":
@@ -1724,122 +1778,107 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-        # --- GERADOR DE PDF (CORREÇÃO DE COLUNA DE CÓDIGO) ---
-        if total_pedido > 0:
-            try:
-                from fpdf import FPDF
-                import os
+        # --- GERADOR DE PDF (VERSÃO FINAL COM CÓDIGOS FIXOS) ---
+if total_pedido > 0:
+    try:
+        from fpdf import FPDF
+        import os
 
-                def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
-                    pdf = FPDF()
-                    pdf.add_page()
+        def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
+            pdf = FPDF()
+            pdf.add_page()
 
-                    logo_path = "Papapa-azul.png"
-                    if os.path.exists(logo_path):
-                        pdf.image(logo_path, x=80, y=12, w=50)
-                        pdf.ln(35) 
-                    else:
-                        pdf.ln(10)
-                    
-                    pdf.set_font("Arial", "B", 16)
-                    pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
-                    pdf.ln(5)
-                    
-                    pdf.set_font("Arial", size=10)
-                    data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
-                    pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
-                    pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
-                    
-                    if cnpj and cnpj.strip() != "":
-                        pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                    
-                    if pagto and pagto.strip() != "":
-                        pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                    
-                    pdf.ln(5)
-                    
-                    # Cabeçalho da Tabela
-                    pdf.set_fill_color(240, 240, 240)
-                    pdf.set_font("Arial", "B", 8)
-                    pdf.cell(20, 10, "Cod.", 1, 0, 'C', True)
-                    pdf.cell(70, 10, "Produto", 1, 0, 'C', True)
-                    pdf.cell(18, 10, "Qtd Cx", 1, 0, 'C', True)
-                    pdf.cell(18, 10, "Qtd Un", 1, 0, 'C', True)
-                    pdf.cell(32, 10, "Preco Unit", 1, 0, 'C', True)
-                    pdf.cell(32, 10, "Subtotal", 1, 1, 'C', True)
-                    
-                    pdf.set_font("Arial", size=8)
-                    for item in dados_pedido:
-                        nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                        pdf.cell(20, 10, str(item['codigo']), 1, 0, 'C')
-                        pdf.cell(70, 10, nome_limpo, 1)
-                        pdf.cell(18, 10, str(item['qtd_cx']), 1, 0, 'C')
-                        pdf.cell(18, 10, str(item['qtd_itens']), 1, 0, 'C')
-                        pdf.cell(32, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                        pdf.cell(32, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
-                    
-                    pdf.ln(5)
-                    pdf.set_font("Arial", "B", 11)
-                    pdf.cell(158, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                    pdf.cell(32, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+            logo_path = "Papapa-azul.png"
+            if os.path.exists(logo_path):
+                pdf.image(logo_path, x=80, y=12, w=50)
+                pdf.ln(35) 
+            else:
+                pdf.ln(10)
+            
+            pdf.set_font("Arial", "B", 16)
+            pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
+            pdf.ln(5)
+            
+            pdf.set_font("Arial", size=10)
+            data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
+            pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
+            pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
+            
+            if cnpj and cnpj.strip() != "":
+                pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+            
+            if pagto and pagto.strip() != "":
+                pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
+            
+            pdf.ln(5)
+            
+            # --- CABEÇALHO DA TABELA (AJUSTADO) ---
+            pdf.set_fill_color(240, 240, 240)
+            pdf.set_font("Arial", "B", 8)
+            # Larguras: Cod(30), Produto(75), Cx(15), Un(15), Preco(27), Sub(28) = 190mm
+            pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
+            pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
+            pdf.cell(15, 10, "Cx", 1, 0, 'C', True)
+            pdf.cell(15, 10, "Un", 1, 0, 'C', True)
+            pdf.cell(27, 10, "Preco Un", 1, 0, 'C', True)
+            pdf.cell(28, 10, "Subtotal", 1, 1, 'C', True)
+            
+            pdf.set_font("Arial", size=7) 
+            for item in dados_pedido:
+                # Trata caracteres especiais para o PDF
+                nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
+                
+                pdf.cell(30, 10, str(item['codigo']), 1, 0, 'C')
+                pdf.cell(75, 10, nome_limpo, 1)
+                pdf.cell(15, 10, str(item['qtd_cx']), 1, 0, 'C')
+                pdf.cell(15, 10, str(item['qtd_itens']), 1, 0, 'C')
+                pdf.cell(27, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                pdf.cell(28, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+            
+            pdf.ln(5)
+            pdf.set_font("Arial", "B", 11)
+            pdf.cell(162, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+            pdf.cell(28, 10, f"R$ {total:,.2f}", 0, 1, 'C')
 
-                    pdf.ln(15)
-                    pdf.set_font("Arial", "I", 8)
-                    aviso = u"*Este documento e apenas uma simulacao de valores (orcamento) e nao garante a reserva de estoque ou a efetivacao do pedido comercial. Este informativo nao possui validade fiscal."
-                    pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
+            pdf.ln(15)
+            pdf.set_font("Arial", "I", 8)
+            aviso = u"*Este documento e apenas uma simulacao de valores (orcamento) e nao garante a reserva de estoque ou a efetivacao do pedido comercial. Este informativo nao possui validade fiscal."
+            pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
+            
+            return pdf.output(dest='S').encode('latin-1')
+
+        # --- LÓGICA DE COLETA SIMPLIFICADA (USANDO DICIONÁRIO FIXO) ---
+        itens_para_pdf = []
+        for nome_exibicao, config in produtos_config.items():
+            q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
+            if q_cx > 0:
+                try:
+                    linha_estado = df_precos[df_precos['Estado'] == estado_sel]
                     
-                    return pdf.output(dest='S').encode('latin-1')
+                    # Preço e Unidades vêm da planilha/config
+                    p_u = float(linha_estado[config["coluna"]].values[0])
+                    u_c = config["un_cx"]
+                    # Código agora vem direto do dicionário que você atualizou
+                    cod_prod = config["cod"] 
+                except:
+                    p_u, u_c, cod_prod = 0.0, 0, "N/A"
+                
+                itens_para_pdf.append({
+                    "codigo": cod_prod,
+                    "nome": nome_exibicao,
+                    "qtd_cx": q_cx,
+                    "qtd_itens": q_cx * u_c,
+                    "preco": p_u,
+                    "subtotal": (p_u * u_c) * q_cx
+                })
 
-                # --- LÓGICA DE COLETA DEFINITIVA (BUSCA PELO NOME DA COLUNA 'CÓDIGO') ---
-                itens_para_pdf = []
-                for nome_exibicao, config in produtos_config.items():
-                    q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-                    if q_cx > 0:
-                        try:
-                            # Filtra a linha do estado
-                            linha_estado = df_precos[df_precos['Estado'] == estado_sel]
-                            
-                            # 1. Tenta buscar pelo nome exato da coluna 'Código' (com acento)
-                            # 2. Se falhar, tenta 'Codigo' (sem acento)
-                            # 3. Se falhar, usa a 4ª coluna (índice 3) que é a 'D'
-                            if 'Código' in linha_estado.columns:
-                                valor_bruto = linha_estado['Código'].values[0]
-                            elif 'Codigo' in linha_estado.columns:
-                                valor_bruto = linha_estado['Codigo'].values[0]
-                            else:
-                                valor_bruto = linha_estado.iloc[0, 3]
-
-                            # Limpa o valor para não vir com .0 ou espaços
-                            if pd.notnull(valor_bruto):
-                                try:
-                                    # Converte para float -> int -> str (remove o .0)
-                                    cod_prod = str(int(float(valor_bruto)))
-                                except:
-                                    cod_prod = str(valor_bruto).strip()
-                            else:
-                                cod_prod = "N/A"
-                            
-                            p_u = float(linha_estado[config["coluna"]].values[0])
-                            u_c = config["un_cx"]
-                        except Exception as e:
-                            cod_prod, p_u, u_c = "Erro", 0.0, 0
-                        
-                        itens_para_pdf.append({
-                            "codigo": cod_prod,
-                            "nome": nome_exibicao,
-                            "qtd_cx": q_cx,
-                            "qtd_itens": q_cx * u_c,
-                            "preco": p_u,
-                            "subtotal": (p_u * u_c) * q_cx
-                        })
-
-                pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
-                st.download_button(
-                    label="📄 Baixar Orçamento em PDF",
-                    data=pdf_bytes,
-                    file_name=f"Orcamento_{estado_sel}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-            except Exception as e:
-                st.error(f"Erro ao gerar PDF: {e}")
+        pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
+        st.download_button(
+            label="📄 Baixar Orçamento em PDF",
+            data=pdf_bytes,
+            file_name=f"Orcamento_{estado_sel}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+    except Exception as e:
+        st.error(f"Erro ao gerar PDF: {e}")
