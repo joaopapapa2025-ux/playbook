@@ -1548,7 +1548,9 @@ import pandas as pd
 import streamlit as st
 import pandas as pd
 
-# --- MAPEAMENTO DOS ARQUIVOS ---
+################################################################################
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS ---
+################################################################################
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1582,6 +1584,7 @@ produtos_config = {
     "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
+elif aba_selecionada == "🛒 Simulador de Pedidos":
 st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
 st.header("🛒 Simulador de Pedidos")
 
