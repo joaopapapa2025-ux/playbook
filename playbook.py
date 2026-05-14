@@ -1543,74 +1543,118 @@ elif aba_selecionada == "🔗 Links Úteis":
         st.warning("**Senha do link antigo:** Papapa@2023")
 
 ################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS ---
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS (LEITURA DINÂMICA) ---
 ################################################################################
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
-    st.write("Selecione as quantidades para calcular o valor estimado do pedido.")
+    st.write("Selecione a tabela e o estado para calcular os valores exatos.")
 
-    # Dicionário de produtos (Preços por Caixa - Ajuste conforme sua tabela)
-    # Formato: "Nome do Produto": Preço da Caixa
-    produtos = {
-        "Papinha Maçã e Ameixa (Cx c/ 12)": 83.88, 
-        "Papinha Manga e Banana (Cx c/ 12)": 83.88,
-        "Puffs de Arroz e Milho (Cx c/ 10)": 119.40,
-        "Biscoito de Arroz Integral (Cx c/ 12)": 95.40,
-        "Suquinho de Frutas (Cx c/ 12)": 71.88
+    # 1. MAPEAMENTO DE ARQUIVOS (Ajuste os nomes conforme seus arquivos reais)
+    mapa_tabelas = {
+        "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
+        "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
+        "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
+        "Tabela Especial Rede": "0325ESPECIAL_REDE.xlsx",
+        "Tabela Distribuidor": "0325DISTRIBUIDOR.xlsx",
+        "Tabela Distribuidor V": "0325DISTRIBUIDOR_V.xlsx",
+        "Tabela Distribuidor X": "0325DISTRIBUIDOR_X.xlsx",
+        "Tabela Varejo": "0325VAREJO.xlsx",
+        "Tabela Varejo V": "0325VAREJO_V.xlsx",
+        "Tabela Varejo X": "0325VAREJO_X.xlsx",
+        "Tabela C": "0325TABELA_C.xlsx"
     }
 
-    # Cabeçalho da Tabela
-    st.markdown("""
-        <div style="display: flex; font-weight: bold; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-bottom: 10px;">
-            <div style="flex: 3;">Produto</div>
-            <div style="flex: 1.5; text-align: center;">Caixas</div>
-            <div style="flex: 1; text-align: right;">Subtotal</div>
-        </div>
-    """, unsafe_allow_html=True)
+    # 2. SELEÇÃO DE PARÂMETROS
+    col_tab, col_est = st.columns(2)
+    with col_tab:
+        tabela_nome = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
+    with col_est:
+        estado_sel = st.selectbox("Selecione o Estado (UF):", 
+                                ["PR", "SC", "RS", "SP", "RJ", "MG", "ES", "MT", "MS", "GO", "DF", "BA", "PE", "CE"])
 
-    total_pedido = 0.0
+    # 3. CARREGAMENTO DOS DADOS DA PLANILHA SELECIONADA
+    @st.cache_data(ttl=600)
+    def carregar_precos(nome_tabela):
+        arquivo = mapa_tabelas.get(nome_tabela)
+        try:
+            # Lê a aba 'PREÇOS' (ajuste se o nome da aba mudar entre arquivos)
+            df = pd.read_excel(arquivo, sheet_name="PREÇOS")
+            # Limpeza básica de nomes para evitar erro de espaço
+            df['PRODUTO'] = df['PRODUTO'].str.strip() 
+            return df
+        except Exception as e:
+            st.error(f"Erro ao carregar {arquivo}: {e}")
+            return None
 
-    # Gerando as linhas de produtos
-    for nome, preco_caixa in produtos.items():
-        with st.container():
-            col_nome, col_input, col_sub = st.columns([3, 1.5, 1])
-            
-            with col_nome:
-                st.markdown(f"<div style='padding-top: 5px;'>{nome}</div>", unsafe_allow_html=True)
-            
-            with col_input:
-                qtd = st.number_input(
-                    f"Qtd {nome}", 
-                    min_value=0, 
-                    step=1, 
-                    label_visibility="collapsed", 
-                    key=f"sim_{nome}"
-                )
-            
-            with col_sub:
-                subtotal = qtd * preco_caixa
-                total_pedido += subtotal
-                valor_formatado = f"R$ {subtotal:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-                # Alinhamento vertical com o input
-                st.markdown(f"<div style='padding-top: 5px; text-align: right;'><b>{valor_formatado if subtotal > 0 else '-'}</b></div>", unsafe_allow_html=True)
+    df_precos = carregar_precos(tabela_nome)
 
-    st.divider()
+    # 4. DEFINIÇÃO DOS SKUS E EMBALAGENS
+    # Organizado por categoria para facilitar a leitura
+    skus_simulador = {
+        "Papinhas 120g (Cx 12)": ["Papinha Papapa Carne Arroz Legumes 120g", "Papinha Papapa Frango Grão Vegetais 120g"],
+        "Iogurtes 100g (Cx 16)": ["Papinha Papapa Iogurte Frutas Amarelas e Banana 100g", "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g"],
+        "Orgânicas 100g (Cx 12)": ["Papinha Papapá Org Maçã Ameixa 100g", "Papinha Papapá Org Banana Mirtilo Quinoa 100g", "Papinha Papapá Org Manga 100g", "Papinha Papapá Org Pera Espinafre Abobrinha 100g", "Papinha Papapá Org Maçã B. Doce Cenoura 100g", "Papinha Papapá Org Morango Maçã 100g"],
+        "Biscoitos Org 20g (Cx 16)": ["Biscoito inf Papapá org. Beterraba 20g", "Biscoito inf Papapá org. Cenoura 20g", "Biscoito inf Papapá org. Tomate/Manjericão 20g"],
+        "Salgadinhos Era Uma Vez (Cx 18)": ["SALGADINHO INTEGRAL ORGÂNICO QUEIJO PAPAPA ERA UMA VEZ 40G", "SALGADINHO INTEGRAL ORGÂNICO CEBOLA & SALSA PAPAPA ERA UMA VEZ 40G", "SALGADINHO INTEGRAL ORGÂNICO CHURRASCO PAPAPA ERA UMA VEZ 40G"],
+        "Bebidas 200ml (Cx 27)": ["BEBIDA LÁCTEA UHT CHOCOLATE PAPAPA ERA UMA VEZ 200ML", "BEBIDA DE LARANJA PAPAPA ERA UMA VEZ 200ML", "BEBIDA DE UVA PAPAPA ERA UMA VEZ 200ML", "BEBIDA DE MORANGO PAPAPA ERA UMA VEZ 200ML", "BEBIDA DE MAÇÃ PAPAPA ERA UMA VEZ 200ML"],
+        "Acessórios (Unitário)": ["Kit De Talheres Infantil - Azul", "Babador Infantil Com Bolso - Rosa", "Bowl Infantil Com Ventosa - Verde"]
+    }
 
-    # Bloco de Resumo e Fechamento
-    col_resumo, col_status = st.columns(2)
-    
-    with col_resumo:
-        total_txt = f"R$ {total_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        st.subheader(f"Total do Pedido: :blue[{total_txt}]")
+    # Função auxiliar para pegar as unidades por caixa
+    def obter_un_por_cx(nome):
+        if "Cx 12" in nome or "Cx c/ 12" in nome: return 12
+        if "Cx 16" in nome: return 16
+        if "Cx 18" in nome: return 18
+        if "Cx 27" in nome: return 27
+        if "60g" in nome: return 12
+        if "180g" in nome or "240g" in nome: return 6
+        if "8 por caixa" in nome: return 8
+        return 1 # Padrão unitário
+
+    # 5. INTERFACE DO SIMULADOR
+    if df_precos is not None:
+        total_pedido = 0.0
         
-    with col_status:
-        # Exemplo de regra de negócio: Faturamento Mínimo de R$ 500,00
-        if total_pedido == 0:
-            st.info("Aguardando inserção de itens...")
-        elif total_pedido < 500:
-            st.warning(f"⚠️ **Pedido abaixo do mínimo!** Falta R$ {500 - total_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
-        else:
-            st.success("✅ **Pedido validado!** Acima do faturamento mínimo.")
+        for categoria, lista_skus in skus_simulador.items():
+            with st.expander(f"📂 {categoria}", expanded=True):
+                # Cabeçalho interno
+                c_n, c_u, c_q, c_s = st.columns([3, 1, 1, 1])
+                c_n.caption("Produto")
+                c_u.caption("Un/Cx")
+                c_q.caption("Qtd (Cx)")
+                c_s.caption("Subtotal")
 
-    # Mensagem de rodapé
-    st.caption("Nota: Esta é uma simulação baseada na tabela de preços geral. Impostos (ST) e frete podem alterar o valor final no faturamento.")
+                for sku in lista_skus:
+                    # Busca o preço na coluna do estado selecionado
+                    try:
+                        preco_unit = float(df_precos.loc[df_precos['PRODUTO'] == sku, estado_sel].values[0])
+                    except:
+                        preco_unit = 0.0
+                    
+                    un_cx = obter_un_por_cx(sku)
+                    preco_caixa = preco_unit * un_cx
+
+                    col_n, col_u, col_q, col_s = st.columns([3, 1, 1, 1])
+                    with col_n: st.write(sku)
+                    with col_u: st.write(f"{un_cx} un")
+                    with col_q: 
+                        qtd = st.number_input(f"Qtd {sku}", min_value=0, step=1, label_visibility="collapsed", key=f"sim_{sku}")
+                    with col_s:
+                        sub = qtd * preco_caixa
+                        total_pedido += sub
+                        val_fmt = f"R$ {sub:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+                        st.markdown(f"<div style='text-align: right;'><b>{val_fmt if sub > 0 else '-'}</b></div>", unsafe_allow_html=True)
+
+        # 6. RESUMO FIXO NO RODAPÉ
+        st.divider()
+        res_col1, res_col2 = st.columns(2)
+        total_final_fmt = f"R$ {total_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        res_col1.metric("💰 Valor Total do Pedido", total_final_fmt)
+        
+        if total_pedido > 0:
+            if total_pedido < 500:
+                st.error(f"🚨 Pedido abaixo do faturamento mínimo (R$ 500,00). Falta {f'R$ {500-total_pedido:,.2f}'.replace(',', 'X').replace('.', ',').replace('X', '.')}")
+            else:
+                st.success("✅ Pedido liberado para faturamento!")
+    else:
+        st.warning("Selecione uma tabela válida para carregar os preços.")
