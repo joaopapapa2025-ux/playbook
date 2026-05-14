@@ -1661,6 +1661,16 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             def gerar_pdf(dados_pedido, total, estado):
                 pdf = FPDF()
                 pdf.add_page()
+
+                # 1. Inserir Logo (Centralizada)
+                # O arquivo deve estar na mesma pasta do script
+                logo_path = "Papapa-azul.png"
+                if os.path.exists(logo_path):
+                    # image(caminho, x, y, largura) - 60 de largura é um bom tamanho
+                    pdf.image(logo_path, x=75, y=10, w=60)
+                    pdf.ln(25) # Pula espaço para o texto não ficar em cima da logo
+                else:
+                    pdf.ln(10) # Se não achar a imagem, pula menos espaço
                 
                 # Título
                 pdf.set_font("Arial", "B", 16)
