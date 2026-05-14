@@ -1713,12 +1713,29 @@ if aba_selecionada == "🏠 Home":
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
 
+    # --- FUNÇÕES DE APOIO ---
     def formatar_cnpj(cnpj):
         cnpj = "".join(filter(str.isdigit, cnpj))
         if len(cnpj) == 14:
             return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
         return cnpj
 
+    @st.cache_data
+    def carregar_dados(nome_tabela):
+        arquivo = mapa_tabelas.get(nome_tabela)
+        if not arquivo:
+            return None
+        try:
+            df = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
+            df.columns = df.columns.str.strip()
+            if 'Estado' in df.columns:
+                df['Estado'] = df['Estado'].astype(str).str.strip()
+            return df
+        except Exception as e:
+            st.error(f"Erro ao carregar arquivo: {e}")
+            return None
+
+    # --- SEÇÃO: DADOS DO CLIENTE ---
     st.subheader("Dados do Cliente e Pagamento")
     c_cnpj, c_pag = st.columns(2)
     
@@ -1736,90 +1753,72 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     st.divider()
 
+    # --- SEÇÃO: SELEÇÃO DE TABELA E ESTADO ---
     c1, c2 = st.columns(2)
-with c1:
-    tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
-with c2:
-    lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
-    estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
+    with c1:
+        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
+    with c2:
+        lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
+        estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
 
-    # --- TRAVA DE SEGURANÇA ---
-# Só entra na lógica se o usuário escolheu uma tabela real E um estado real
-if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
-    
-    df_precos = carregar_dados(tabela_sel)
-
-    if df_precos is not None:
-        total_pedido = 0.0
-        st.subheader("Itens do Pedido")
+    # --- LÓGICA PRINCIPAL (TRAVA DE SEGURANÇA) ---
+    if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         
-        # Aqui continua o seu código de categorias (PAPAPÁ, ERA UMA VEZ...)
-        # for cat_principal, subcategorias in categorias_produtos.items():
-        # ...
-        
-else:
-    # Mensagem amigável enquanto nada é selecionado
-    st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos e valores.")
+        df_precos = carregar_dados(tabela_sel)
 
-    @st.cache_data
-    def carregar_dados(nome_tabela):
-        arquivo = mapa_tabelas.get(nome_tabela)
-        try:
-            df = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
-            df.columns = df.columns.str.strip()
-            if 'Estado' in df.columns:
-                df['Estado'] = df['Estado'].astype(str).str.strip()
-            return df
-        except Exception as e:
-            st.error(f"Erro ao carregar arquivo: {e}")
-            return None
-
-    df_precos = carregar_dados(tabela_sel)
-
-    if df_precos is not None:
-        total_pedido = 0.0
-        st.subheader("Itens do Pedido")
-        
-        # --- ITERAÇÃO PELAS CATEGORIAS NO HUB ---
-        for cat_principal, subcategorias in categorias_produtos.items():
-            st.markdown(f"### {cat_principal}")
+        if df_precos is not None:
+            total_pedido = 0.0
+            st.subheader("Itens do Pedido")
             
-            for sub_cat, produtos in subcategorias.items():
-                with st.expander(sub_cat, expanded=False):
-                    for nome_exibicao, config in produtos.items():
-                        col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
-                        
-                        try:
-                            col_planilha = config["coluna"]
-                            linha = df_precos[df_precos['Estado'] == estado_sel]
-                            preco_unit = float(linha[col_planilha].values[0])
-                        except:
-                            preco_unit = 0.0
-
-                        un_cx = config["un_cx"]
-
-                        with col_prod:
-                            st.write(f"**{nome_exibicao}**")
-                            st.caption(f"Cod: {config['cod']} | Unit: R$ {preco_unit:,.2f}")
-                        
-                        with col_un:
-                            st.write(f"{un_cx} un/cx")
+            # Iteração pelas categorias e subcategorias
+            for cat_principal, subcategorias in categorias_produtos.items():
+                st.markdown(f"#### {cat_principal}") # Título da Categoria
+                
+                for sub_cat, produtos in subcategorias.items():
+                    with st.expander(sub_cat, expanded=False): # Sub-subtítulo como Expander
+                        for nome_exibicao, config in produtos.items():
+                            col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             
-                        with col_qtd:
-                            qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
-                            
-                        with col_sub:
-                            subtotal = (preco_unit * un_cx) * qtd_cx
-                            total_pedido += subtotal
-                            st.write(f"R$ {subtotal:,.2f}")
+                            # Busca o preço na planilha
+                            try:
+                                col_planilha = config["coluna"]
+                                linha = df_precos[df_precos['Estado'] == estado_sel]
+                                preco_unit = float(linha[col_planilha].values[0])
+                            except:
+                                preco_unit = 0.0
 
-        st.divider()
-        st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
-        
-        if total_pedido >= 800:
-            st.success("✅ Pedido validado!")
-        elif total_pedido > 0:
-            st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
+                            un_cx = config["un_cx"]
+
+                            with col_prod:
+                                st.write(f"**{nome_exibicao}**")
+                                st.caption(f"Cod: {config['cod']} | Unit: R$ {preco_unit:,.2f}")
+                            
+                            with col_un:
+                                st.write(f"{un_cx} un/cx")
+                                
+                            with col_qtd:
+                                qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
+                                
+                            with col_sub:
+                                subtotal = (preco_unit * un_cx) * qtd_cx
+                                total_pedido += subtotal
+                                st.write(f"R$ {subtotal:,.2f}")
+
+            # --- RESUMO FINAL ---
+            st.divider()
+            st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
+            
+            if total_pedido >= 800:
+                st.success("✅ Pedido validado!")
+            elif total_pedido > 0:
+                st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
+
+            # --- ESPAÇO PARA O GERADOR DE PDF ---
+            if total_pedido > 0:
+                # Aqui você pode inserir o bloco do PDF que enviei anteriormente
+                pass
+    else:
+        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
 
         # --- GERADOR DE PDF (VERSÃO FINAL COM CATEGORIAS E CÓDIGOS FIXOS) ---
 if total_pedido > 0:
