@@ -1777,7 +1777,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.markdown(f"#### {cat_principal}")
                 
                 for sub_cat, produtos in subcategorias.items():
-                    with st.expander(sub_cat, expanded=False):
+                    with st.container(sub_cat, expanded=False):
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             
