@@ -1654,82 +1654,91 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-# --- NOVO BLOCO: GERADOR DE PDF (ATUALIZADO) ---
+# --- NOVO BLOCO: GERADOR DE PDF (ATUALIZADO COM LOGO E NOVAS COLUNAS) ---
         try:
             from fpdf import FPDF
+            import os
 
             def gerar_pdf(dados_pedido, total, estado):
                 pdf = FPDF()
                 pdf.add_page()
 
-                # 1. Inserir Logo (Centralizada)
-                # O arquivo deve estar na mesma pasta do script
+                # 1. Inserir Logo (Melhorada e centralizada)
                 logo_path = "Papapa-azul.png"
                 if os.path.exists(logo_path):
-                    # image(caminho, x, y, largura) - 60 de largura é um bom tamanho
-                    pdf.image(logo_path, x=75, y=10, w=60)
-                    pdf.ln(25) # Pula espaço para o texto não ficar em cima da logo
+                    # Centralizando: (Largura da página 210 - largura da logo 50) / 2 = 80
+                    pdf.image(logo_path, x=80, y=12, w=50)
+                    pdf.ln(35) 
                 else:
-                    pdf.ln(10) # Se não achar a imagem, pula menos espaço
+                    pdf.ln(10)
                 
                 # Título
                 pdf.set_font("Arial", "B", 16)
-                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era uma Vez", ln=True, align='C')
-                pdf.ln(10)
-                
-                # Cabeçalho do Orçamento (Apenas Estado e Data)
-                pdf.set_font("Arial", size=12)
-                data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
-                pdf.cell(190, 10, txt=f"Estado: {estado} | Data: {data_atual}", ln=True)
+                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
                 pdf.ln(5)
                 
-                # Tabela de Itens
-                pdf.set_fill_color(240, 240, 240)
-                pdf.set_font("Arial", "B", 10)
-                pdf.cell(80, 10, "Produto", 1, 0, 'C', True)
-                pdf.cell(30, 10, "Qtd Cx", 1, 0, 'C', True)
-                pdf.cell(40, 10, "Preco Unit", 1, 0, 'C', True)
-                pdf.cell(40, 10, "Subtotal", 1, 1, 'C', True)
+                # Cabeçalho do Orçamento (Data em cima, Estado embaixo)
+                pdf.set_font("Arial", size=11)
+                data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
+                pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True, align='L')
+                pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True, align='L')
+                pdf.ln(5)
                 
-                pdf.set_font("Arial", size=10)
+                # Tabela de Itens (Adicionado coluna Qtd Itens)
+                pdf.set_fill_color(240, 240, 240)
+                pdf.set_font("Arial", "B", 9)
+                pdf.cell(70, 10, "Produto", 1, 0, 'C', True)
+                pdf.cell(22, 10, "Qtd Cx", 1, 0, 'C', True)
+                pdf.cell(22, 10, "Qtd Itens", 1, 0, 'C', True) # Nova Coluna
+                pdf.cell(38, 10, "Preco Unit", 1, 0, 'C', True)
+                pdf.cell(38, 10, "Subtotal", 1, 1, 'C', True)
+                
+                pdf.set_font("Arial", size=9)
                 for item in dados_pedido:
-                    pdf.cell(80, 10, item['nome'].encode('latin-1', 'ignore').decode('latin-1'), 1)
-                    pdf.cell(30, 10, str(item['qtd']), 1, 0, 'C')
-                    pdf.cell(40, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                    pdf.cell(40, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                    # Ajuste para caracteres especiais
+                    nome_prod = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
+                    pdf.cell(70, 10, nome_prod, 1)
+                    pdf.cell(22, 10, str(item['qtd_cx']), 1, 0, 'C')
+                    pdf.cell(22, 10, str(item['qtd_itens']), 1, 0, 'C') # Valor calculado
+                    pdf.cell(38, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
+                    pdf.cell(38, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
                 
                 # Total
                 pdf.ln(5)
-                pdf.set_font("Arial", "B", 12)
-                pdf.cell(150, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                pdf.cell(40, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+                pdf.set_font("Arial", "B", 11)
+                pdf.cell(152, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
+                pdf.cell(38, 10, f"R$ {total:,.2f}", 0, 1, 'C')
 
                 # Nota de Rodapé (Aviso Legal)
-                pdf.ln(20)
+                pdf.ln(15)
                 pdf.set_font("Arial", "I", 8)
-                pdf.multi_cell(190, 5, txt=u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal.", align='C')
+                aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
                 
                 return pdf.output(dest='S').encode('latin-1')
 
-            # Preparar dados para o PDF (apenas o que foi pedido)
+            # Preparar dados para o PDF
             itens_para_pdf = []
             for nome_exibicao, config in produtos_config.items():
-                qtd = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-                if qtd > 0:
+                qtd_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
+                if qtd_cx > 0:
                     try:
                         col_planilha = config["coluna"]
                         linha = df_precos[df_precos['Estado'] == estado_sel]
                         p_unit = float(linha[col_planilha].values[0])
                         u_cx = config["un_cx"]
+                        qtd_itens = qtd_cx * u_cx # Cálculo da nova coluna
                     except:
                         p_unit = 0.0
                         u_cx = 0
+                        qtd_itens = 0
                     
                     itens_para_pdf.append({
                         "nome": nome_exibicao,
-                        "qtd": qtd,
+                        "qtd_cx": qtd_cx,
+                        "qtd_itens": qtd_itens,
                         "preco": p_unit,
-                        "subtotal": (p_unit * u_cx) * qtd
+                        "subtotal": (p_unit * u_cx) * qtd_cx
                     })
 
             # Exibir botão se houver itens
@@ -1743,5 +1752,5 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     use_container_width=True
                 )
         except Exception as e:
-            st.error(f"Erro ao gerar PDF: {e}. Verifique se a biblioteca 'fpdf' está no seu requirements.txt")
+            st.error(f"Erro ao gerar PDF: {e}")
             
