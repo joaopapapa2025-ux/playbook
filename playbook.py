@@ -1615,12 +1615,12 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         opcoes_pagamento = [
             "", 
             "PIX",
-            "boleto 1x - 30 dias da data do faturamento",
-            "boleto 2x - 30/45 dias da data do faturamento",
-            "boleto 3x - 30/45/60 dias da data do faturamento",
-            "boleto 1x - 45 dias da data do faturamento",
-            "boleto 2x - 45/60 dias da data do faturamento",
-            "boleto 3x - 40/50/60 dias da data do faturamento"
+            "Boleto 1x - 30 dias da data do faturamento",
+            "Boleto 2x - 30/45 dias da data do faturamento",
+            "Boleto 3x - 30/45/60 dias da data do faturamento",
+            "Boleto 1x - 45 dias da data do faturamento",
+            "Boleto 2x - 45/60 dias da data do faturamento",
+            "Boleto 3x - 40/50/60 dias da data do faturamento"
         ]
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, help="Se deixado em branco, não aparecerá no PDF")
 
