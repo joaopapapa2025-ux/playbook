@@ -1801,7 +1801,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         elif total_pedido > 0:
             st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-        # --- GERADOR DE PDF (VERSÃO FINAL COM CÓDIGOS FIXOS) ---
+        # --- GERADOR DE PDF (VERSÃO FINAL COM CATEGORIAS E CÓDIGOS FIXOS) ---
 if total_pedido > 0:
     try:
         from fpdf import FPDF
@@ -1835,10 +1835,9 @@ if total_pedido > 0:
             
             pdf.ln(5)
             
-            # --- CABEÇALHO DA TABELA (AJUSTADO) ---
+            # --- CABEÇALHO DA TABELA ---
             pdf.set_fill_color(240, 240, 240)
             pdf.set_font("Arial", "B", 8)
-            # Larguras: Cod(30), Produto(75), Cx(15), Un(15), Preco(27), Sub(28) = 190mm
             pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
             pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
             pdf.cell(15, 10, "Cx", 1, 0, 'C', True)
@@ -1848,9 +1847,7 @@ if total_pedido > 0:
             
             pdf.set_font("Arial", size=7) 
             for item in dados_pedido:
-                # Trata caracteres especiais para o PDF
                 nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                
                 pdf.cell(30, 10, str(item['codigo']), 1, 0, 'C')
                 pdf.cell(75, 10, nome_limpo, 1)
                 pdf.cell(15, 10, str(item['qtd_cx']), 1, 0, 'C')
@@ -1870,31 +1867,33 @@ if total_pedido > 0:
             
             return pdf.output(dest='S').encode('latin-1')
 
-        # --- LÓGICA DE COLETA SIMPLIFICADA (USANDO DICIONÁRIO FIXO) ---
+        # --- NOVA LÓGICA DE COLETA (VARRENDO AS CATEGORIAS) ---
         itens_para_pdf = []
-        for nome_exibicao, config in produtos_config.items():
-            q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-            if q_cx > 0:
-                try:
-                    linha_estado = df_precos[df_precos['Estado'] == estado_sel]
+        for cat_nome, subcategorias in categorias_produtos.items():
+            for sub_nome, produtos in subcategorias.items():
+                for nome_exibicao, config in produtos.items():
+                    # Puxa a quantidade que o usuário digitou no Hub
+                    q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
                     
-                    # Preço e Unidades vêm da planilha/config
-                    p_u = float(linha_estado[config["coluna"]].values[0])
-                    u_c = config["un_cx"]
-                    # Código agora vem direto do dicionário que você atualizou
-                    cod_prod = config["cod"] 
-                except:
-                    p_u, u_c, cod_prod = 0.0, 0, "N/A"
-                
-                itens_para_pdf.append({
-                    "codigo": cod_prod,
-                    "nome": nome_exibicao,
-                    "qtd_cx": q_cx,
-                    "qtd_itens": q_cx * u_c,
-                    "preco": p_u,
-                    "subtotal": (p_u * u_c) * q_cx
-                })
+                    if q_cx > 0:
+                        try:
+                            linha_estado = df_precos[df_precos['Estado'] == estado_sel]
+                            p_u = float(linha_estado[config["coluna"]].values[0])
+                            u_c = config["un_cx"]
+                            cod_prod = config["cod"] 
+                        except:
+                            p_u, u_c, cod_prod = 0.0, 0, "N/A"
+                        
+                        itens_para_pdf.append({
+                            "codigo": cod_prod,
+                            "nome": nome_exibicao,
+                            "qtd_cx": q_cx,
+                            "qtd_itens": q_cx * u_c,
+                            "preco": p_u,
+                            "subtotal": (p_u * u_c) * q_cx
+                        })
 
+        # Gerar o botão de download
         pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
         st.download_button(
             label="📄 Baixar Orçamento em PDF",
