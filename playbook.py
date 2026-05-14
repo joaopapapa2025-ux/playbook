@@ -128,7 +128,8 @@ opcoes_menu = [
     "🛠️ Resolução de Problemas",
     "🚫 Quebras de Excuses",
     "📈 Impactos no resultado",
-    "🔗 Links Úteis"
+    "🔗 Links Úteis",
+    "🛒 Simulador de Pedidos"
 ]
 
 if 'aba_atual' not in st.session_state:
@@ -1540,3 +1541,65 @@ elif aba_selecionada == "🔗 Links Úteis":
         )
     with c4:
         st.warning("**Senha do link antigo:** Papapa@2023")
+
+################################################################################
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS ---
+################################################################################
+elif aba_selecionada == "🛒 Simulador de Pedidos":
+    st.title("🛒 Simulador de Pedidos")
+    st.write("Selecione as quantidades para calcular o valor estimado do pedido.")
+
+    # Dicionário de produtos (Preços de exemplo - ajuste conforme sua tabela)
+    # Formato: "Nome": [Preço Caixa, Unidades por Caixa]
+    produtos = {
+        "Papinha Maçã e Ameixa (Un)": [83.88, 12], 
+        "Papinha Manga e Banana (Un)": [83.88, 12],
+        "Puffs de Arroz e Milho (Un)": [119.40, 10],
+        "Biscoito de Arroz Integral (Un)": [95.40, 12],
+        "Suquinho de Frutas (Un)": [71.88, 12]
+    }
+
+    with st.container():
+        col_prod, col_qtd, col_subtotal = st.columns([3, 1, 2])
+        
+        total_pedido = 0.0
+        itens_simulados = {}
+
+        with col_prod:
+            st.markdown("**Produto**")
+        with col_qtd:
+            st.markdown("**Caixas**")
+        with col_subtotal:
+            st.markdown("**Subtotal**")
+
+        # Gerando as linhas de input
+        for nome, dados in produtos.items():
+            preco_caixa = dados[0]
+            
+            with col_prod:
+                st.write(f"{nome}")
+            with col_qtd:
+                qtd = st.number_input(f"Qtd {nome}", min_value=0, step=1, label_visibility="collapsed", key=f"sim_{nome}")
+            with col_subtotal:
+                subtotal = qtd * preco_caixa
+                total_pedido += subtotal
+                if subtotal > 0:
+                    st.write(f"R$ {subtotal:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+                else:
+                    st.write("-")
+
+    st.divider()
+
+    # Resumo Final
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader(f"Total do Pedido: :blue[R$ {total_pedido:,.2f}]".replace(",", "X").replace(".", ",").replace("X", "."))
+    
+    with c2:
+        # Lógica de Frete ou valor mínimo (exemplo)
+        if total_pedido > 0 and total_pedido < 500:
+            st.warning("⚠️ Pedido abaixo do faturamento mínimo (R$ 500,00)")
+        elif total_pedido >= 500:
+            st.success("✅ Pedido acima do faturamento mínimo!")
+
+    st.info("💡 Os valores acima são simulações baseadas na tabela geral e podem sofrer alterações conforme impostos e região.")
