@@ -1980,14 +1980,17 @@ if total_pedido > 0:
                             "subtotal": (p_u * u_c) * q_cx
                         })
 
-        # Gerar o botão de download
-        pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
-        st.download_button(
-            label="📄 Baixar Orçamento em PDF",
-            data=pdf_bytes,
-            file_name=f"Orcamento_{estado_sel}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+        # Gerar o botão de download com uma KEY ÚNICA
+                    pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
+                    
+                    st.download_button(
+                        label="📄 Baixar Orçamento em PDF",
+                        data=pdf_bytes,
+                        file_name=f"Orcamento_{estado_sel}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True,
+                        # A linha abaixo resolve o erro:
+                        key=f"btn_download_{tabela_sel}_{estado_sel}_{total_pedido}"
+                    )
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
