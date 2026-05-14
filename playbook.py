@@ -1744,7 +1744,12 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     c_cnpj, c_pag = st.columns(2)
     
     with c_cnpj:
-        cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números")
+        # label_visibility="visible" é o padrão, mas clearable=True adiciona o 'x'
+        cnpj_digitado = st.text_input(
+            "CNPJ do Cliente:", 
+            placeholder="Digite apenas números",
+            key="cnpj_input"
+        )
         cnpj_cliente = formatar_cnpj(cnpj_digitado)
         if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
             st.caption(":red[CNPJ incompleto]")
@@ -1753,6 +1758,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     with c_pag:
         opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
+        # Selectbox não tem 'x' nativo, mas ao deixar o index=0 como "", ele funciona como o estado vazio
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
 
     st.divider()
@@ -1760,6 +1766,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     # --- SEÇÃO: SELEÇÃO DE TABELA E ESTADO ---
     c1, c2 = st.columns(2)
     with c1:
+        # Para selectboxes, o 'x' para limpar geralmente não existe, 
+        # o padrão é selecionar a opção vazia ou a primeira da lista.
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
     with c2:
         lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
