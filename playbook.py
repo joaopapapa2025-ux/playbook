@@ -1585,8 +1585,8 @@ produtos_config = {
 }
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
-st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
-st.header("🛒 Simulador de Pedidos")
+    st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
+    st.header("🛒 Simulador de Pedidos")
 
 # 1. Seleção
 c1, c2 = st.columns(2)
