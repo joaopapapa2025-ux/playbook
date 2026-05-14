@@ -1777,7 +1777,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.markdown(f"#### {cat_principal}")
                 
                 for sub_cat, produtos in subcategorias.items():
-                    with st.expander(sub_cat, expanded=True)
+                    # Adicionado o ":" no final da linha abaixo:
+                    with st.expander(sub_cat, expanded=True):
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             
@@ -1798,6 +1799,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 st.write(f"{un_cx} un/cx")
                                 
                             with col_qtd:
+                                # Input de quantidade
                                 qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
                                 
                             with col_sub:
