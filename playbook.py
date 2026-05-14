@@ -1664,7 +1664,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 
                 # Título
                 pdf.set_font("Arial", "B", 16)
-                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Era uma Vez", ln=True, align='C')
+                pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era uma Vez", ln=True, align='C')
                 pdf.ln(10)
                 
                 # Cabeçalho do Orçamento (Apenas Estado e Data)
@@ -1697,7 +1697,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 # Nota de Rodapé (Aviso Legal)
                 pdf.ln(20)
                 pdf.set_font("Arial", "I", 8)
-                pdf.multi_cell(190, 5, txt=u"* Este documento e apenas uma simulacao de valores (orcamento) e nao garante a reserva de estoque ou a efetivacao do pedido comercial. Este informativo nao possui validade fiscal.", align='C')
+                pdf.multi_cell(190, 5, txt=u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal.", align='C')
                 
                 return pdf.output(dest='S').encode('latin-1')
 
