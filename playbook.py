@@ -1584,10 +1584,13 @@ import pandas as pd
 
 import streamlit as st
 import pandas as pd
+from fpdf import FPDF
+import os
 
 ################################################################################
 # --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
+
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1602,75 +1605,105 @@ mapa_tabelas = {
     "Tabela C": "0325TABELA_C.xlsx"
 }
 
-produtos_config = {
-    # --- SALGADINHOS (18 un/cx) ---
-    "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5670"},
-    "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5671"},
-    "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5673"},
-
-    # --- BISCOITOS RECHEADOS (8 un/cx) ---
-    "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5677"},
-    "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5678"},
-
-    # --- BEBIDAS E SUCOS (27 un/cx) ---
-    "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5680"},
-    "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5681"},
-    "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5682"},
-    "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5683"},
-    "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "un_cx": 27, "cod": "5310"},
-
-    # --- PUERICULTURA (1 un/cx) ---
-    "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5641"},
-    "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5658"},
-    "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5665"},
-    "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5733"},
-    "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5740"},
-    "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5757"},
-    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5702"},
-    "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5719"},
-    "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5726"},
-    "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5675"},
-    "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5689"},
-    "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5696"},
-
-    # --- PAPINHAS E SOPINHAS (6 un/cx) ---
-    "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5313"},
-    "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5320"},
-    "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5563"},
-    "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5570"},
-    "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908729"},
-    "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908736"},
-    "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908712"},
-    "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908750"},
-    "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "27898994908757"},
-    "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "5306"},
-    "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5276"},
-    "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5269"},
-    "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5252"},
-    "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5610"},
-    "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5634"},
-    "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5627"},
-    "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5603"},
-
-    # --- BISCOITOS INFANTIS E DENTIÇÃO (12 un/cx) ---
-    "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5085"},
-    "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5078"},
-    "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5061"},
-    "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8774"},
-    "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8767"},
-    "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5375"},
-    "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5351"},
-    "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5368"},
-    "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5597"},
-    "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5580"},
-
-    # --- MASSAS E CEREAIS ---
-    "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5290"},
-    "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5283"},
-    "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5402"},
-    "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5419"},
-    "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5429"},
-    "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "Cereais", "un_cx": 6, "cod": "5399"},
+# Dicionário organizado para facilitar a iteração por categorias na interface
+categorias_produtos = {
+    "PAPAPÁ": {
+        "PAPINHA DE CARNE": {
+            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5313"},
+            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5320"},
+        },
+        "YOGUZINHO": {
+            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5563"},
+            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Papinhas", "un_cx": 6, "cod": "5570"},
+        },
+        "PAPINHA DE FRUTA": {
+            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908729"},
+            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908736"},
+            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908712"},
+            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "17898994908750"},
+            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "27898994908757"},
+            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas Org", "un_cx": 6, "cod": "5306"},
+        },
+        "PALITINHO": {
+            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5085"},
+            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5078"},
+            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Bisc. Org 20g", "un_cx": 12, "cod": "5061"},
+        },
+        "DENTIÇÃO": {
+            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8774"},
+            "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Bisc. Denticao", "un_cx": 12, "cod": "8767"},
+        },
+        "MACARRÃO": {
+            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5290"},
+            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Massas", "un_cx": 12, "cod": "5283"},
+        },
+        "LA CHEF": {
+            "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5276"},
+            "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5269"},
+            "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "Refeicoes Org", "un_cx": 6, "cod": "5252"},
+        },
+        "CEREAL": {
+            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5402"},
+            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5419"},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "Cereais", "un_cx": 10, "cod": "5429"},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "Cereais", "un_cx": 6, "cod": "5399"},
+        },
+        "BISCOTTI": {
+            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5375"},
+            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5351"},
+            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5368"},
+            "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5597"},
+            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "un_cx": 12, "cod": "5580"},
+        },
+        "SOPINHA": {
+            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5610"},
+            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5634"},
+            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5627"},
+            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Sopinhas 240g", "un_cx": 6, "cod": "5603"},
+        }
+    },
+    "ERA UMA VEZ": {
+        "SALGADINHOS": {
+            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5670"},
+            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5671"},
+            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "un_cx": 18, "cod": "5673"},
+        },
+        "BISCOITO RECHEADO": {
+            "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5677"},
+            "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "un_cx": 8, "cod": "5678"},
+        },
+        "SUCOS": {
+            "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5680"},
+            "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5681"},
+            "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5682"},
+            "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "un_cx": 27, "cod": "5683"},
+        },
+        "ACHOCOLATADO": {
+            "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "un_cx": 27, "cod": "5310"},
+        }
+    },
+    "PUERICULTURA": {
+        "TALHERES": {
+            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5641"},
+            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5658"},
+            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "un_cx": 1, "cod": "5665"},
+        },
+        "BABADORES": {
+            "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5733"},
+            "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5740"},
+            "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "un_cx": 1, "cod": "5757"},
+        },
+        "BOWLS": {
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5702"},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5719"},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bowl", "un_cx": 1, "cod": "5726"},
+        },
+        "PRATINHOS": {
+            "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5675"},
+            "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5689"},
+            "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "un_cx": 1, "cod": "5696"},
+        }
+    }
 }
 
 if aba_selecionada == "🏠 Home":
@@ -1679,17 +1712,12 @@ if aba_selecionada == "🏠 Home":
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
 
-    # Função para formatar CNPJ automaticamente
     def formatar_cnpj(cnpj):
-        # Remove qualquer caractere que não seja número
         cnpj = "".join(filter(str.isdigit, cnpj))
-        
-        # Se tiver os 14 dígitos, aplica a máscara
         if len(cnpj) == 14:
             return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
-        return cnpj # Retorna como digitou se estiver incompleto
+        return cnpj
 
-    # --- SEÇÃO DE DADOS DO CLIENTE ---
     st.subheader("Dados do Cliente e Pagamento")
     c_cnpj, c_pag = st.columns(2)
     
@@ -1702,22 +1730,11 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.caption(f":green[Formatado: {cnpj_cliente}]")
 
     with c_pag:
-        # Adicionada opção vazia no início
-        opcoes_pagamento = [
-            "", 
-            "PIX",
-            "Boleto 1x - 30 dias da data do faturamento",
-            "Boleto 2x - 30/45 dias da data do faturamento",
-            "Boleto 3x - 30/45/60 dias da data do faturamento",
-            "Boleto 1x - 45 dias da data do faturamento",
-            "Boleto 2x - 45/60 dias da data do faturamento",
-            "Boleto 3x - 40/50/60 dias da data do faturamento"
-        ]
-        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, help="Se deixado em branco, não aparecerá no PDF")
+        opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
+        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
 
     st.divider()
 
-    # 1. Seleção de Tabela e UF
     c1, c2 = st.columns(2)
     with c1:
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
@@ -1743,32 +1760,38 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         total_pedido = 0.0
         st.subheader("Itens do Pedido")
         
-        for nome_exibicao, config in produtos_config.items():
-            col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
+        # --- ITERAÇÃO PELAS CATEGORIAS NO HUB ---
+        for cat_principal, subcategorias in categorias_produtos.items():
+            st.markdown(f"### {cat_principal}")
             
-            try:
-                col_planilha = config["coluna"]
-                linha = df_precos[df_precos['Estado'] == estado_sel]
-                preco_unit = float(linha[col_planilha].values[0])
-            except:
-                preco_unit = 0.0
+            for sub_cat, produtos in subcategorias.items():
+                with st.expander(sub_cat, expanded=False):
+                    for nome_exibicao, config in produtos.items():
+                        col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
+                        
+                        try:
+                            col_planilha = config["coluna"]
+                            linha = df_precos[df_precos['Estado'] == estado_sel]
+                            preco_unit = float(linha[col_planilha].values[0])
+                        except:
+                            preco_unit = 0.0
 
-            un_cx = config["un_cx"]
+                        un_cx = config["un_cx"]
 
-            with col_prod:
-                st.write(f"**{nome_exibicao}**")
-                st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
-            
-            with col_un:
-                st.write(f"{un_cx} un")
-                
-            with col_qtd:
-                qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
-                
-            with col_sub:
-                subtotal = (preco_unit * un_cx) * qtd_cx
-                total_pedido += subtotal
-                st.write(f"R$ {subtotal:,.2f}")
+                        with col_prod:
+                            st.write(f"**{nome_exibicao}**")
+                            st.caption(f"Cod: {config['cod']} | Unit: R$ {preco_unit:,.2f}")
+                        
+                        with col_un:
+                            st.write(f"{un_cx} un/cx")
+                            
+                        with col_qtd:
+                            qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
+                            
+                        with col_sub:
+                            subtotal = (preco_unit * un_cx) * qtd_cx
+                            total_pedido += subtotal
+                            st.write(f"R$ {subtotal:,.2f}")
 
         st.divider()
         st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
