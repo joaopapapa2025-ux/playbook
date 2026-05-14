@@ -1545,6 +1545,9 @@ elif aba_selecionada == "🔗 Links Úteis":
 import streamlit as st
 import pandas as pd
 
+import streamlit as st
+import pandas as pd
+
 ################################################################################
 # --- CONFIGURAÇÕES E MAPEAMENTO ATUALIZADO ---
 ################################################################################
@@ -1610,6 +1613,7 @@ produtos_config = {
 # --- INTERFACE STREAMLIT ---
 ################################################################################
 
+st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
 st.header("🛒 Simulador de Pedidos Dinâmico")
 
 # 1. Seleção de Parâmetros
@@ -1617,7 +1621,6 @@ c1, c2 = st.columns(2)
 with c1:
     tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
 with c2:
-    # Lista de estados baseada na sua planilha
     estado_sel = st.selectbox("Selecione o Estado (UF):", 
                              ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", 
                               "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", 
@@ -1628,49 +1631,61 @@ with c2:
 def carregar_dados(nome_tabela):
     arquivo = mapa_tabelas.get(nome_tabela)
     try:
-        # Lê a aba PREÇOS, garantindo que a coluna 'Estado' seja tratada como índice
         df = pd.read_excel(arquivo, sheet_name="PREÇOS")
-        df.columns = df.columns.str.strip() # Limpa nomes das colunas
+        # Limpeza básica dos dados
+        df.columns = df.columns.str.strip()
+        if 'Estado' in df.columns:
+            df['Estado'] = df['Estado'].astype(str).str.strip()
         return df
     except Exception as e:
-        st.error(f"Arquivo '{arquivo}' não encontrado ou erro na leitura.")
+        st.error(f"Erro ao carregar '{arquivo}': {e}")
         return None
 
 df_precos = carregar_dados(tabela_sel)
 
 if df_precos is not None:
     total_pedido = 0.0
-    itens_pedido = []
 
     st.subheader("Itens do Pedido")
     
-    # Criamos a tabela de entrada de dados
+    # Títulos das colunas
+    col_prod_h, col_un_h, col_qtd_h, col_sub_h = st.columns([3, 1, 1, 2])
+    col_prod_h.write("**Produto**")
+    col_un_h.write("**Un/Cx**")
+    col_qtd_h.write("**Qtd Cx**")
+    col_sub_h.write("**Subtotal**")
+    st.divider()
+
+    # Loop pelos produtos configurados
     for nome_exibicao, config in produtos_config.items():
         col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
         
-        # Busca o preço unitário cruzando Linha (Estado) e Coluna (Produto)
+        # Busca o preço unitário
         try:
             col_planilha = config["coluna"]
-            # Filtra a linha do estado e pega o valor da coluna do produto
-            preco_unit = float(df_precos.loc[df_precos['Estado'] == estado_sel, col_planilha].values[0])
-        except:
+            # Localiza a linha do estado e a coluna do produto
+            linha_estado = df_precos[df_precos['Estado'] == estado_sel]
+            if not linha_estado.empty:
+                preco_unit = float(linha_estado[col_planilha].values[0])
+            else:
+                preco_unit = 0.0
+        except Exception:
             preco_unit = 0.0
 
         un_cx = config["un_cx"]
-        preco_cx = preco_unit * un_cx
-
+        
         with col_prod:
-            st.write(f"**{nome_exibicao}**")
+            st.write(f"{nome_exibicao}")
             st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
         
         with col_un:
-            st.write(f"{un_cx} un/cx")
-        
+            st.write(f"{un_cx}")
+            
         with col_qtd:
             qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"qtd_{nome_exibicao}", label_visibility="collapsed")
-        
+            
         with col_sub:
-            subtotal = qtd_cx * preco_cx
+            subtotal = (preco_unit * un_cx) * qtd_cx
             total_pedido += subtotal
             st.write(f"R$ {subtotal:,.2f}")
 
