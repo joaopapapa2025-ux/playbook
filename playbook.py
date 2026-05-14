@@ -1584,73 +1584,76 @@ produtos_config = {
     "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
+# ... (seu código anterior: dicionários, etc)
+
+# ONDE EDITAR: Certifique-se de que o elif está alinhado com o if principal 
+# e que TUDO abaixo dele está com 4 espaços de recuo (indentado)
+
 elif aba_selecionada == "🛒 Simulador de Pedidos":
-    st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
+    # A partir daqui, tudo precisa ter 4 espaços na frente
     st.header("🛒 Simulador de Pedidos")
 
-# 1. Seleção
-c1, c2 = st.columns(2)
-with c1:
-    tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
-with c2:
-    estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
+    # 1. Seleção
+    c1, c2 = st.columns(2)
+    with c1:
+        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
+    with c2:
+        estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
 
-# 2. Carregamento com Ajuste de Cabeçalho (header=1 pula a primeira linha)
-@st.cache_data
-def carregar_dados(nome_tabela):
-    arquivo = mapa_tabelas.get(nome_tabela)
-    try:
-        # header=1 faz o pandas começar a ler pela linha 2 (onde estão os nomes das colunas)
-        df = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
-        df.columns = df.columns.str.strip()
-        if 'Estado' in df.columns:
-            df['Estado'] = df['Estado'].astype(str).str.strip()
-        return df
-    except Exception as e:
-        st.error(f"Erro: {e}")
-        return None
-
-df_precos = carregar_dados(tabela_sel)
-
-if df_precos is not None:
-    # Verificação técnica: descomente a linha abaixo se o erro continuar para ver as colunas lidas
-    # st.write(df_precos.columns.tolist()) 
-
-    total_pedido = 0.0
-    st.subheader("Itens do Pedido")
-    
-    for nome_exibicao, config in produtos_config.items():
-        col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
-        
+    # 2. Carregamento (Mantenha a função aqui dentro ou defina antes do if)
+    @st.cache_data
+    def carregar_dados(nome_tabela):
+        arquivo = mapa_tabelas.get(nome_tabela)
         try:
-            col_planilha = config["coluna"]
-            # Busca o valor na linha do estado selecionado
-            linha = df_precos[df_precos['Estado'] == estado_sel]
-            preco_unit = float(linha[col_planilha].values[0])
-        except:
-            preco_unit = 0.0
+            df = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
+            df.columns = df.columns.str.strip()
+            if 'Estado' in df.columns:
+                df['Estado'] = df['Estado'].astype(str).str.strip()
+            return df
+        except Exception as e:
+            st.error(f"Erro: {e}")
+            return None
 
-        un_cx = config["un_cx"]
+    df_precos = carregar_dados(tabela_sel)
 
-        with col_prod:
-            st.write(f"**{nome_exibicao}**")
-            st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
+    if df_precos is not None:
+        total_pedido = 0.0
+        st.subheader("Itens do Pedido")
         
-        with col_un:
-            st.write(f"{un_cx} un")
+        for nome_exibicao, config in produtos_config.items():
+            col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
             
-        with col_qtd:
-            qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"qtd_{nome_exibicao}", label_visibility="collapsed")
-            
-        with col_sub:
-            subtotal = (preco_unit * un_cx) * qtd_cx
-            total_pedido += subtotal
-            st.write(f"R$ {subtotal:,.2f}")
+            try:
+                col_planilha = config["coluna"]
+                linha = df_precos[df_precos['Estado'] == estado_sel]
+                preco_unit = float(linha[col_planilha].values[0])
+            except:
+                preco_unit = 0.0
 
-    st.divider()
-    st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
-    
-    if total_pedido >= 500:
-        st.success("✅ Pedido validado!")
-    elif total_pedido > 0:
-        st.warning(f"Faltam R$ {500 - total_pedido:,.2f} para o mínimo.")
+            un_cx = config["un_cx"]
+
+            with col_prod:
+                st.write(f"**{nome_exibicao}**")
+                st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
+            
+            with col_un:
+                st.write(f"{un_cx} un")
+                
+            with col_qtd:
+                # Importante: o key precisa ser único para não dar erro de widget
+                qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
+                
+            with col_sub:
+                subtotal = (preco_unit * un_cx) * qtd_cx
+                total_pedido += subtotal
+                st.write(f"R$ {subtotal:,.2f}")
+
+        st.divider()
+        st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
+        
+        if total_pedido >= 500:
+            st.success("✅ Pedido validado!")
+        elif total_pedido > 0:
+            st.warning(f"Faltam R$ {500 - total_pedido:,.2f} para o mínimo.")
+
+# Se houver código depois daqui sem indentação, ele voltará a aparecer em todas as páginas!
