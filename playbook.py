@@ -1712,15 +1712,15 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
                     pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
                     pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
-                
-                # SÓ APARECE SE TIVER CONTEÚDO:
-                if cnpj and cnpj.strip() != "":
-                    pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                
-                if pagto and pagto.strip() != "":
-                    pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                
-                pdf.ln(5)
+                    
+                    # SÓ APARECE SE TIVER CONTEÚDO (CNPJ E PAGAMENTO):
+                    if cnpj and cnpj.strip() != "":
+                        pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                    
+                    if pagto and pagto.strip() != "":
+                        pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
+                    
+                    pdf.ln(5)
                     
                     # Tabela
                     pdf.set_fill_color(240, 240, 240)
