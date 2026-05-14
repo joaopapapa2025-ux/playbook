@@ -1548,11 +1548,7 @@ import pandas as pd
 import streamlit as st
 import pandas as pd
 
-################################################################################
-# --- CONFIGURAÇÕES E MAPEAMENTO ATUALIZADO ---
-################################################################################
-
-# Mapeamento dos arquivos
+# --- MAPEAMENTO DOS ARQUIVOS ---
 mapa_tabelas = {
     "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
@@ -1567,119 +1563,78 @@ mapa_tabelas = {
     "Tabela C": "0325TABELA_C.xlsx"
 }
 
-# Dicionário de Produtos Expandido
-# Estrutura: "Nome para o Usuário": {"coluna": "Nome na Aba PREÇOS", "un_cx": Quantidade}
+# --- DICIONÁRIO DE PRODUTOS ---
+# Importante: O nome em "coluna" deve ser EXATAMENTE igual ao que está na linha 2 da aba PREÇOS
 produtos_config = {
-    # SALGADINHOS
     "Extrusdos Sabor Queijo 40g": {"coluna": "Salgadinhos", "un_cx": 18},
     "Extrusdos Sabor Cebola e Salsa 40g": {"coluna": "Salgadinhos", "un_cx": 18},
     "Extrusdos Sabor Churrasco 40g": {"coluna": "Salgadinhos", "un_cx": 18},
-    
-    # RECHEADOS
     "Biscoito Rechado Frutas Amarelas 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
     "Biscoito Rechaeado Morango 30g": {"coluna": "Bisc. Recheados", "un_cx": 8},
-    
-    # SUCOS
     "Suco laranja e Acerola 200ml": {"coluna": "Sucos", "un_cx": 27},
     "Suco de Uva 200ml": {"coluna": "Sucos", "un_cx": 27},
     "Suco de Morango 200ml": {"coluna": "Sucos", "un_cx": 27},
     "Suco de Maça 200ml": {"coluna": "Sucos", "un_cx": 27},
-    
-    # ACHOCOLATADO
     "Achocolatado 200ml": {"coluna": "Achocolatado", "un_cx": 27},
-    
-    # PUERICULTURA (Talheres)
     "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "un_cx": 1},
-    "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "un_cx": 1},
-    "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "un_cx": 1},
-    
-    # PUERICULTURA (Babadores)
     "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "un_cx": 1},
-    "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "un_cx": 1},
-    "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "un_cx": 1},
-    
-    # PUERICULTURA (Bowls)
-    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1},
-    "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "un_cx": 1},
-    "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "un_cx": 1},
-    
-    # PUERICULTURA (Pratinhos)
+    "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "un_cx": 1}, # Ajustado para 'Bolw' conforme sua planilha
     "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "un_cx": 1},
-    "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "un_cx": 1},
-    "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "un_cx": 1},
 }
 
-################################################################################
-# --- INTERFACE STREAMLIT ---
-################################################################################
-
 st.set_page_config(page_title="Simulador de Pedidos", layout="wide")
-st.header("🛒 Simulador de Pedidos Dinâmico")
+st.header("🛒 Simulador de Pedidos")
 
-# 1. Seleção de Parâmetros
+# 1. Seleção
 c1, c2 = st.columns(2)
 with c1:
     tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
 with c2:
-    estado_sel = st.selectbox("Selecione o Estado (UF):", 
-                             ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", 
-                              "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", 
-                              "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
+    estado_sel = st.selectbox("Selecione o Estado (UF):", ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
 
-# 2. Carregamento do Arquivo Selecionado
+# 2. Carregamento com Ajuste de Cabeçalho (header=1 pula a primeira linha)
 @st.cache_data
 def carregar_dados(nome_tabela):
     arquivo = mapa_tabelas.get(nome_tabela)
     try:
-        df = pd.read_excel(arquivo, sheet_name="PREÇOS")
-        # Limpeza básica dos dados
+        # header=1 faz o pandas começar a ler pela linha 2 (onde estão os nomes das colunas)
+        df = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
         df.columns = df.columns.str.strip()
         if 'Estado' in df.columns:
             df['Estado'] = df['Estado'].astype(str).str.strip()
         return df
     except Exception as e:
-        st.error(f"Erro ao carregar '{arquivo}': {e}")
+        st.error(f"Erro: {e}")
         return None
 
 df_precos = carregar_dados(tabela_sel)
 
 if df_precos is not None:
-    total_pedido = 0.0
+    # Verificação técnica: descomente a linha abaixo se o erro continuar para ver as colunas lidas
+    # st.write(df_precos.columns.tolist()) 
 
+    total_pedido = 0.0
     st.subheader("Itens do Pedido")
     
-    # Títulos das colunas
-    col_prod_h, col_un_h, col_qtd_h, col_sub_h = st.columns([3, 1, 1, 2])
-    col_prod_h.write("**Produto**")
-    col_un_h.write("**Un/Cx**")
-    col_qtd_h.write("**Qtd Cx**")
-    col_sub_h.write("**Subtotal**")
-    st.divider()
-
-    # Loop pelos produtos configurados
     for nome_exibicao, config in produtos_config.items():
         col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
         
-        # Busca o preço unitário
         try:
             col_planilha = config["coluna"]
-            # Localiza a linha do estado e a coluna do produto
-            linha_estado = df_precos[df_precos['Estado'] == estado_sel]
-            if not linha_estado.empty:
-                preco_unit = float(linha_estado[col_planilha].values[0])
-            else:
-                preco_unit = 0.0
-        except Exception:
+            # Busca o valor na linha do estado selecionado
+            linha = df_precos[df_precos['Estado'] == estado_sel]
+            preco_unit = float(linha[col_planilha].values[0])
+        except:
             preco_unit = 0.0
 
         un_cx = config["un_cx"]
-        
+
         with col_prod:
-            st.write(f"{nome_exibicao}")
+            st.write(f"**{nome_exibicao}**")
             st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
         
         with col_un:
-            st.write(f"{un_cx}")
+            st.write(f"{un_cx} un")
             
         with col_qtd:
             qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"qtd_{nome_exibicao}", label_visibility="collapsed")
@@ -1689,17 +1644,10 @@ if df_precos is not None:
             total_pedido += subtotal
             st.write(f"R$ {subtotal:,.2f}")
 
-    # 3. Resumo Final
     st.divider()
-    res1, res2 = st.columns(2)
+    st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
     
-    with res1:
-        st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
-    
-    with res2:
-        if total_pedido >= 500:
-            st.success("✅ Pedido acima do mínimo (R$ 500,00)")
-        elif total_pedido > 0:
-            st.warning(f"⚠️ Falta R$ {500 - total_pedido:,.2f} para o mínimo.")
-        else:
-            st.info("Insira as quantidades para calcular.")
+    if total_pedido >= 500:
+        st.success("✅ Pedido validado!")
+    elif total_pedido > 0:
+        st.warning(f"Faltam R$ {500 - total_pedido:,.2f} para o mínimo.")
