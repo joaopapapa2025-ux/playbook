@@ -6,3 +6,4 @@ reportlab
 openpyxl
 google-cloud-firestore
 pytz
+fpdf
