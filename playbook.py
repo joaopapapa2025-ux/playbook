@@ -1777,7 +1777,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.markdown(f"#### {cat_principal}")
                 
                 for sub_cat, produtos in subcategorias.items():
-                    with st.container(sub_cat, expanded=False):
+                    with st.expander(sub_cat, expanded=True)
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             
@@ -1814,7 +1814,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
 
-            # --- GERADOR DE PDF (DENTRO DA TRAVA) ---
+            # --- GERADOR DE PDF (VERSÃO FINAL UNIFICADA) ---
             if total_pedido > 0:
                 try:
                     from fpdf import FPDF
@@ -1823,6 +1823,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
                         pdf = FPDF()
                         pdf.add_page()
+
+                        # Logo
                         logo_path = "Papapa-azul.png"
                         if os.path.exists(logo_path):
                             pdf.image(logo_path, x=80, y=12, w=50)
@@ -1830,16 +1832,25 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         else:
                             pdf.ln(10)
                         
+                        # Título
                         pdf.set_font("Arial", "B", 16)
                         pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
                         pdf.ln(5)
+                        
+                        # Informações do Cabeçalho
                         pdf.set_font("Arial", size=10)
                         data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
                         pdf.cell(190, 7, txt=f"Data: {data_atual} | Estado: {estado}", ln=True)
-                        if cnpj: pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                        if pagto: pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
+                        
+                        if cnpj and cnpj.strip() != "":
+                            pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                        
+                        if pagto and pagto.strip() != "":
+                            pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
                         
                         pdf.ln(5)
+                        
+                        # Cabeçalho da Tabela
                         pdf.set_fill_color(240, 240, 240)
                         pdf.set_font("Arial", "B", 8)
                         pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
@@ -1849,6 +1860,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         pdf.cell(27, 10, "Preco Un", 1, 0, 'C', True)
                         pdf.cell(28, 10, "Subtotal", 1, 1, 'C', True)
                         
+                        # Linhas da Tabela
                         pdf.set_font("Arial", size=7) 
                         for item in dados_pedido:
                             nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
@@ -1856,17 +1868,26 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             pdf.cell(75, 10, nome_limpo, 1)
                             pdf.cell(15, 10, str(item['qtd_cx']), 1, 0, 'C')
                             pdf.cell(15, 10, str(item['qtd_itens']), 1, 0, 'C')
-                            pdf.cell(27, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                            pdf.cell(28, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
+                            pdf.cell(27, 10, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
+                            pdf.cell(28, 10, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
                         
+                        # Total Final
                         pdf.ln(5)
                         pdf.set_font("Arial", "B", 11)
                         pdf.cell(162, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
                         pdf.cell(28, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+
+                        # Aviso Legal (Rodapé)
+                        pdf.ln(10)
+                        pdf.set_font("Arial", "I", 8)
+                        aviso = u""*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                        pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
+                        
                         return pdf.output(dest='S').encode('latin-1')
 
+                    # --- COLETA DE DADOS ---
                     itens_para_pdf = []
-                    for cat_nome, subcats in categorias_produtos.items():
+                    for cat_n, subcats in categorias_produtos.items():
                         for sub_n, prods in subcats.items():
                             for nome_ex, cfg in prods.items():
                                 q_cx = st.session_state.get(f"sim_qtd_{nome_ex}", 0)
@@ -1874,122 +1895,29 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                     try:
                                         p_u = float(df_precos[df_precos['Estado'] == estado_sel][cfg["coluna"]].values[0])
                                         itens_para_pdf.append({
-                                            "codigo": cfg["cod"], "nome": nome_ex, "qtd_cx": q_cx,
-                                            "qtd_itens": q_cx * cfg["un_cx"], "preco": p_u,
+                                            "codigo": cfg["cod"],
+                                            "nome": nome_ex,
+                                            "qtd_cx": q_cx,
+                                            "qtd_itens": q_cx * cfg["un_cx"],
+                                            "preco": p_u,
                                             "subtotal": (p_u * cfg["un_cx"]) * q_cx
                                         })
-                                    except: pass
+                                    except:
+                                        pass
 
+                    # Gerar Bytes e Botão
                     pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
-                    st.download_button(label="📄 Baixar Orçamento em PDF", data=pdf_bytes, file_name=f"Orcamento_{estado_sel}.pdf", mime="application/pdf", use_container_width=True)
+                    
+                    st.download_button(
+                        label="📄 Baixar Orçamento em PDF",
+                        data=pdf_bytes,
+                        file_name=f"Orcamento_{estado_sel}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True,
+                        key=f"btn_pdf_final_{tabela_sel}_{estado_sel}_{total_pedido}"
+                    )
+
                 except Exception as e:
                     st.error(f"Erro ao gerar PDF: {e}")
     else:
-        # APENAS ESTA MENSAGEM APARECE AGORA
         st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
-
-        # --- GERADOR DE PDF (VERSÃO FINAL E CORRIGIDA) ---
-        if total_pedido > 0:
-            try:
-                from fpdf import FPDF
-                import os
-
-                def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
-                    pdf = FPDF()
-                    pdf.add_page()
-
-                    logo_path = "Papapa-azul.png"
-                    if os.path.exists(logo_path):
-                        pdf.image(logo_path, x=80, y=12, w=50)
-                        pdf.ln(35) 
-                    else:
-                        pdf.ln(10)
-                    
-                    pdf.set_font("Arial", "B", 16)
-                    pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
-                    pdf.ln(5)
-                    
-                    pdf.set_font("Arial", size=10)
-                    data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
-                    pdf.cell(190, 7, txt=f"Data: {data_atual}", ln=True)
-                    pdf.cell(190, 7, txt=f"Estado: {estado}", ln=True)
-                    
-                    if cnpj and cnpj.strip() != "":
-                        pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                    
-                    if pagto and pagto.strip() != "":
-                        pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                    
-                    pdf.ln(5)
-                    
-                    # --- CABEÇALHO DA TABELA ---
-                    pdf.set_fill_color(240, 240, 240)
-                    pdf.set_font("Arial", "B", 8)
-                    pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
-                    pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
-                    pdf.cell(15, 10, "Cx", 1, 0, 'C', True)
-                    pdf.cell(15, 10, "Un", 1, 0, 'C', True)
-                    pdf.cell(27, 10, "Preco Un", 1, 0, 'C', True)
-                    pdf.cell(28, 10, "Subtotal", 1, 1, 'C', True)
-                    
-                    pdf.set_font("Arial", size=7) 
-                    for item in dados_pedido:
-                        # Limpeza de caracteres para evitar erro de encode no PDF
-                        nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                        pdf.cell(30, 10, str(item['codigo']), 1, 0, 'C')
-                        pdf.cell(75, 10, nome_limpo, 1)
-                        pdf.cell(15, 10, str(item['qtd_cx']), 1, 0, 'C')
-                        pdf.cell(15, 10, str(item['qtd_itens']), 1, 0, 'C')
-                        pdf.cell(27, 10, f"R$ {item['preco']:.2f}", 1, 0, 'C')
-                        pdf.cell(28, 10, f"R$ {item['subtotal']:.2f}", 1, 1, 'C')
-                    
-                    pdf.ln(5)
-                    pdf.set_font("Arial", "B", 11)
-                    pdf.cell(162, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                    pdf.cell(28, 10, f"R$ {total:,.2f}", 0, 1, 'C')
-
-                    pdf.ln(15)
-                    pdf.set_font("Arial", "I", 8)
-                    aviso = u"*Este documento e apenas uma simulacao de valores (orcamento) e nao garante a reserva de estoque ou a efetivacao do pedido comercial. Este informativo nao possui validade fiscal."
-                    pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
-                    
-                    return pdf.output(dest='S').encode('latin-1')
-
-                # --- COLETA DE ITENS ---
-                itens_para_pdf = []
-                for cat_nome, subcategorias in categorias_produtos.items():
-                    for sub_nome, produtos in subcategorias.items():
-                        for nome_exibicao, config in produtos.items():
-                            q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
-                            
-                            if q_cx > 0:
-                                try:
-                                    linha_estado = df_precos[df_precos['Estado'] == estado_sel]
-                                    p_u = float(linha_estado[config["coluna"]].values[0])
-                                    cod_prod = config["cod"] 
-                                except:
-                                    p_u, cod_prod = 0.0, config.get("cod", "N/A")
-                                
-                                itens_para_pdf.append({
-                                    "codigo": cod_prod,
-                                    "nome": nome_exibicao,
-                                    "qtd_cx": q_cx,
-                                    "qtd_itens": q_cx * config["un_cx"],
-                                    "preco": p_u,
-                                    "subtotal": (p_u * config["un_cx"]) * q_cx
-                                })
-
-                # --- GERAÇÃO DO BOTÃO ---
-                pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
-                
-                st.download_button(
-                    label="📄 Baixar Orçamento em PDF",
-                    data=pdf_bytes,
-                    file_name=f"Orcamento_{estado_sel}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True,
-                    key=f"btn_pdf_{tabela_sel}_{estado_sel}_{total_pedido}"
-                )
-
-            except Exception as e:
-                st.error(f"Erro ao gerar PDF: {e}")
