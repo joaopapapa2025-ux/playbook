@@ -1649,7 +1649,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         st.divider()
         st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
         
-        if total_pedido >= 500:
+        if total_pedido >= 800:
             st.success("✅ Pedido validado!")
         elif total_pedido > 0:
-            st.warning(f"Faltam R$ {500 - total_pedido:,.2f} para o mínimo.")
+            st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
