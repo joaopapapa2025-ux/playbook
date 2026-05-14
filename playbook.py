@@ -1880,7 +1880,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         # Aviso Legal (Rodapé)
                         pdf.ln(10)
                         pdf.set_font("Arial", "I", 8)
-                        aviso = u""*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                        aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
                         pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
                         
                         return pdf.output(dest='S').encode('latin-1')
