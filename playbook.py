@@ -1790,30 +1790,39 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     
                     return pdf.output(dest='S').encode('latin-1')
 
-                # --- LÓGICA DE COLETA DOS DADOS (CORRIGIDA PARA CÓDIGOS LIMPOS) ---
+                # --- LÓGICA DE COLETA DEFINITIVA (BUSCA PELO NOME DA COLUNA 'CÓDIGO') ---
                 itens_para_pdf = []
                 for nome_exibicao, config in produtos_config.items():
                     q_cx = st.session_state.get(f"sim_qtd_{nome_exibicao}", 0)
                     if q_cx > 0:
                         try:
+                            # Filtra a linha do estado
                             linha_estado = df_precos[df_precos['Estado'] == estado_sel]
                             
-                            # Pega o valor bruto da coluna D (índice 3)
-                            valor_codigo = linha_estado.iloc[0, 3]
-                            
-                            # CORREÇÃO: Se for número, remove o .0 convertendo para int primeiro
-                            if pd.notnull(valor_codigo):
+                            # 1. Tenta buscar pelo nome exato da coluna 'Código' (com acento)
+                            # 2. Se falhar, tenta 'Codigo' (sem acento)
+                            # 3. Se falhar, usa a 4ª coluna (índice 3) que é a 'D'
+                            if 'Código' in linha_estado.columns:
+                                valor_bruto = linha_estado['Código'].values[0]
+                            elif 'Codigo' in linha_estado.columns:
+                                valor_bruto = linha_estado['Codigo'].values[0]
+                            else:
+                                valor_bruto = linha_estado.iloc[0, 3]
+
+                            # Limpa o valor para não vir com .0 ou espaços
+                            if pd.notnull(valor_bruto):
                                 try:
-                                    cod_prod = str(int(float(valor_codigo)))
+                                    # Converte para float -> int -> str (remove o .0)
+                                    cod_prod = str(int(float(valor_bruto)))
                                 except:
-                                    cod_prod = str(valor_codigo)
+                                    cod_prod = str(valor_bruto).strip()
                             else:
                                 cod_prod = "N/A"
                             
                             p_u = float(linha_estado[config["coluna"]].values[0])
                             u_c = config["un_cx"]
-                        except:
-                            cod_prod, p_u, u_c = "N/A", 0.0, 0
+                        except Exception as e:
+                            cod_prod, p_u, u_c = "Erro", 0.0, 0
                         
                         itens_para_pdf.append({
                             "codigo": cod_prod,
