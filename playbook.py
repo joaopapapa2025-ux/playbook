@@ -7,6 +7,31 @@ from pathlib import Path
 from google.cloud import firestore
 from google.oauth2 import service_account
 
+# --- LÓGICA DE URL (QUERY PARAMS) ---
+# 1. Mapeamento de nomes amigáveis para as abas
+mapa_urls = {
+    "home": "🏠 Home (Equipe)",
+    "bonificacao": "💰 Simulador de Bonificação",
+    "arquivos": "📄 Biblioteca de Arquivos",
+    "scripts": "✍️ Templates & Scripts",
+    "politicas": "📊 Políticas Comerciais",
+    "problemas": "🛠️ Resolução de Problemas",
+    "excuses": "🚫 Quebras de Excuses",
+    "resultado": "📈 Impactos no resultado",
+    "links": "🔗 Links Úteis",
+    "simulador": "🛒 Simulador de Pedidos"
+}
+# Inverte o mapa para facilitar a busca reversa
+mapa_nomes_para_urls = {v: k for k, v in mapa_urls.items()}
+
+# 2. Verifica se existe um parâmetro na URL ao carregar
+query_params = st.query_params
+aba_da_url = query_params.get("aba", "home")
+
+# 3. Define a aba inicial baseada na URL (se existir)
+if 'aba_atual' not in st.session_state:
+    st.session_state.aba_atual = mapa_urls.get(aba_da_url, "🏠 Home (Equipe)")
+
 # ------------------------------------------------------------------------------
 # CONEXÃO COM O BANCO DE DADOS (FIRESTORE)
 # ------------------------------------------------------------------------------
@@ -118,30 +143,42 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# Lista de opções exatamente como nos seus IFs
-opcoes_menu = [
-    "🏠 Home (Equipe)", 
-    "💰 Simulador de Bonificação", 
-    "📄 Biblioteca de Arquivos", 
-    "✍️ Templates & Scripts", 
-    "📊 Políticas Comerciais", 
-    "🛠️ Resolução de Problemas",
-    "🚫 Quebras de Excuses",
-    "📈 Impactos no resultado",
-    "🔗 Links Úteis",
-    "🛒 Simulador de Pedidos"
-]
+# --- 1. MAPEAMENTO DE URLS ---
+mapa_urls = {
+    "home": "🏠 Home (Equipe)",
+    "bonificacao": "💰 Simulador de Bonificação",
+    "arquivos": "📄 Biblioteca de Arquivos",
+    "scripts": "✍️ Templates & Scripts",
+    "politicas": "📊 Políticas Comerciais",
+    "problemas": "🛠️ Resolução de Problemas",
+    "excuses": "🚫 Quebras de Excuses",
+    "resultado": "📈 Impactos no resultado",
+    "links": "🔗 Links Úteis",
+    "simulador": "🛒 Simulador de Pedidos"
+}
+mapa_nomes_para_urls = {v: k for k, v in mapa_urls.items()}
+
+# --- 2. SINCRONIZAÇÃO INICIAL (URL -> APP) ---
+query_params = st.query_params
+aba_da_url = query_params.get("aba", "home")
 
 if 'aba_atual' not in st.session_state:
-    st.session_state.aba_atual = "🏠 Home (Equipe)"
+    # Se a URL tiver algo, carrega essa aba. Se não, vai para Home.
+    st.session_state.aba_atual = mapa_urls.get(aba_da_url, "🏠 Home (Equipe)")
 
-# Criamos as colunas e injetamos os botões
+# Lista de opções para os botões
+opcoes_menu = list(mapa_urls.values())
+
+# --- 3. CRIAÇÃO DOS BOTÕES E ATUALIZAÇÃO DA URL ---
 cols = st.columns(len(opcoes_menu))
 
 for i, label in enumerate(opcoes_menu):
     with cols[i]:
         if st.button(label, key=f"btn_{label}", use_container_width=True):
             st.session_state.aba_atual = label
+            # Muda o link lá em cima no navegador
+            url_slug = mapa_nomes_para_urls.get(label, "home")
+            st.query_params["aba"] = url_slug
 
 aba_selecionada = st.session_state.aba_atual
 st.divider()
