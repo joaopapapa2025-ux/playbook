@@ -1542,164 +1542,125 @@ elif aba_selecionada == "🔗 Links Úteis":
     with c4:
         st.warning("**Senha do link antigo:** Papapa@2023")
 
+import streamlit as st
+import pandas as pd
+
 ################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS (DINÂMICO) ---
+# --- CONFIGURAÇÕES E MAPEAMENTO ---
 ################################################################################
-elif aba_selecionada == "🛒 Simulador de Pedidos":
-    st.header("🛒 Simulador de Pedidos Inteligente")
-    st.write("Selecione a tabela e o estado para calcular os valores conforme a política comercial.")
 
-    # 1. MAPEAMENTO DE ARQUIVOS
-    # Certifique-se de que os arquivos abaixo estão na mesma pasta do script
-    mapa_tabelas = {
-        "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
-        "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
-        "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
-        "Tabela Especial Rede": "0325ESPECIAL_REDE.xlsx",
-        "Tabela Distribuidor": "0325DISTRIBUIDOR.xlsx",
-        "Tabela Distribuidor V": "0325DISTRIBUIDOR_V.xlsx",
-        "Tabela Distribuidor X": "0325DISTRIBUIDOR_X.xlsx",
-        "Tabela Varejo": "0325VAREJO.xlsx",
-        "Tabela Varejo 5": "0325VAREJO_5.xlsx",
-        "Tabela Varejo 10": "0325VAREJO_10.xlsx",
-        "Tabela C": "0325TABELA_C.xlsx"
-    }
+# Mapeamento exato dos nomes dos arquivos que você terá no Streamlit
+mapa_tabelas = {
+    "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
+    "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
+    "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
+    "Tabela Especial Rede": "0325ESPECIAL_REDE.xlsx",
+    "Tabela Distribuidor": "0325DISTRIBUIDOR.xlsx",
+    "Tabela Distribuidor V": "0325DISTRIBUIDOR_V.xlsx",
+    "Tabela Distribuidor X": "0325DISTRIBUIDOR_X.xlsx",
+    "Tabela Varejo": "0325VAREJO.xlsx",
+    "Tabela Varejo V": "0325VAREJO_V.xlsx",
+    "Tabela Varejo X": "0325VAREJO_X.xlsx",
+    "Tabela C": "0325TABELA_C.xlsx"
+}
 
-    # 2. SELEÇÃO DE PARÂMETROS
-    col_tab, col_est = st.columns(2)
-    with col_tab:
-        tabela_nome = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
-    with col_est:
-        # Estados conforme colunas da sua planilha
-        estado_sel = st.selectbox("Selecione o Estado (UF):", 
-                                ["PR", "SC", "RS", "SP", "RJ", "MG", "ES", "MT", "MS", "GO", "DF", "BA", "PE", "CE"])
+# Dicionário de Produtos: Nome Amigável -> (Nome da Coluna na Planilha, Unidades por Caixa)
+# Isso permite que você mude o nome na planilha sem quebrar a interface do usuário
+produtos_config = {
+    "🥣 Papinhas": {"coluna": "Papinhas", "un_cx": 12},
+    "🍢 Palitinhos": {"coluna": "Palitinhos", "un_cx": 12},
+    "🍪 Biscoitinhos": {"coluna": "Biscoitinhos", "un_cx": 16},
+    "🍝 Papapasta": {"coluna": "Papapasta", "un_cx": 12},
+    "👨‍🍳 La Chef": {"coluna": "La Chef", "un_cx": 12},
+    "🌾 Linha Cereais": {"coluna": "Linha Cerais", "un_cx": 12},
+    "🥨 Biscotti": {"coluna": "Biscotti", "un_cx": 12},
+    "🍗 Pouch Carne": {"coluna": "Pouch Carne", "un_cx": 12},
+    "🥤 Yoguzinho": {"coluna": "Yoguzinho", "un_cx": 16},
+    "🍿 Salgadinhos": {"coluna": "Salgadinhos", "un_cx": 18},
+    "🍩 Bisc. Recheados": {"coluna": "Bisc. Recheados", "un_cx": 8},
+    "🧃 Sucos": {"coluna": "Sucos", "un_cx": 27},
+    "🍫 Achocolatado": {"coluna": "Achocolatado", "un_cx": 27},
+}
 
-    # 3. CARREGAMENTO DOS PREÇOS
-    @st.cache_data(ttl=600)
-    def carregar_dados_precos(nome_da_tabela):
-        arquivo_excel = mapa_tabelas.get(nome_da_tabela)
+################################################################################
+# --- INTERFACE STREAMLIT ---
+################################################################################
+
+st.header("🛒 Simulador de Pedidos Dinâmico")
+
+# 1. Seleção de Parâmetros
+c1, c2 = st.columns(2)
+with c1:
+    tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()))
+with c2:
+    # Lista de estados baseada na sua planilha
+    estado_sel = st.selectbox("Selecione o Estado (UF):", 
+                             ["AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", 
+                              "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", 
+                              "RO", "RR", "RS", "SC", "SE", "SP", "TO"])
+
+# 2. Carregamento do Arquivo Selecionado
+@st.cache_data
+def carregar_dados(nome_tabela):
+    arquivo = mapa_tabelas.get(nome_tabela)
+    try:
+        # Lê a aba PREÇOS, garantindo que a coluna 'Estado' seja tratada como índice
+        df = pd.read_excel(arquivo, sheet_name="PREÇOS")
+        df.columns = df.columns.str.strip() # Limpa nomes das colunas
+        return df
+    except Exception as e:
+        st.error(f"Arquivo '{arquivo}' não encontrado ou erro na leitura.")
+        return None
+
+df_precos = carregar_dados(tabela_sel)
+
+if df_precos is not None:
+    total_pedido = 0.0
+    itens_pedido = []
+
+    st.subheader("Itens do Pedido")
+    
+    # Criamos a tabela de entrada de dados
+    for nome_exibicao, config in produtos_config.items():
+        col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
+        
+        # Busca o preço unitário cruzando Linha (Estado) e Coluna (Produto)
         try:
-            # Carrega especificamente a aba PREÇOS
-            df = pd.read_excel(arquivo_excel, sheet_name="PREÇOS")
-            df['PRODUTO'] = df['PRODUTO'].str.strip() # Remove espaços extras
-            return df
-        except Exception as e:
-            st.error(f"Erro ao carregar {arquivo_excel}. Verifique se o arquivo está na pasta e se a aba se chama 'PREÇOS'.")
-            return None
+            col_planilha = config["coluna"]
+            # Filtra a linha do estado e pega o valor da coluna do produto
+            preco_unit = float(df_precos.loc[df_precos['Estado'] == estado_sel, col_planilha].values[0])
+        except:
+            preco_unit = 0.0
 
-    df_base = carregar_dados_precos(tabela_nome)
+        un_cx = config["un_cx"]
+        preco_cx = preco_unit * un_cx
 
-    # 4. DICIONÁRIO DE SKUS E QUANTIDADE POR CAIXA
-    # Estruturado conforme sua lista
-    categorias_produtos = {
-        "🥣 Papinhas & Sopinhas (6 a 12 un/cx)": {
-            "Papinha Papapa Carne Arroz Legumes 120g": 12,
-            "Papinha Papapa Frango Grão Vegetais 120g": 12,
-            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": 16,
-            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": 16,
-            "Sopinha Papapá org Lentinha Carne Legumes 180g": 6,
-            "Risotinho Papapá org Arroz quinoa frango 180g": 6,
-            "Caseirinho Papapá org Arroz feijão carne leg. 180g": 6,
-            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": 6,
-            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": 6,
-            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": 6,
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": 6
-        },
-        "🍎 Linha Orgânica Pouch (12 un/cx)": {
-            "Papinha Papapá Org Maçã Ameixa 100g": 12,
-            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": 12,
-            "Papinha Papapá Org Manga 100g": 12,
-            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": 12,
-            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": 12,
-            "Papinha Papapá Org Morango Maçã 100g": 12
-        },
-        "🍪 Biscoitos & Snacks": {
-            "Biscoito inf Papapá org. Beterraba 20g": 16,
-            "Biscoito inf Papapá org. Cenoura 20g": 16,
-            "Biscoito inf Papapá org. Tomate/Manjericão 20g": 16,
-            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": 12,
-            "Biscoito Inf Papapá dent Vegetais 36g": 12,
-            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": 12,
-            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": 12,
-            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": 12,
-            "Biscoito Infantil Papapá Biscotti Goiaba 60g": 12,
-            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": 12,
-            "BISCOITO RECHEADO DE MORANGO PAPAPA ERA UMA VEZ 30G": 8,
-            "BISCOITO RECHEADO DE FRUTAS AMARELAS PAPAPA ERA UMA VEZ 30G": 8
-        },
-        "🍿 Era Uma Vez (Salgadinhos & Bebidas)": {
-            "SALGADINHO INTEGRAL ORGÂNICO QUEIJO PAPAPA ERA UMA VEZ 40G": 18,
-            "SALGADINHO INTEGRAL ORGÂNICO CEBOLA & SALSA PAPAPA ERA UMA VEZ 40G": 18,
-            "SALGADINHO INTEGRAL ORGÂNICO CHURRASCO PAPAPA ERA UMA VEZ 40G": 18,
-            "BEBIDA LÁCTEA UHT CHOCOLATE PAPAPA ERA UMA VEZ 200ML": 27,
-            "BEBIDA DE LARANJA PAPAPA ERA UMA VEZ 200ML": 27,
-            "BEBIDA DE UVA PAPAPA ERA UMA VEZ 200ML": 27,
-            "BEBIDA DE MORANGO PAPAPA ERA UMA VEZ 200ML": 27,
-            "BEBIDA DE MAÇÃ PAPAPA ERA UMA VEZ 200ML": 27
-        },
-        "🍝 Massas & Cereais (12 un/cx)": {
-            "Macarrao Inf Papapá m. Elbow Quinoa 200g": 12,
-            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": 12,
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": 12,
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": 12,
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": 12,
-            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": 12
-        },
-        "🧸 Acessórios (Unitários)": {
-            "Kit De Talheres Infantil - Azul": 1, "Kit De Talheres Infantil - Verde": 1, "Kit De Talheres Infantil - Rosa": 1,
-            "Babador Infantil Com Bolso - Azul": 1, "Babador Infantil Com Bolso - Verde": 1, "Babador Infantil Com Bolso - Rosa": 1,
-            "Bowl Infantil Com Ventosa - Azul": 1, "Bowl Infantil Com Ventosa - Verde": 1, "Bowl Infantil Com Ventosa - Rosa": 1,
-            "Pratinho Infantil Com Ventosa - Azul": 1, "Pratinho Infantil Com Ventosa - Verde": 1, "Pratinho Infantil Com Ventosa - Rosa": 1
-        }
-    }
-
-    # 5. EXECUÇÃO DO SIMULADOR
-    if df_base is not None:
-        total_pedido = 0.0
+        with col_prod:
+            st.write(f"**{nome_exibicao}**")
+            st.caption(f"Preço Unit: R$ {preco_unit:,.2f}")
         
-        for cat, itens in categorias_produtos.items():
-            with st.expander(f"{cat}", expanded=False):
-                # Cabeçalho das colunas
-                h_col1, h_col2, h_col3, h_col4 = st.columns([3, 1, 1, 1])
-                h_col1.caption("Produto")
-                h_col2.caption("Un/Cx")
-                h_col3.caption("Qtd (Cx)")
-                h_col4.caption("Subtotal")
-                
-                for produto, un_cx in itens.items():
-                    # Tenta localizar o preço na planilha
-                    try:
-                        preco_unitario = float(df_base.loc[df_base['PRODUTO'] == produto, estado_sel].values[0])
-                    except:
-                        preco_unitario = 0.0
-                    
-                    preco_caixa = preco_unitario * un_cx
-                    
-                    with st.container():
-                        c1, c2, c3, c4 = st.columns([3, 1, 1, 1])
-                        c1.write(f"**{produto}**")
-                        c2.write(f"{un_cx} un")
-                        with c3:
-                            qtd = st.number_input(f"Qtd {produto}", min_value=0, step=1, label_visibility="collapsed", key=f"sim_{produto}")
-                        with c4:
-                            sub = qtd * preco_caixa
-                            total_pedido += sub
-                            val_fmt = f"R$ {sub:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-                            st.markdown(f"<div style='text-align: right; padding-top: 5px;'><b>{val_fmt if sub > 0 else '-'}</b></div>", unsafe_allow_html=True)
+        with col_un:
+            st.write(f"{un_cx} un/cx")
+        
+        with col_qtd:
+            qtd_cx = st.number_input("Qtd Cx", min_value=0, step=1, key=f"qtd_{nome_exibicao}", label_visibility="collapsed")
+        
+        with col_sub:
+            subtotal = qtd_cx * preco_cx
+            total_pedido += subtotal
+            st.write(f"R$ {subtotal:,.2f}")
 
-        # 6. RESUMO DE FECHAMENTO
-        st.divider()
-        res_c1, res_c2 = st.columns(2)
-        
-        total_pedido_fmt = f"R$ {total_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-        res_c1.metric("💰 Total Estimado do Pedido", total_pedido_fmt)
-        
-        with res_c2:
-            if total_pedido == 0:
-                st.info("Adicione quantidades para calcular o pedido.")
-            elif total_pedido < 500:
-                falta = 500 - total_pedido
-                falta_fmt = f"R$ {falta:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-                st.warning(f"⚠️ Abaixo do faturamento mínimo (R$ 500,00). Faltam **{falta_fmt}**")
-            else:
-                st.success("✅ Pedido validado! Acima do faturamento mínimo.")
+    # 3. Resumo Final
+    st.divider()
+    res1, res2 = st.columns(2)
+    
+    with res1:
+        st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
+    
+    with res2:
+        if total_pedido >= 500:
+            st.success("✅ Pedido acima do mínimo (R$ 500,00)")
+        elif total_pedido > 0:
+            st.warning(f"⚠️ Falta R$ {500 - total_pedido:,.2f} para o mínimo.")
+        else:
+            st.info("Insira as quantidades para calcular.")
