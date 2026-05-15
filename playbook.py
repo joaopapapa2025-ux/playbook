@@ -1833,7 +1833,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     st.write(f"**Total Líquido: R$ {total_pedido:,.2f}**")
             
             if total_com_desconto >= 800:
-                st.success("✅ Pedido validado!")
+                st.success("✅ Pedido acima do valor mínimo!")
             elif total_pedido > 0:
                 st.warning(f"Faltam R$ {800 - total_com_desconto:,.2f} para o mínimo.")
 
@@ -1855,7 +1855,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             pdf.ln(10)
                         
                         pdf.set_font("Arial", "B", 16)
-                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
+                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
                         pdf.ln(5)
                         
                         pdf.set_font("Arial", size=10)
