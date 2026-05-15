@@ -798,7 +798,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         """, unsafe_allow_html=True)
 
     with col_info2:
-        st.subheader("💳 Modalidades de Pagamento")
+        st.subheader("💳 Modalidades de Pagamento - Inside Sales")
         
         st.markdown("""
             <style>
@@ -810,18 +810,18 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         with st.expander("Prazos: Sul e Sudeste", expanded=True):
             st.markdown("""
             <div class="pagamento-texto">
-            • <b>Até R$ 1.000:</b> <span class="highlight">30 dias</span><br>
-            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">30/45 dias</span><br>
-            • <b>Acima de R$ 2.000:</b> <span class="highlight">30/45/60 dias</span>
+            • <b>Até R$ 1.000:</b> <span class="highlight">30 dias da data do faturamento</span><br>
+            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">30/45 dias da data do faturamento</span><br>
+            • <b>Acima de R$ 2.000:</b> <span class="highlight">30/45/60 dias da data do faturamento</span>
             </div>
             """, unsafe_allow_html=True)
 
         with st.expander("Prazos: Demais Regiões", expanded=True):
             st.markdown("""
             <div class="pagamento-texto">
-            • <b>Até R$ 1.000:</b> <span class="highlight">45 dias</span><br>
-            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">45/60 dias</span><br>
-            • <b>Acima de R$ 2.000:</b> <span class="highlight">40/50/60 dias</span>
+            • <b>Até R$ 1.000:</b> <span class="highlight">45 dias da data do faturamento</span><br>
+            • <b>R$ 1.000 a R$ 2.000:</b> <span class="highlight">45/60 dias da data do faturamento</span><br>
+            • <b>Acima de R$ 2.000:</b> <span class="highlight">40/50/60 dias da data do faturamento</span>
             </div>
             """, unsafe_allow_html=True)
             
