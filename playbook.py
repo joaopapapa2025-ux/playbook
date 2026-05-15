@@ -1521,9 +1521,16 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     with st.container():
-        st.subheader("📂 Fichas Comerciais")
+        st.subheader("🗂️ Fichas Comerciais")
         st.link_button("📂 Fichas comerciais de produtos", "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos&p=true&ct=1776191232287&or=Teams%2DHL&ga=1&LOF=1", use_container_width=True)
         st.caption("Fichas comerciais de produtos")
+
+    st.markdown("---")
+
+    with st.container():
+        st.subheader("🛍️ Pedidos de bonificação")
+        st.link_button("✍️ Pedidos de bonificação", "https://docs.google.com/forms/d/1IwICqg6apNUdhyQAX9vQHO6zKggJACffmynCMDvVrg4/viewform?edit_requested=true", use_container_width=True)
+        st.caption("Formulário para pedidos de bonificação")
 
     st.markdown("---")
     
@@ -1541,7 +1548,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     with c2:
         st.link_button("📂 Respostas Solicitações", "https://papapacombr-my.sharepoint.com/:x:/g/personal/operacoes_papapa_com_br/IQDfqtRILiD4R5lmLjQujLN3AS4On6breUbk-qRT2a0sUYk?rtime=_eVdf_F13kg", use_container_width=True)
     
-    st.link_button("📍 Follow-up de Entregas (Sharepoint)", "https://papapacombr.sharepoint.com/:x:/r/sites/Papapa-Fileserver/_layouts/15/Doc.aspx?sourcedoc=%7B5cf28a24-1caa-4578-8641-a96b089efffa%7D&action=edit", use_container_width=True)
+    st.link_button("📍 Follow-up de Entregas (Sharepoint)", "https://papapacombr.sharepoint.com/:x:/r/sites/Papapa-Fileserver/_layouts/15/Doc.aspx?sourcedoc=%7B5cf28a24-1caa-4578-8641-a96b089efffa%7D&action=edit", use_container_width=True)                                                           
 
     st.write("**Portais das Transportadoras:**")
     t1, t2, t3, t4 = st.columns(4) # Alterado para 4 colunas
