@@ -1497,7 +1497,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     with st.container():
-        st.subheader("📝 Cadastro - Inside Sales")
+        st.subheader("📝 Cadastros - Inside Sales")
         col1, col2 = st.columns(2)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
@@ -1509,7 +1509,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     with st.container():
-        st.subheader("📝 Cadastro - Regionais e RCA")
+        st.subheader("📝 Cadastros - Regionais e RCA")
         col1, col2 = st.columns(2)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://statics.teams.cdn.office.net/evergreen-assets/safelinks/2/atp-safelinks.html", use_container_width=True)
