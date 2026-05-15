@@ -860,8 +860,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.markdown("---")
 
-        st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
-
         # --- MODALIDADES REGIONAIS ---
         st.subheader("💼 Modalidades de Pagamento - Regionais")
         
