@@ -1518,11 +1518,15 @@ elif aba_selecionada == "🔗 Links Úteis":
             st.link_button("👀 Acompanhar Cadastros", "https://docs.google.com/spreadsheets/d/1KrwiEVyjguz8cPjnHsOM2ymbcP5aB2AfhTQczppvtpc/edit?gid=1200882492#gid=1200882492", use_container_width=True)
             st.caption("Acompanhamento da realização dos cadastros")
 
+    st.markdown("---")
+
     with st.container():
         st.subheader("📂 Fichas Comerciais")
         with col1:
             st.link_button("📂 Ficha comercial de produtos", "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos&p=true&ct=1776191232287&or=Teams%2DHL&ga=1&LOF=1", use_container_width=True)
             st.caption("Ficha comercial de produtos")
+
+    st.markdown("---")
     
     with st.container():
         st.subheader("📊 Dashboards de Gestão")
