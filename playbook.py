@@ -272,14 +272,16 @@ if aba_selecionada == "🏠 Home (Equipe)":
                     num_limpo = "".join(filter(str.isdigit, m['telefone']))
                     link_wa = f"https://wa.me/55{num_limpo}"
                     
-                    # Lógica da Foto
+                    # Lógica da Foto com Fallback seguro
+                    estilo = f"background-image: url('{url_avatar_padrao}');" # Padrão inicial
+                    
                     if Path(m['foto']).exists():
                         try:
                             f_b64 = get_base64_of_bin_file(m['foto'])
                             estilo = f"background-image: url('data:image/jpeg;base64,{f_b64}');"
-                        except: estilo = f"background-image: url('{img_avatar_html}');"
-                    else: estilo = f"background-image: url('{img_avatar_html}');"
-
+                        except:
+                            pass # Mantém o padrão se der erro no base64
+                    
                     with cols[j]:
                         st.markdown(f"""
                             <div class="team-card">
