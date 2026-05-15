@@ -1840,7 +1840,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam R$ {800 - total_com_desconto:,.2f} para o mínimo.")
 
-            # --- GERADOR DE PDF (VERSÃO COM AJUSTE DE LINHA E DESCONTO) ---
+            # --- GERADOR DE PDF (VERSÃO FINAL CORRIGIDA) ---
             if total_pedido > 0:
                 try:
                     from fpdf import FPDF
@@ -1873,65 +1873,60 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         # Cabeçalho da Tabela
                         pdf.set_fill_color(240, 240, 240)
                         pdf.set_font("Arial", "B", 8)
-                        pdf.cell(25, 10, "Cod.", 1, 0, 'C', True)
-                        pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
+                        pdf.cell(20, 10, "Cod.", 1, 0, 'C', True)
+                        pdf.cell(85, 10, "Produto", 1, 0, 'C', True)
                         pdf.cell(12, 10, "Cx", 1, 0, 'C', True)
                         pdf.cell(12, 10, "Un", 1, 0, 'C', True)
-                        pdf.cell(33, 10, "Preco Un", 1, 0, 'C', True)
-                        pdf.cell(33, 10, "Subtotal", 1, 1, 'C', True)
+                        pdf.cell(30, 10, "Preco Un", 1, 0, 'C', True)
+                        pdf.cell(31, 10, "Subtotal", 1, 1, 'C', True)
                         
-                        # Itens com ajuste de linha automática (Multi-cell)
+                        # Itens
                         pdf.set_font("Arial", size=7) 
                         for item in dados_pedido:
                             nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
                             
-                            # Salva a posição X e Y antes de escrever o nome do produto
-                            x_antes = pdf.get_x()
-                            y_antes = pdf.get_y()
+                            # Cálculo de altura para evitar quebras de borda esquisitas
+                            # Se o nome for longo, ele ocupa mais que 10mm
+                            linhas_nome = len(pdf.multi_cell(85, 5, nome_limpo, split_only=True))
+                            h_dinamica = max(10, linhas_nome * 5)
                             
-                            # Coluna de Código
-                            pdf.cell(25, 10, str(item['codigo']), 1, 0, 'C')
+                            x_ref = pdf.get_x()
+                            y_ref = pdf.get_y()
                             
-                            # Coluna de Produto (A que quebra linha)
-                            # Usamos multi_cell para o texto longo não ultrapassar a borda
-                            pdf.multi_cell(75, 5, nome_limpo, 1, 'L')
-                            y_depois = pdf.get_y()
+                            # Desenha as colunas uma a uma garantindo que todas tenham a mesma altura (h_dinamica)
+                            pdf.cell(20, h_dinamica, str(item['codigo']), 1, 0, 'C')
                             
-                            # Calcula a altura real que a linha ocupou (mínimo de 10)
-                            h_linha = max(10, y_depois - y_antes)
+                            # Multi-cell para o nome (ajustado para caber no quadro)
+                            pdf.set_xy(x_ref + 20, y_ref)
+                            pdf.multi_cell(85, 5, nome_limpo, 1, 'L')
                             
-                            # Volta para a posição ao lado do nome do produto para completar a linha
-                            pdf.set_xy(x_antes + 100, y_antes)
-                            
-                            # Completa as outras colunas usando a altura calculada
-                            pdf.cell(12, h_linha, str(item['qtd_cx']), 1, 0, 'C')
-                            pdf.cell(12, h_linha, str(item['qtd_itens']), 1, 0, 'C')
-                            pdf.cell(33, h_linha, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
-                            pdf.cell(33, h_linha, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
-                            
-                            # Garante que a próxima linha comece abaixo da maior célula
-                            pdf.set_y(max(y_depois, y_antes + h_linha))
+                            # Volta para o resto da linha
+                            pdf.set_xy(x_ref + 105, y_ref)
+                            pdf.cell(12, h_dinamica, str(item['qtd_cx']), 1, 0, 'C')
+                            pdf.cell(12, h_dinamica, str(item['qtd_itens']), 1, 0, 'C')
+                            pdf.cell(30, h_dinamica, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
+                            pdf.cell(31, h_dinamica, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
                         
                         # Rodapé de Valores
                         pdf.ln(5)
                         pdf.set_font("Arial", "B", 10)
-                        pdf.cell(157, 8, "Total Bruto:", 0, 0, 'R')
-                        pdf.cell(33, 8, f"R$ {total_bruto:,.2f}", 0, 1, 'C')
+                        pdf.cell(159, 8, "Total Bruto:", 0, 0, 'R')
+                        pdf.cell(31, 8, f"R$ {total_bruto:,.2f}", 0, 1, 'C')
                         
                         if desconto_p > 0:
                             pdf.set_text_color(200, 0, 0)
-                            pdf.cell(157, 8, f"Desconto ({desconto_p}%):", 0, 0, 'R')
-                            pdf.cell(33, 8, f"- R$ {desconto_v:,.2f}", 0, 1, 'C')
+                            pdf.cell(159, 8, f"Desconto ({desconto_p}%):", 0, 0, 'R')
+                            pdf.cell(31, 8, f"- R$ {desconto_v:,.2f}", 0, 1, 'C')
                             pdf.set_text_color(0, 0, 0)
                             
                         pdf.set_font("Arial", "B", 12)
-                        pdf.cell(157, 10, "TOTAL LÍQUIDO:", 0, 0, 'R')
-                        pdf.cell(33, 10, f"R$ {total_liq:,.2f}", 0, 1, 'C')
+                        pdf.cell(159, 10, "TOTAL LÍQUIDO:", 0, 0, 'R')
+                        pdf.cell(31, 10, f"R$ {total_liq:,.2f}", 0, 1, 'C')
 
-                        # Aviso Legal
-                        pdf.ln(5)
+                        # Aviso Legal (EXATAMENTE COMO VOCÊ PEDIU)
+                        pdf.ln(10)
                         pdf.set_font("Arial", "I", 8)
-                        aviso = u"*Este documento é uma simulação de valores (orçamento) e não garante reserva de estoque ou validade fiscal."
+                        aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
                         pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
                         
                         return pdf.output(dest='S').encode('latin-1')
@@ -1960,7 +1955,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         file_name=f"Orcamento_{estado_sel}.pdf",
                         mime="application/pdf",
                         use_container_width=True,
-                        key=f"btn_pdf_v3_{estado_sel}_{total_com_desconto}" # Key única para evitar erro
+                        key=f"btn_pdf_vfinal_{estado_sel}_{total_com_desconto}"
                     )
                 except Exception as e:
                     st.error(f"Erro ao gerar PDF: {e}")
