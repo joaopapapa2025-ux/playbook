@@ -860,12 +860,14 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.markdown("---")
 
+        st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
+
         # --- MODALIDADES REGIONAIS ---
         st.subheader("💼 Modalidades de Pagamento - Regionais")
         
         st.info("💡 **Política Comercial:** Os prazos e condições para vendas via Gerentes Regionais são definidos **conforme negociação direta com o cliente** ou especificações contidas no pedido enviado.")
 
-        with st.expander("📝 Prazos e Condições Genéricas", expanded=False):
+        with st.expander("📝 Prazos e Condições Genéricas", expanded=True):
             st.markdown("""
             <div class="pagamento-texto">
             • <b>Faturamento Direto:</b> Conforme acordado em contrato ou pedido.<br>
@@ -881,6 +883,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
                 </p>
             </div>
         """, unsafe_allow_html=True)
+
+        st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
 
         st.subheader("🔄 Trocas e Devoluções")
         st.warning("""
