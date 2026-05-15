@@ -1844,7 +1844,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         
                         # Título
                         pdf.set_font("Arial", "B", 16)
-                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
+                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
                         pdf.ln(5)
                         
                         # Informações do Cabeçalho
