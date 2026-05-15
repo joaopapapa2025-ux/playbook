@@ -1815,22 +1815,38 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 total_pedido += subtotal
                                 st.write(f"R$ {subtotal:,.2f}")
 
-            # --- RESUMO FINAL ---
+            # --- RESUMO FINAL COM DESCONTO ---
             st.divider()
-            st.metric("Total do Pedido", f"R$ {total_pedido:,.2f}")
             
-            if total_pedido >= 800:
+            col_total_1, col_total_2 = st.columns([2, 1])
+            
+            with col_total_2:
+                # Campo para o vendedor preencher a % de desconto
+                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5)
+                
+                valor_desconto = total_pedido * (perc_desconto / 100)
+                total_com_desconto = total_pedido - valor_desconto
+
+            with col_total_1:
+                st.metric("Total Bruto", f"R$ {total_pedido:,.2f}")
+                if perc_desconto > 0:
+                    st.metric("Total com Desconto", f"R$ {total_com_desconto:,.2f}", delta=f"- R$ {valor_desconto:,.2f}", delta_color="normal")
+                else:
+                    st.write(f"**Total Líquido: R$ {total_pedido:,.2f}**")
+            
+            # Validação de pedido mínimo baseada no total bruto (ou líquido, como preferir)
+            if total_com_desconto >= 800:
                 st.success("✅ Pedido validado!")
             elif total_pedido > 0:
-                st.warning(f"Faltam R$ {800 - total_pedido:,.2f} para o mínimo.")
+                st.warning(f"Faltam R$ {800 - total_com_desconto:,.2f} para o mínimo.")
 
-            # --- GERADOR DE PDF (VERSÃO FINAL UNIFICADA) ---
+            # --- GERADOR DE PDF (VERSÃO COM DESCONTO) ---
             if total_pedido > 0:
                 try:
                     from fpdf import FPDF
                     import os
 
-                    def gerar_pdf(dados_pedido, total, estado, cnpj, pagto):
+                    def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
                         pdf = FPDF()
                         pdf.add_page()
 
@@ -1844,23 +1860,18 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         
                         # Título
                         pdf.set_font("Arial", "B", 16)
-                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
+                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá", ln=True, align='C')
                         pdf.ln(5)
                         
-                        # Informações do Cabeçalho
+                        # Info Cabeçalho
                         pdf.set_font("Arial", size=10)
                         data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
                         pdf.cell(190, 7, txt=f"Data: {data_atual} | Estado: {estado}", ln=True)
-                        
-                        if cnpj and cnpj.strip() != "":
-                            pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                        
-                        if pagto and pagto.strip() != "":
-                            pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                        
+                        if cnpj: pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
+                        if pagto: pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
                         pdf.ln(5)
                         
-                        # Cabeçalho da Tabela
+                        # Tabela
                         pdf.set_fill_color(240, 240, 240)
                         pdf.set_font("Arial", "B", 8)
                         pdf.cell(30, 10, "Cod.", 1, 0, 'C', True)
@@ -1870,7 +1881,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         pdf.cell(27, 10, "Preco Un", 1, 0, 'C', True)
                         pdf.cell(28, 10, "Subtotal", 1, 1, 'C', True)
                         
-                        # Linhas da Tabela
                         pdf.set_font("Arial", size=7) 
                         for item in dados_pedido:
                             nome_limpo = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
@@ -1881,21 +1891,31 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             pdf.cell(27, 10, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
                             pdf.cell(28, 10, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
                         
-                        # Total Final
+                        # Rodapé de Valores
                         pdf.ln(5)
-                        pdf.set_font("Arial", "B", 11)
-                        pdf.cell(162, 10, "TOTAL DO PEDIDO:", 0, 0, 'R')
-                        pdf.cell(28, 10, f"R$ {total:,.2f}", 0, 1, 'C')
+                        pdf.set_font("Arial", "B", 10)
+                        pdf.cell(162, 8, "Total Bruto:", 0, 0, 'R')
+                        pdf.cell(28, 8, f"R$ {total_bruto:,.2f}", 0, 1, 'C')
+                        
+                        if desconto_p > 0:
+                            pdf.set_text_color(200, 0, 0)
+                            pdf.cell(162, 8, f"Desconto ({desconto_p}%):", 0, 0, 'R')
+                            pdf.cell(28, 8, f"- R$ {desconto_v:,.2f}", 0, 1, 'C')
+                            pdf.set_text_color(0, 0, 0)
+                            
+                        pdf.set_font("Arial", "B", 12)
+                        pdf.cell(162, 10, "TOTAL LÍQUIDO:", 0, 0, 'R')
+                        pdf.cell(28, 10, f"R$ {total_liq:,.2f}", 0, 1, 'C')
 
-                        # Aviso Legal (Rodapé)
+                        # Aviso Legal
                         pdf.ln(10)
                         pdf.set_font("Arial", "I", 8)
-                        aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                        aviso = u"*Simulação de valores. Sem validade fiscal ou reserva de estoque."
                         pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
                         
                         return pdf.output(dest='S').encode('latin-1')
 
-                    # --- COLETA DE DADOS ---
+                    # Coleta de itens (mesma lógica)
                     itens_para_pdf = []
                     for cat_n, subcats in categorias_produtos.items():
                         for sub_n, prods in subcats.items():
@@ -1905,26 +1925,26 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                     try:
                                         p_u = float(df_precos[df_precos['Estado'] == estado_sel][cfg["coluna"]].values[0])
                                         itens_para_pdf.append({
-                                            "codigo": cfg["cod"],
-                                            "nome": nome_ex,
-                                            "qtd_cx": q_cx,
-                                            "qtd_itens": q_cx * cfg["un_cx"],
-                                            "preco": p_u,
+                                            "codigo": cfg["cod"], "nome": nome_ex, "qtd_cx": q_cx,
+                                            "qtd_itens": q_cx * cfg["un_cx"], "preco": p_u,
                                             "subtotal": (p_u * cfg["un_cx"]) * q_cx
                                         })
-                                    except:
-                                        pass
+                                    except: pass
 
-                    # Gerar Bytes e Botão
-                    pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, estado_sel, cnpj_cliente, forma_pagamento)
+                    # Gerar PDF enviando as variáveis de desconto
+                    pdf_bytes = gerar_pdf(
+                        itens_para_pdf, total_pedido, perc_desconto, 
+                        valor_desconto, total_com_desconto, 
+                        estado_sel, cnpj_cliente, forma_pagamento
+                    )
                     
                     st.download_button(
-                        label="📄 Baixar Orçamento em PDF",
+                        label="📄 Baixar Orçamento com Desconto",
                         data=pdf_bytes,
                         file_name=f"Orcamento_{estado_sel}.pdf",
                         mime="application/pdf",
                         use_container_width=True,
-                        key=f"btn_pdf_final_{tabela_sel}_{estado_sel}_{total_pedido}"
+                        key=f"btn_pdf_{total_com_desconto}" # Key dinâmica para evitar erro
                     )
 
                 except Exception as e:
