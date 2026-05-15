@@ -769,18 +769,19 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.write("**💙 Papapá**")
         st.markdown("""
-            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">15 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">15 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">14 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">12 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">10 meses</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">12 meses</span></div>
         """, unsafe_allow_html=True)
 
+        st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
         st.write("**✨ Era Uma Vez**")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🥨 Salgadinhos</span><span class="unidade-valor">9 meses</span></div>
@@ -790,7 +791,6 @@ elif aba_selecionada == "📊 Políticas Comerciais":
         """, unsafe_allow_html=True)
 
         st.caption("❄️ Nenhuma linha necessita de refrigeração.")
-
         st.write("") 
 
         # 2. UNIDADES POR CAIXA
@@ -798,18 +798,19 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.write("**💙 Papapá**")
         st.markdown("""
-            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">6 un.</span></div>
-            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">12 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🥩 Papinhas de Carne</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🦷 Dentição</span><span class="unidade-valor">12 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">6 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">12 un.</span></div>
+            <div class="unidade-row"><span class="unidade-nome">🥣 Sopinhas</span><span class="unidade-valor">6 un.</span></div>
         """, unsafe_allow_html=True)
 
+        st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
         st.write("**✨ Era Uma Vez**")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🥨 Salgadinhos</span><span class="unidade-valor">18 un.</span></div>
