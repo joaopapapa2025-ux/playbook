@@ -261,6 +261,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
         """, unsafe_allow_html=True)
 
     wa_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733585.png"
+    url_avatar_padrao = "https://www.w3schools.com/howto/img_avatar.png"
 
     # FUNÇÃO INTERNA PARA RENDERIZAR CARDS
     def render_equipe(lista_membros):
@@ -273,14 +274,14 @@ if aba_selecionada == "🏠 Home (Equipe)":
                     link_wa = f"https://wa.me/55{num_limpo}"
                     
                     # Lógica da Foto com Fallback seguro
-                    estilo = f"background-image: url('{url_avatar_padrao}');" # Padrão inicial
+                    estilo = f"background-image: url('{url_avatar_padrao}');"
                     
                     if Path(m['foto']).exists():
                         try:
                             f_b64 = get_base64_of_bin_file(m['foto'])
                             estilo = f"background-image: url('data:image/jpeg;base64,{f_b64}');"
                         except:
-                            pass # Mantém o padrão se der erro no base64
+                            pass
                     
                     with cols[j]:
                         st.markdown(f"""
