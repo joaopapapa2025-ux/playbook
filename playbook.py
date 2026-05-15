@@ -795,6 +795,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         # 2. UNIDADES POR CAIXA
         st.subheader("📦 Unidades por Caixa")
+
+        st.write("**💙 Papapá**")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🍼 Yoguzinho</span><span class="unidade-valor">16 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">16 un.</span></div>
@@ -806,6 +808,10 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             <div class="unidade-row"><span class="unidade-nome">🍝 Macarrão</span><span class="unidade-valor">12 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">12 un.</span></div>
+        """, unsafe_allow_html=True)
+
+        st.write("**✨ Era Uma Vez**")
+        st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🥨 Salgadinhos</span><span class="unidade-valor">18 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍩 Biscoito Recheado</span><span class="unidade-valor">8 un.</span></div>
             <div class="unidade-row"><span class="unidade-nome">🧃 Sucos</span><span class="unidade-valor">27 un.</span></div>
