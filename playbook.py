@@ -1482,7 +1482,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     
     # --- BLOCO ATUALIZADO: FERRAMENTAS DE TRABALHO (3 COLUNAS) ---
     with st.container():
-        st.subheader("🛠️ Ferramentas de Trabalho (Daily)")
+        st.subheader("🛠️ Ferramentas de Trabalho - Inside Sales")
         col_v1, col_v2, col_v3 = st.columns(3)
         with col_v1:
             st.link_button("📦 Dibb (ERP)", "http://170.231.15.12:8080/web/view/app/ger/GER801V.php?term=3321245", use_container_width=True)
