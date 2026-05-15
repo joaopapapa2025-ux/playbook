@@ -1836,7 +1836,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             
             # Validação de pedido mínimo baseada no total bruto (ou líquido, como preferir)
             if total_com_desconto >= 800:
-                st.success("✅ Pedido validado!")
+                st.success("✅ Pedido acima do valor mínimo!")
             elif total_pedido > 0:
                 st.warning(f"Faltam R$ {800 - total_com_desconto:,.2f} para o mínimo.")
 
@@ -1939,7 +1939,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     )
                     
                     st.download_button(
-                        label="📄 Baixar Orçamento com Desconto",
+                        label="📄 Baixar Orçamento em PDF",
                         data=pdf_bytes,
                         file_name=f"Orcamento_{estado_sel}.pdf",
                         mime="application/pdf",
