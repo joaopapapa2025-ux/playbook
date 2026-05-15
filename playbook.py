@@ -766,6 +766,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         # 1. VALIDADES
         st.subheader("📅 Shelf Life (Validades)")
+        st.write("**💙 Papapá**")
         st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🍎 Papinhas de Fruta</span><span class="unidade-valor">16 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">👨‍🍳 La Chef</span><span class="unidade-valor">16 meses</span></div>
@@ -777,6 +778,9 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             <div class="unidade-row"><span class="unidade-nome">🌾 Cereal</span><span class="unidade-valor">12 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍪 Biscotti</span><span class="unidade-valor">10 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🥖 Palitinhos</span><span class="unidade-valor">9 meses</span></div>
+        """, unsafe_allow_html=True)
+            st.write("**✨ Era Uma Vez**")
+        st.markdown("""
             <div class="unidade-row"><span class="unidade-nome">🥨 Salgadinhos</span><span class="unidade-valor">9 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🍩 Biscoito Recheado</span><span class="unidade-valor">10 meses</span></div>
             <div class="unidade-row"><span class="unidade-nome">🧃 Sucos</span><span class="unidade-valor">8 meses</span></div>
