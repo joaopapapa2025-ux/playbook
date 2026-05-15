@@ -271,7 +271,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
                 if i + j < len(lista_membros):
                     m = lista_membros[i + j]
                     num_limpo = "".join(filter(str.isdigit, m['telefone']))
-                    link_wa = f"https://wa.me/55{num_limpo}"
+                    link_wa = f"https://web.whatsapp.com/send?phone=55{num_limpo}"
                     
                     # Lógica da Foto com Fallback seguro
                     estilo = f"background-image: url('{url_avatar_padrao}');"
