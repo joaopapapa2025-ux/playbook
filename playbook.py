@@ -1497,7 +1497,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     with st.container():
-        st.subheader("📝 Cadastro e Operação")
+        st.subheader("📝 Cadastro - Inside Sales")
         col1, col2, col3 = st.columns(3)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
@@ -1505,12 +1505,25 @@ elif aba_selecionada == "🔗 Links Úteis":
         with col2:
             st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
             st.caption("Acompanhamento da realização dos cadastros")
-        with col3:
-            st.link_button("📂 Ficha comercial de produtos", "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos&p=true&ct=1776191232287&or=Teams%2DHL&ga=1&LOF=1", use_container_width=True)
-            st.caption("Ficha comercial de produtos")
 
     st.markdown("---")
 
+    with st.container():
+        st.subheader("📝 Cadastro - Regionais e RCA")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.link_button("📄 Forms Cadastro", "https://statics.teams.cdn.office.net/evergreen-assets/safelinks/2/atp-safelinks.html", use_container_width=True)
+            st.caption("Novo cadastro e atualização de clientes")
+        with col2:
+            st.link_button("👀 Acompanhar Cadastros", "https://docs.google.com/spreadsheets/d/1KrwiEVyjguz8cPjnHsOM2ymbcP5aB2AfhTQczppvtpc/edit?gid=1200882492#gid=1200882492", use_container_width=True)
+            st.caption("Acompanhamento da realização dos cadastros")
+
+    with st.container():
+        st.subheader("📂 Ficha Comercial)
+        with col3:
+            st.link_button("📂 Ficha comercial de produtos", "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos&p=true&ct=1776191232287&or=Teams%2DHL&ga=1&LOF=1", use_container_width=True)
+            st.caption("Ficha comercial de produtos")
+    
     with st.container():
         st.subheader("📊 Dashboards de Gestão")
         st.link_button("📈 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
