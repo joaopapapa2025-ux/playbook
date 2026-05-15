@@ -187,7 +187,7 @@ st.divider()
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
-    st.header("👥 Nossa Equipe")
+    st.header("👥 Equipe - Inside Sales")
     st.write("Conheça o time Inside Sales da Papapá.")
 
     # ESTRUTURA CSS CORRIGIDA E COMPACTA
