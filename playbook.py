@@ -1498,7 +1498,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📝 Cadastro - Inside Sales")
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
             st.caption("Novo cadastro e atualização de clientes")
@@ -1510,7 +1510,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📝 Cadastro - Regionais e RCA")
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://statics.teams.cdn.office.net/evergreen-assets/safelinks/2/atp-safelinks.html", use_container_width=True)
             st.caption("Novo cadastro e atualização de clientes")
@@ -1520,7 +1520,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📂 Fichas Comerciais")
-        with col3:
+        with col1:
             st.link_button("📂 Ficha comercial de produtos", "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos&p=true&ct=1776191232287&or=Teams%2DHL&ga=1&LOF=1", use_container_width=True)
             st.caption("Ficha comercial de produtos")
     
