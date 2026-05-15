@@ -187,10 +187,10 @@ st.divider()
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
 ################################################################################
 if aba_selecionada == "🏠 Home (Equipe)":
-    st.header("👥 Equipe - Inside Sales")
-    st.write("Conheça o time Inside Sales da Papapá.")
+    st.header("👥 Ecossistema Comercial - Papapá")
+    st.write("Conheça o time que faz a operação acontecer.")
 
-    # ESTRUTURA CSS CORRIGIDA E COMPACTA
+    # ESTRUTURA CSS
     st.markdown("""
         <style>
         .team-card {
@@ -201,19 +201,19 @@ if aba_selecionada == "🏠 Home (Equipe)":
             text-align: center;
             margin-bottom: 20px; 
             border: 1px solid #eaeaea;
-            height: 350px; /* Altura reduzida para eliminar o espaço em branco */
+            height: 360px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; /* Centraliza o conteúdo para evitar vácuo */
+            justify-content: center;
             transition: transform 0.3s;
         }
         
         .team-card:hover { transform: translateY(-5px); }
 
         .photo-circle {
-            width: 125px; 
-            height: 125px; 
+            width: 120px; 
+            height: 120px; 
             border-radius: 50%;
             border: 4px solid #007bff; 
             margin-bottom: 10px;
@@ -223,14 +223,13 @@ if aba_selecionada == "🏠 Home (Equipe)":
             background-repeat: no-repeat;
         }
 
-        /* Ajustes Manuais de Enquadramento */
+        /* Ajustes de Enquadramento Específicos */
         .photo-joao-vitor { background-position: center 20%; }
         .photo-ana { background-position: center 10%; }
-        .photo-joao-paulo { background-position: center 10%; }
-        .photo-bernardo { background-position: center 10%; }
+        .photo-priscila { background-position: center 15%; }
 
-        .team-name { font-weight: bold; font-size: 1.1em; color: #333; margin-bottom: 2px; }
-        .team-role { color: #666; font-size: 0.9em; margin-bottom: 10px; font-weight: 500; font-style: italic; }
+        .team-name { font-weight: bold; font-size: 1.05em; color: #333; margin-bottom: 2px; }
+        .team-role { color: #666; font-size: 0.85em; margin-bottom: 10px; font-weight: 500; font-style: italic; min-height: 35px; }
         
         .contact-container {
             width: 100%;
@@ -241,7 +240,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
         .contact-link {
             text-decoration: none !important;
             color: #007bff !important;
-            font-size: 0.82em;
+            font-size: 0.78em;
             margin-bottom: 4px;
             display: flex;
             align-items: center;
@@ -249,65 +248,88 @@ if aba_selecionada == "🏠 Home (Equipe)":
             gap: 6px;
         }
         
-        .whatsapp-icon {
-            width: 16px;
-            height: 16px;
-            vertical-align: middle;
+        .whatsapp-icon { width: 14px; height: 14px; }
+        .section-title { 
+            background: #f0f2f6; 
+            padding: 10px; 
+            border-radius: 10px; 
+            margin: 20px 0; 
+            color: #1f3a5f;
+            font-weight: bold;
         }
         </style>
         """, unsafe_allow_html=True)
 
-    # Lista da equipe com dados oficiais
-    equipe = [
-        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe_foto": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
-        {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe_foto": "photo-ana", "telefone": "(41) 3797-6554", "email": "comercial3@papapa.com.br"},
-        {"nome": "Pedro Henrique Born", "cargo": "Analista - Crescimento", "foto": "Pedro.jpeg", "classe_foto": "photo-pedro", "telefone": "(41) 3797-6885", "email": "comercial5@papapa.com.br"},
-        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista - Desenvolvimento", "foto": "João Paulo.jpeg", "classe_foto": "photo-joao-paulo", "telefone": "(41) 99247-4213", "email": "comercial2@papapa.com.br"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe_foto": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe_foto": "photo-bernardo", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
-    ]
-    
     wa_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733585.png"
 
-    for i in range(0, len(equipe), 3):
-        cols = st.columns(3)
-        for j in range(3):
-            if i + j < len(equipe):
-                membro = equipe[i + j]
-                
-                # Limpeza do número para o link
-                numero_limpo = "".join(filter(str.isdigit, membro['telefone']))
-                link_whatsapp = f"https://wa.me/55{numero_limpo}"
-                
-                caminho_foto = membro['foto']
-                # Tenta carregar a imagem ou usa o avatar padrão
-                if Path(caminho_foto).exists() and Path(caminho_foto).stat().st_size > 0:
-                    try:
-                        foto_base64 = get_base64_of_bin_file(caminho_foto)
-                        ext = caminho_foto.split('.')[-1].lower()
-                        if ext == 'jpg': ext = 'jpeg'
-                        estilo_foto = f"background-image: url('data:image/{ext};base64,{foto_base64}');"
-                    except:
-                        estilo_foto = f"background-image: url('{img_avatar_html}');"
-                else:
-                    estilo_foto = f"background-image: url('{img_avatar_html}');"
+    # FUNÇÃO INTERNA PARA RENDERIZAR CARDS
+    def render_equipe(lista_membros):
+        for i in range(0, len(lista_membros), 3):
+            cols = st.columns(3)
+            for j in range(3):
+                if i + j < len(lista_membros):
+                    m = lista_membros[i + j]
+                    num_limpo = "".join(filter(str.isdigit, m['telefone']))
+                    link_wa = f"https://wa.me/55{num_limpo}"
+                    
+                    # Lógica da Foto
+                    if Path(m['foto']).exists():
+                        try:
+                            f_b64 = get_base64_of_bin_file(m['foto'])
+                            estilo = f"background-image: url('data:image/jpeg;base64,{f_b64}');"
+                        except: estilo = f"background-image: url('{img_avatar_html}');"
+                    else: estilo = f"background-image: url('{img_avatar_html}');"
 
-                with cols[j]:
-                    st.markdown(f"""
-                        <div class="team-card">
-                            <div class="photo-circle {membro['classe_foto']}" style="{estilo_foto}"></div>
-                            <div class="team-name">{membro['nome']}</div>
-                            <div class="team-role">{membro['cargo']}</div>
-                            <div class="contact-container">
-                                <a href="{link_whatsapp}" target="_blank" class="contact-link">
-                                    <img src="{wa_icon_url}" class="whatsapp-icon"> {membro['telefone']}
-                                </a>
-                                <a href="mailto:{membro['email']}" class="contact-link">
-                                    ✉️ {membro['email']}
-                                </a>
+                    with cols[j]:
+                        st.markdown(f"""
+                            <div class="team-card">
+                                <div class="photo-circle {m.get('classe', '')}" style="{estilo}"></div>
+                                <div class="team-name">{m['nome']}</div>
+                                <div class="team-role">{m['cargo']}</div>
+                                <div class="contact-container">
+                                    <a href="{link_wa}" target="_blank" class="contact-link">
+                                        <img src="{wa_icon_url}" class="whatsapp-icon"> {m['telefone']}
+                                    </a>
+                                    <a href="mailto:{m['email']}" class="contact-link">
+                                        ✉️ {m['email']}
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    """, unsafe_allow_html=True)
+                        """, unsafe_allow_html=True)
+
+    # --- SETOR 1: INSIDE SALES ---
+    st.markdown('<div class="section-title">⚡ Inside Sales</div>', unsafe_allow_html=True)
+    inside_sales = [
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
+        {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe": "photo-ana", "telefone": "(41) 3797-6554", "email": "comercial3@papapa.com.br"},
+        {"nome": "Pedro Henrique Born", "cargo": "Analista - Crescimento", "foto": "Pedro.jpeg", "classe": "", "telefone": "(41) 3797-6885", "email": "comercial5@papapa.com.br"},
+        {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista - Desenvolvimento", "foto": "João Paulo.jpeg", "classe": "", "telefone": "(41) 99247-4213", "email": "comercial2@papapa.com.br"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
+    ]
+    render_equipe(inside_sales)
+
+    st.markdown("---")
+
+    # --- SETOR 2: ADM VENDAS ---
+    st.markdown('<div class="section-title">📊 Administração de Vendas</div>', unsafe_allow_html=True)
+    adm_vendas = [
+        {"nome": "Priscila de Assis Lima", "cargo": "Analista de Adm Vendas", "foto": "Priscila.jpeg", "classe": "photo-priscila", "telefone": "(41) 98439-0737", "email": "Adm.vendas@papapa.com.br"}
+    ]
+    render_equipe(adm_vendas)
+
+    st.markdown("---")
+
+    # --- SETOR 3: GERENTES REGIONAIS ---
+    st.markdown('<div class="section-title">🌍 Gerentes Regionais</div>', unsafe_allow_html=True)
+    gerentes = [
+        {"nome": "Fernando Andrade", "cargo": "Key Account", "foto": "Fernando.jpeg", "classe": "", "telefone": "(11) 94831-0774", "email": "comercialsp3@papapa.com.br"},
+        {"nome": "Tiago Eleuterio", "cargo": "Regional NE", "foto": "Tiago.jpeg", "classe": "", "telefone": "(85) 98759-2781", "email": "comercialne@papapa.com.br"},
+        {"nome": "Renato Basso", "cargo": "Regional SP", "foto": "Renato.jpeg", "classe": "", "telefone": "(14) 98807-8888", "email": "comercialsp2@papapa.com.br"},
+        {"nome": "Elton Lopes", "cargo": "Regional NCOSE", "foto": "Elton.jpeg", "classe": "", "telefone": "(41) 99212-8370", "email": "comercialmg@papapa.com.br"},
+        {"nome": "Felipe Augustus", "cargo": "Regional SUL", "foto": "Felipe.jpeg", "classe": "", "telefone": "(17) 98206-1509", "email": "comercialsul@papapa.com.br"}
+    ]
+    render_equipe(gerentes)
     
 ################################################################################
 # --- MÓDULO 2: SIMULADOR DE BONIFICAÇÃO ---
