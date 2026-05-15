@@ -1842,7 +1842,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 try:
                     from fpdf import FPDF
                     import os
-                    import time
 
                     def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
                         pdf = FPDF()
@@ -1880,27 +1879,37 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         for item in dados_pedido:
                             nome_p = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
                             
-                            # Medir altura necessária para o nome do produto
-                            # Isso evita que o texto invada a célula do lado
-                            altura_celula = 10 
-                            # Se o nome for muito grande, a célula cresce
-                            if len(nome_p) > 55: altura_celula = 15
-
-                            x_pos = pdf.get_x()
-                            y_pos = pdf.get_y()
-
-                            pdf.cell(20, altura_celula, str(item['codigo']), 1, 0, 'C')
+                            # Lógica para calcular a altura da linha baseada no texto do produto
+                            largura_prod = 85
+                            altura_linha = 7 # Altura base de cada linha de texto
                             
-                            # Multi_cell para o produto não fugir da margem
-                            pdf.set_xy(x_pos + 20, y_pos)
-                            pdf.multi_cell(85, (altura_celula/2 if altura_celula > 10 else 10), nome_p, 1, 'L')
+                            # Divide o nome do produto em várias linhas se necessário
+                            linhas_texto = pdf.multi_cell(largura_prod, altura_linha, nome_p, split_only=True)
+                            num_linhas = len(linhas_texto)
+                            h_total = num_linhas * altura_linha
                             
-                            pdf.set_xy(x_pos + 105, y_pos)
-                            pdf.cell(12, altura_celula, str(item['qtd_cx']), 1, 0, 'C')
-                            pdf.cell(12, altura_celula, str(item['qtd_itens']), 1, 0, 'C')
-                            pdf.cell(30, altura_celula, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
-                            pdf.cell(31, altura_celula, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
+                            # Altura mínima da célula para não ficar achatado
+                            if h_total < 10: h_total = 10
+                            
+                            curr_x = pdf.get_x()
+                            curr_y = pdf.get_y()
+
+                            # Coluna Código
+                            pdf.cell(20, h_total, str(item['codigo']), 1, 0, 'C')
+                            
+                            # Coluna Produto (com quebra automática)
+                            pdf.multi_cell(largura_prod, h_total/num_linhas, nome_p, 1, 'L')
+                            
+                            # Posiciona para as próximas colunas
+                            pdf.set_xy(curr_x + 105, curr_y)
+                            
+                            # Restante das colunas com a mesma altura h_total
+                            pdf.cell(12, h_total, str(item['qtd_cx']), 1, 0, 'C')
+                            pdf.cell(12, h_total, str(item['qtd_itens']), 1, 0, 'C')
+                            pdf.cell(30, h_total, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
+                            pdf.cell(31, h_total, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
                         
+                        # Totais
                         pdf.ln(5)
                         pdf.set_font("Arial", "B", 10)
                         pdf.cell(159, 8, "Total Bruto:", 0, 0, 'R')
@@ -1940,8 +1949,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
                     pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, perc_desconto, valor_desconto, total_com_desconto, estado_sel, cnpj_cliente, forma_pagamento)
                     
-                    # Gerar uma chave única baseada no tempo para evitar o erro de 'Duplicate Key'
-                    chave_unica = f"btn_download_{int(time.time())}"
+                    # Chave única baseada nos dados do pedido para evitar erro de Duplicate Key
+                    id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
 
                     st.download_button(
                         label="📄 Baixar Orçamento em PDF",
@@ -1949,7 +1958,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         file_name=f"Orcamento_{estado_sel}.pdf",
                         mime="application/pdf",
                         use_container_width=True,
-                        key=chave_unica
+                        key=id_botao
                     )
                 except Exception as e:
                     st.error(f"Erro ao gerar PDF: {e}")
