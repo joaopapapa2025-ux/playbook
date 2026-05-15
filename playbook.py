@@ -860,6 +860,28 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.markdown("---")
 
+        # --- MODALIDADES REGIONAIS ---
+        st.subheader("💼 Modalidades de Pagamento - Regionais")
+        
+        st.info("💡 **Política Comercial:** Os prazos e condições para vendas via Gerentes Regionais são definidos **conforme negociação direta com o cliente** ou especificações contidas no pedido enviado.")
+
+        with st.expander("📝 Prazos e Condições Genéricas", expanded=False):
+            st.markdown("""
+            <div class="pagamento-texto">
+            • <b>Faturamento Direto:</b> Conforme acordado em contrato ou pedido.<br>
+            • <b>Análise de Crédito:</b> Sujeito à aprovação pelo financeiro conforme histórico do cliente.<br>
+            • <b>Flexibilidade:</b> Condições especiais para Redes e Key Accounts sob consulta.
+            </div>
+            """, unsafe_allow_html=True)
+            
+        st.markdown("""
+            <div style="background-color: #f0f2f6; padding: 15px; border-radius: 10px; border-left: 5px solid #1f3a5f;">
+                <p style="margin: 0; font-size: 14px; color: #1f3a5f;">
+                <b>Nota:</b> Toda e qualquer divergência nas modalidades de pagamento deve ser validada junto ao setor de <b>Administração de Vendas</b> antes da finalização do pedido.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+
         st.subheader("🔄 Trocas e Devoluções")
         st.warning("""
         **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
