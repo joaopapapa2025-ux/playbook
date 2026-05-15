@@ -884,6 +884,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.markdown('<div style="margin-top: 25px;"></div>', unsafe_allow_html=True)
 
+        st.markdown("---")
+
         st.subheader("🔄 Trocas e Devoluções")
         st.warning("""
         **Validade:** Troca aplicada apenas se o produto chegar com **menos de 60%** do Shelf Life total.
