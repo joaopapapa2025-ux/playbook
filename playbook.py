@@ -1535,7 +1535,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
     
     with st.container():
-        st.subheader("📊 Dashboards de Gestão")
+        st.subheader("📊 Dashboards - Inside Sales")
         st.link_button("📈 Dashboard Clientes", "https://dashboard-clientes-swsbdiavx4hfqvjbtcvafs.streamlit.app/", use_container_width=True)
         st.info("**Senha:** amamosnossosclientes")
 
