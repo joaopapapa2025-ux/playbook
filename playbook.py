@@ -317,7 +317,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
     # --- SETOR 2: ADM VENDAS ---
     st.markdown('<div class="section-title">📊 Administração de Vendas</div>', unsafe_allow_html=True)
     adm_vendas = [
-        {"nome": "Priscila de Assis Lima", "cargo": "Analista de Adm Vendas", "foto": "Priscila.jpeg", "classe": "photo-priscila", "telefone": "(41) 98439-0737", "email": "Adm.vendas@papapa.com.br"}
+        {"nome": "Priscila de Assis Lima", "cargo": "Analista de Adm Vendas", "foto": "Priscila.jpeg", "classe": "photo-priscila", "telefone": "(41) 98439-0737", "email": "adm.vendas@papapa.com.br"}
     ]
     render_equipe(adm_vendas)
 
