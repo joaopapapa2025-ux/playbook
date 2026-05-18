@@ -1704,7 +1704,7 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
-# Dicionário organizado para facilitar a iteração por categorias na interface
+# Dicionário REORDENADO conforme a nova sequência solicitada
 categorias_produtos = {
     "PAPAPÁ": {
         "PAPINHA DE CARNE": {
@@ -1811,7 +1811,6 @@ if aba_selecionada == "🏠 Home":
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
     
-    # IMPORTANTE: Inicializamos as variáveis aqui para evitar NameError no código do PDF
     total_pedido = 0.0
     df_precos = None
 
@@ -1842,7 +1841,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     c_cnpj, c_pag = st.columns(2)
     
     with c_cnpj:
-        # label_visibility="visible" é o padrão, mas clearable=True adiciona o 'x'
         cnpj_digitado = st.text_input(
             "CNPJ do Cliente:", 
             placeholder="Digite apenas números",
@@ -1856,7 +1854,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     with c_pag:
         opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
-        # Selectbox não tem 'x' nativo, mas ao deixar o index=0 como "", ele funciona como o estado vazio
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
 
     st.divider()
@@ -1864,8 +1861,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     # --- SEÇÃO: SELEÇÃO DE TABELA E ESTADO ---
     c1, c2 = st.columns(2)
     with c1:
-        # Para selectboxes, o 'x' para limpar geralmente não existe, 
-        # o padrão é selecionar a opção vazia ou a primeira da lista.
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
     with c2:
         lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
@@ -1880,10 +1875,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.subheader("Itens do Pedido")
             
             for cat_principal, subcategorias in categorias_produtos.items():
-                st.markdown(f"#### {cat_principal}")
+                st.markdown(f"### {cat_principal}")
                 
                 for sub_cat, produtos in subcategorias.items():
-                    # Adicionado o ":" no final da linha abaixo:
                     with st.expander(sub_cat, expanded=True):
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
@@ -1905,7 +1899,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 st.write(f"{un_cx} un/cx")
                                 
                             with col_qtd:
-                                # Input de quantidade
                                 qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
                                 
                             with col_sub:
@@ -1953,7 +1946,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             pdf.ln(10)
                         
                         pdf.set_font("Arial", "B", 16)
-                        pdf.cell(190, 10, txt=u"Orçamento de Pedido - Papapá - Era Uma Vez", ln=True, align='C')
+                        pdf.cell(190, 10, txt="Orcamento de Pedido - Papapa - Era Uma Vez", ln=True, align='C')
                         pdf.ln(5)
                         
                         pdf.set_font("Arial", size=10)
@@ -1966,8 +1959,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         # Cabeçalho da Tabela
                         pdf.set_fill_color(240, 240, 240)
                         pdf.set_font("Arial", "B", 8)
-                        pdf.cell(20, 10, "Cod.", 1, 0, 'C', True)
-                        pdf.cell(85, 10, "Produto", 1, 0, 'C', True)
+                        pdf.cell(25, 10, "Cod.", 1, 0, 'C', True) # Aumentado para comportar EAN de 14 dígitos
+                        pdf.cell(80, 10, "Produto", 1, 0, 'C', True)
                         pdf.cell(12, 10, "Cx", 1, 0, 'C', True)
                         pdf.cell(12, 10, "Un", 1, 0, 'C', True)
                         pdf.cell(30, 10, "Preco Un", 1, 0, 'C', True)
@@ -1977,23 +1970,20 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         for item in dados_pedido:
                             nome_p = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
                             
-                            # Lógica para calcular a altura da linha baseada no texto do produto
-                            largura_prod = 85
-                            altura_linha = 7 # Altura base de cada linha de texto
+                            largura_prod = 80
+                            altura_linha = 7
                             
-                            # Divide o nome do produto em várias linhas se necessário
                             linhas_texto = pdf.multi_cell(largura_prod, altura_linha, nome_p, split_only=True)
                             num_linhas = len(linhas_texto)
                             h_total = num_linhas * altura_linha
                             
-                            # Altura mínima da célula para não ficar achatado
                             if h_total < 10: h_total = 10
                             
                             curr_x = pdf.get_x()
                             curr_y = pdf.get_y()
 
-                            # Coluna Código
-                            pdf.cell(20, h_total, str(item['codigo']), 1, 0, 'C')
+                            # Coluna Código (Tratado como string pura)
+                            pdf.cell(25, h_total, str(item['codigo']), 1, 0, 'C')
                             
                             # Coluna Produto (com quebra automática)
                             pdf.multi_cell(largura_prod, h_total/num_linhas, nome_p, 1, 'L')
@@ -2001,7 +1991,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             # Posiciona para as próximas colunas
                             pdf.set_xy(curr_x + 105, curr_y)
                             
-                            # Restante das colunas com a mesma altura h_total
+                            # Restante das colunas
                             pdf.cell(12, h_total, str(item['qtd_cx']), 1, 0, 'C')
                             pdf.cell(12, h_total, str(item['qtd_itens']), 1, 0, 'C')
                             pdf.cell(30, h_total, f"R$ {item['preco']:,.2f}", 1, 0, 'C')
@@ -2025,7 +2015,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
                         pdf.ln(10)
                         pdf.set_font("Arial", "I", 8)
-                        aviso = u"*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+                        aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
                         pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
                         
                         return pdf.output(dest='S').encode('latin-1')
@@ -2039,15 +2029,17 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                     try:
                                         p_u = float(df_precos[df_precos['Estado'] == estado_sel][cfg["coluna"]].values[0])
                                         itens_para_pdf.append({
-                                            "codigo": cfg["cod"], "nome": nome_ex, "qtd_cx": q_cx,
-                                            "qtd_itens": q_cx * cfg["un_cx"], "preco": p_u,
+                                            "codigo": cfg["cod"], 
+                                            "nome": nome_ex, 
+                                            "qtd_cx": q_cx,
+                                            "qtd_itens": q_cx * cfg["un_cx"], 
+                                            "preco": p_u,
                                             "subtotal": (p_u * cfg["un_cx"]) * q_cx
                                         })
                                     except: pass
 
                     pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, perc_desconto, valor_desconto, total_com_desconto, estado_sel, cnpj_cliente, forma_pagamento)
                     
-                    # Chave única baseada nos dados do pedido para evitar erro de Duplicate Key
                     id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
 
                     st.download_button(
