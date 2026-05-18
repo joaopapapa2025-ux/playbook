@@ -1759,10 +1759,10 @@ categorias_produtos = {
             "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
         },
         "SOPINHA": {
-            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5610", "ipi": 0.0},
-            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5634", "ipi": 0.0},
-            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5627", "ipi": 0.0},
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5603", "ipi": 0.0},
+            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Sopinha", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5610", "ipi": 0.0},
+            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Sopinha", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5634", "ipi": 0.0},
+            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Sopinha", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5627", "ipi": 0.0},
+            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Sopinha", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5603", "ipi": 0.0},
         }
     },
     "ERA UMA VEZ": {
