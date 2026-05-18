@@ -1689,17 +1689,19 @@ import os
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "Tabela Especial e Farma": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
-    "Tabela Especial e Farma V": "0325FARMA + ESPECIAL_V.xlsx",
-    "Tabela Especial e Farma X": "0325FARMA + ESPECIAL_X.xlsx",
-    "Tabela Especial Rede": "0325ESPECIAL_REDE.xlsx",
-    "Tabela Distribuidor": "0325DISTRIBUIDOR.xlsx",
-    "Tabela Distribuidor V": "0325DISTRIBUIDOR_V.xlsx",
-    "Tabela Distribuidor X": "0325DISTRIBUIDOR_X.xlsx",
-    "Tabela Varejo": "0325VAREJO.xlsx",
-    "Tabela Varejo V": "0325VAREJO_V.xlsx",
-    "Tabela Varejo X": "0325VAREJO_X.xlsx",
-    "Tabela C": "0325TABELA_C.xlsx"
+    "ESPECIAL": "0325E_PC reajuste abril26.xlsx",
+    "ESPECIAL REDE (-10%)": "0325ER_PC reajuste abril26.xlsx",
+    "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
+    "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
+    "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
+    "CASH AND CARRY 0": "0325C_PC reajuste abril26 - Era uma Vez.xlsx",
+    "CASH AND CARRY V": "0325Cv_PC reajuste abril26 - Era uma Vez.xlsx",
+    "DISTRIBUIDOR 0": "0325D_PC reajuste abril26 - Era uma Vez.xlsx",
+    "DISTRIBUIDOR V": "0325Dv_PC reajuste abril26 - Era uma Vez.xlsx",
+    "DISTRIBUIDOR X": "0325Dx_PC reajuste abril26 - Era uma Vez.xlsx",
+    "VAREJO 0": "0325V_PC reajuste abril26 - Era uma vez.xlsx",
+    "VAREJO V": "0325Vv_PC reajustes abril26 - Era uma Vez.xlsx",
+    "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
 # Dicionário organizado para facilitar a iteração por categorias na interface
