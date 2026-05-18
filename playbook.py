@@ -1704,12 +1704,13 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
-# Dicionário REORDENADO e mapeado com as abas de ST corretas do Excel
+# Dicionário CORRIGIDO e mapeado com as abas de ST corretas do Excel
 categorias_produtos = {
     "PAPAPÁ": {
         "PAPINHA DE CARNE": {
-            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5313", "ipi": 0.0},
-            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5320", "ipi": 0.0},
+            # Corrigido: Pouch Carne não tem aba de ST (ST zerada na tabela)
+            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5313", "ipi": 0.0},
+            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
         },
         "YOGUZINHO": {
             "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5563", "ipi": 0.0},
@@ -1733,8 +1734,9 @@ categorias_produtos = {
             "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
         },
         "MACARRÃO": {
-            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Massas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
-            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Massas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
+            # Ajustado de "Massas" para "Papapasta" que é o nome real da coluna no Excel
+            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
+            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
         },
         "LA CHEF": {
             "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
@@ -1742,9 +1744,11 @@ categorias_produtos = {
             "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
         },
         "CEREAL": {
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P. Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
+            # Corrigido: Removido o ponto inicial da coluna e corrigida a aba_st para "ST CEREAL"
+            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
+            # Corrigido: Removido o ponto inicial da coluna
+            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
             "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
         },
         "BISCOTTI": {
@@ -1763,13 +1767,15 @@ categorias_produtos = {
     },
     "ERA UMA VEZ": {
         "SALGADINHOS": {
-            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5670", "ipi": 0.0},
-            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5671", "ipi": 0.0},
-            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5673", "ipi": 0.0},
+            # Corrigido: un_cx ajustado para 16 conforme aba Tabelas do Excel
+            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5670", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5671", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5673", "ipi": 0.0},
         },
         "BISCOITO RECHEADO": {
-            "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 8, "cod": "5677", "ipi": 0.0},
-            "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 8, "cod": "5678", "ipi": 0.0},
+            # Corrigido: un_cx ajustado para 14 conforme aba Tabelas do Excel
+            "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 14, "cod": "5677", "ipi": 0.0},
+            "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 14, "cod": "5678", "ipi": 0.0},
         },
         "SUCOS": {
             "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5680", "ipi": 0.0},
@@ -1793,9 +1799,10 @@ categorias_produtos = {
             "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.0},
         },
         "BOWLS": {
-            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.0},
-            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.0},
-            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.0},
+            # Corrigido: Alterado para "Puer. Bolw" espelhando o erro de digitação do Excel para dar match correto
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.0},
         },
         "PRATINHOS": {
             "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.0},
