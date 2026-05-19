@@ -2018,10 +2018,10 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
 
-            ############################################################################
+############################################################################
 # GERADOR DE PDF
 ############################################################################
-if total_pedido > 0:
+if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals() and total_pedido > 0:
     try:
         from fpdf import FPDF
         import os
@@ -2202,5 +2202,6 @@ if total_pedido > 0:
 
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
-else:
+
+elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
