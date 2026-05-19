@@ -2019,144 +2019,188 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
 
             ############################################################################
-            # GERADOR DE PDF
-            ############################################################################
-            if total_pedido > 0:
-                try:
-                    from fpdf import FPDF
-                    import os
+# GERADOR DE PDF
+############################################################################
+if total_pedido > 0:
+    try:
+        from fpdf import FPDF
+        import os
 
-                    def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
-                        pdf = FPDF()
-                        pdf.add_page()
+        def texto_pdf(txt):
+            return str(txt).encode("latin-1", "ignore").decode("latin-1")
 
-                        logo_path = "Papapa-azul.png"
-                        if os.path.exists(logo_path):
-                            pdf.image(logo_path, x=80, y=12, w=50)
-                            pdf.ln(35) 
-                        else:
-                            pdf.ln(10)
-                        
-                        pdf.set_font("Arial", "B", 16)
-                        pdf.cell(190, 10, txt="Orcamento de Pedido - Papapa - Era Uma Vez", ln=True, align='C')
-                        pdf.ln(5)
-                        
-                        pdf.set_font("Arial", size=10)
-                        data_atual = pd.to_datetime('today').strftime('%d/%m/%Y')
-                        pdf.cell(190, 7, txt=f"Data: {data_atual} | Estado: {estado} | Regime Simples: {regime_simples}", ln=True)
-                        if cnpj: pdf.cell(190, 7, txt=f"CNPJ Cliente: {cnpj}", ln=True)
-                        if pagto: pdf.cell(190, 7, txt=f"Forma de Pagamento: {pagto}", ln=True)
-                        pdf.ln(5)
-                        
-                        # Cabeçalho da Tabela
-                        pdf.set_fill_color(240, 240, 240)
-                        pdf.set_font("Arial", "B", 8)
-                        pdf.cell(20, 10, "Cod.", 1, 0, 'C', True)
-                        pdf.cell(75, 10, "Produto", 1, 0, 'C', True)
-                        pdf.cell(10, 10, "Cx", 1, 0, 'C', True)
-                        pdf.cell(15, 10, "ST/Cx", 1, 0, 'C', True)
-                        pdf.cell(15, 10, "IPI/Cx", 1, 0, 'C', True)
-                        pdf.cell(25, 10, "Preco Cx Tot", 1, 0, 'C', True)
-                        pdf.cell(30, 10, "Subtotal", 1, 1, 'C', True)
-                        
-                        pdf.set_font("Arial", size=7) 
-                        for item in dados_pedido:
-                            nome_p = item['nome'].encode('latin-1', 'ignore').decode('latin-1')
-                            
-                            largura_prod = 75
-                            altura_linha = 7
-                            
-                            linhas_texto = pdf.multi_cell(largura_prod, altura_linha, nome_p, split_only=True)
-                            num_linhas = len(linhas_texto)
-                            h_total = num_linhas * altura_linha
-                            
-                            if h_total < 10: h_total = 10
-                            
-                            curr_x = pdf.get_x()
-                            curr_y = pdf.get_y()
+        def moeda_pdf(valor):
+            return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
-                            # Coluna Código
-                            pdf.cell(20, h_total, str(item['codigo']), 1, 0, 'C')
-                            
-                            # Coluna Produto (com quebra automática)
-                            pdf.multi_cell(largura_prod, h_total/num_linhas, nome_p, 1, 'L')
-                            
-                            # Posiciona para as próximas colunas
-                            pdf.set_xy(curr_x + 95, curr_y)
-                            
-                            # Restante das colunas
-                            pdf.cell(10, h_total, str(item['qtd_cx']), 1, 0, 'C')
-                            pdf.cell(15, h_total, f"R$ {item['st_cx']:,.2f}", 1, 0, 'C')
-                            pdf.cell(15, h_total, f"R$ {item['ipi_cx']:,.2f}", 1, 0, 'C')
-                            pdf.cell(25, h_total, f"R$ {item['preco_cx_tot']:,.2f}", 1, 0, 'C')
-                            pdf.cell(30, h_total, f"R$ {item['subtotal']:,.2f}", 1, 1, 'C')
-                        
-                        # Totais
-                        pdf.ln(5)
-                        pdf.set_font("Arial", "B", 10)
-                        pdf.cell(160, 8, "Total Bruto:", 0, 0, 'R')
-                        pdf.cell(30, 8, f"R$ {total_bruto:,.2f}", 0, 1, 'C')
-                        
-                        if desconto_p > 0:
-                            pdf.set_text_color(200, 0, 0)
-                            pdf.cell(160, 8, f"Desconto ({desconto_p}%):", 0, 0, 'R')
-                            pdf.cell(30, 8, f"- R$ {desconto_v:,.2f}", 0, 1, 'C')
-                            pdf.set_text_color(0, 0, 0)
-                            
-                        pdf.set_font("Arial", "B", 12)
-                        pdf.cell(160, 10, "TOTAL LÍQUIDO:", 0, 0, 'R')
-                        pdf.cell(30, 10, f"R$ {total_liq:,.2f}", 0, 1, 'C')
+        def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
+            pdf = FPDF()
+            pdf.set_auto_page_break(auto=True, margin=15)
+            pdf.add_page()
 
-                        pdf.ln(10)
-                        pdf.set_font("Arial", "I", 8)
-                        aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
-                        pdf.multi_cell(190, 5, txt=aviso.encode('latin-1', 'ignore').decode('latin-1'), align='C')
-                        
-                        return pdf.output(dest='S').encode('latin-1')
+            logo_path = "Papapa-azul.png"
+            if os.path.exists(logo_path):
+                pdf.image(logo_path, x=80, y=12, w=50)
+                pdf.ln(35)
+            else:
+                pdf.ln(10)
 
-                    itens_para_pdf = []
-                    for cat_n, subcats in categorias_produtos.items():
-                        for sub_n, prods in subcats.items():
-                            for nome_ex, cfg in prods.items():
-                                q_cx = st.session_state.get(f"sim_qtd_{nome_ex}", 0)
-                                if q_cx > 0:
-                                    try:
-                                        # Recalcula os componentes para salvar no PDF de forma idêntica
-                                        p_u = float(df_precos[df_precos['Estado'] == estado_sel][cfg["coluna"]].values[0])
-                                        v_cx_b = p_u * cfg["un_cx"]
-                                        
-                                        st_cx = 0.0
-                                        if cfg["aba_st"] and cfg["aba_st"] in dicionario_st:
-                                            col_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-                                            st_cx = float(dicionario_st[cfg["aba_st"]][dicionario_st[cfg["aba_st"]]['Estado'] == estado_sel][col_tipo].values[0])
-                                        
-                                        ipi_cx = v_cx_b * cfg.get("ipi", 0.0)
-                                        cx_tot = v_cx_b + st_cx + ipi_cx
+            pdf.set_font("Arial", "B", 16)
+            pdf.cell(190, 10, txt=texto_pdf("Orçamento de Pedido - Papapá - Era Uma Vez"), ln=True, align="C")
+            pdf.ln(5)
 
-                                        itens_para_pdf.append({
-                                            "codigo": cfg["cod"], 
-                                            "nome": nome_ex, 
-                                            "qtd_cx": q_cx,
-                                            "st_cx": st_cx,
-                                            "ipi_cx": ipi_cx,
-                                            "preco_cx_tot": cx_tot,
-                                            "subtotal": cx_tot * q_cx
-                                        })
-                                    except: pass
+            pdf.set_font("Arial", size=10)
+            data_atual = pd.to_datetime("today").strftime("%d/%m/%Y")
 
-                    pdf_bytes = gerar_pdf(itens_para_pdf, total_pedido, perc_desconto, valor_desconto, total_com_desconto, estado_sel, cnpj_cliente, forma_pagamento)
-                    
-                    id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
+            pdf.cell(190, 7, txt=texto_pdf(f"Data: {data_atual}"), ln=True)
+            pdf.cell(190, 7, txt=texto_pdf(f"Estado: {estado}"), ln=True)
 
-                    st.download_button(
-                        label="📄 Baixar Orçamento em PDF",
-                        data=pdf_bytes,
-                        file_name=f"Orcamento_{estado_sel}.pdf",
-                        mime="application/pdf",
-                        use_container_width=True,
-                        key=id_botao
-                    )
-                except Exception as e:
-                    st.error(f"Erro ao gerar PDF: {e}")
-    else:
-        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
+            if cnpj and str(cnpj).strip():
+                pdf.cell(190, 7, txt=texto_pdf(f"CNPJ Cliente: {cnpj}"), ln=True)
+
+            if pagto and str(pagto).strip():
+                pdf.cell(190, 7, txt=texto_pdf(f"Forma de Pagamento: {pagto}"), ln=True)
+
+            pdf.ln(5)
+
+            # Larguras ajustadas para caber código longo e manter a tabela respirando
+            w_cod = 32
+            w_prod = 68
+            w_qtd_cx = 18
+            w_qtd_itens = 22
+            w_preco_unit = 25
+            w_subtotal = 25
+            altura_header = 10
+            altura_linha = 6
+
+            # Cabeçalho da tabela
+            pdf.set_fill_color(240, 240, 240)
+            pdf.set_font("Arial", "B", 8)
+
+            pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
+            pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
+            pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
+            pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
+            pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
+            pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
+
+            pdf.set_font("Arial", size=7)
+
+            for item in dados_pedido:
+                nome_p = texto_pdf(item["nome"])
+                codigo = texto_pdf(item["codigo"])
+
+                linhas_produto = pdf.multi_cell(w_prod, altura_linha, nome_p, split_only=True)
+                num_linhas = max(1, len(linhas_produto))
+                h_total = max(10, num_linhas * altura_linha)
+
+                if pdf.get_y() + h_total > 275:
+                    pdf.add_page()
+
+                    pdf.set_fill_color(240, 240, 240)
+                    pdf.set_font("Arial", "B", 8)
+                    pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
+                    pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
+                    pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
+                    pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
+                    pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
+                    pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
+                    pdf.set_font("Arial", size=7)
+
+                curr_x = pdf.get_x()
+                curr_y = pdf.get_y()
+
+                pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
+
+                pdf.multi_cell(w_prod, h_total / num_linhas, nome_p, 1, "L")
+
+                pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
+
+                pdf.cell(w_qtd_cx, h_total, str(item["qtd_cx"]), 1, 0, "C")
+                pdf.cell(w_qtd_itens, h_total, str(item["qtd_itens"]), 1, 0, "C")
+                pdf.cell(w_preco_unit, h_total, moeda_pdf(item["preco_unit_total"]), 1, 0, "C")
+                pdf.cell(w_subtotal, h_total, moeda_pdf(item["subtotal"]), 1, 1, "C")
+
+            # Totais
+            pdf.ln(5)
+            pdf.set_font("Arial", "B", 10)
+            pdf.cell(160, 8, "Total Bruto:", 0, 0, "R")
+            pdf.cell(30, 8, moeda_pdf(total_bruto), 0, 1, "C")
+
+            if desconto_p > 0:
+                pdf.set_text_color(200, 0, 0)
+                pdf.cell(160, 8, f"Desconto ({desconto_p}%):", 0, 0, "R")
+                pdf.cell(30, 8, f"- {moeda_pdf(desconto_v)}", 0, 1, "C")
+                pdf.set_text_color(0, 0, 0)
+
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(160, 10, texto_pdf("TOTAL LÍQUIDO:"), 0, 0, "R")
+            pdf.cell(30, 10, moeda_pdf(total_liq), 0, 1, "C")
+
+            pdf.ln(10)
+            pdf.set_font("Arial", "I", 8)
+            aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+            pdf.multi_cell(190, 5, txt=texto_pdf(aviso), align="C")
+
+            return pdf.output(dest="S").encode("latin-1")
+
+        itens_para_pdf = []
+
+        for cat_n, subcats in categorias_produtos.items():
+            for sub_n, prods in subcats.items():
+                for nome_ex, cfg in prods.items():
+                    q_cx = st.session_state.get(f"sim_qtd_{nome_ex}", 0)
+
+                    if q_cx > 0:
+                        try:
+                            p_u = buscar_valor_linha(df_precos, estado_sel, cfg["coluna"])
+                            v_cx_b = p_u * cfg["un_cx"]
+
+                            st_cx = 0.0
+                            if cfg["aba_st"] and cfg["aba_st"] in dicionario_st:
+                                col_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+                                st_cx = buscar_valor_linha(dicionario_st[cfg["aba_st"]], estado_sel, col_tipo)
+
+                            ipi_cx = v_cx_b * cfg.get("ipi", 0.0)
+                            cx_tot = v_cx_b + st_cx + ipi_cx
+
+                            qtd_itens = q_cx * cfg["un_cx"]
+                            preco_unit_total = cx_tot / cfg["un_cx"] if cfg["un_cx"] else 0.0
+
+                            itens_para_pdf.append({
+                                "codigo": cfg["cod"],
+                                "nome": nome_ex,
+                                "qtd_cx": q_cx,
+                                "qtd_itens": qtd_itens,
+                                "preco_unit_total": preco_unit_total,
+                                "subtotal": cx_tot * q_cx
+                            })
+
+                        except:
+                            pass
+
+        pdf_bytes = gerar_pdf(
+            itens_para_pdf,
+            total_pedido,
+            perc_desconto,
+            valor_desconto,
+            total_com_desconto,
+            estado_sel,
+            cnpj_cliente,
+            forma_pagamento
+        )
+
+        id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
+
+        st.download_button(
+            label="📄 Baixar Orçamento em PDF",
+            data=pdf_bytes,
+            file_name=f"Orcamento_{estado_sel}.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+            key=id_botao
+        )
+
+    except Exception as e:
+        st.error(f"Erro ao gerar PDF: {e}")
+else:
+    st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
