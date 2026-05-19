@@ -1684,7 +1684,7 @@ from fpdf import FPDF
 import os
 
 ################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS (VERSÃO CORRIGIDA) ---
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
 
 mapa_tabelas = {
@@ -1704,472 +1704,278 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
-################################################################################
-# --- DICIONÁRIO DE PRODUTOS ---
-################################################################################
-
+# Dicionário CORRIGIDO e mapeado com as abas de ST corretas do Excel
 categorias_produtos = {
-
     "PAPAPÁ": {
-
-        "CEREAL": {
-
-            # CEREAIS 170G SABORES
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {
-                "coluna": "P Cereal 170g Sache sabores",
-                "aba_st": "ST CEREAL SABOR POUCH 170",
-                "un_cx": 12,
-                "cod": "5402",
-                "ipi": 0.0
-            },
-
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {
-                "coluna": "P Cereal 170g Sache sabores",
-                "aba_st": "ST CEREAL SABOR POUCH 170",
-                "un_cx": 12,
-                "cod": "5419",
-                "ipi": 0.0
-            },
-
-            # MULTICEREAIS 170G
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {
-                "coluna": "P Cereal 170g Sache MULTI",
-                "aba_st": "ST MULTI 170 POUCH",
-                "un_cx": 12,
-                "cod": "5429",
-                "ipi": 0.0
-            },
-
-            # MULTICEREAIS 500G
-            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {
-                "coluna": "MULTI sache 500 g",
-                "aba_st": "ST MULTI 500 POUCH",
-                "un_cx": 12,
-                "cod": "5399",
-                "ipi": 0.0
-            },
+        "PAPINHA DE CARNE": {
+            # Corrigido: Pouch Carne não tem aba de ST (ST zerada na tabela)
+            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5313", "ipi": 0.0},
+            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
         },
-
+        "YOGUZINHO": {
+            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5563", "ipi": 0.0},
+            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5570", "ipi": 0.0},
+        },
+        "PAPINHA DE FRUTA": {
+            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
+            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908736", "ipi": 0.0},
+            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908712", "ipi": 0.0},
+            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908750", "ipi": 0.0},
+            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "27898994908757", "ipi": 0.0},
+            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5306", "ipi": 0.0},
+        },
+        "PALITINHO": {
+            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5085", "ipi": 0.0},
+            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5078", "ipi": 0.0},
+            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5061", "ipi": 0.0},
+        },
+        "DENTIÇÃO": {
+            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8774", "ipi": 0.0},
+            "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
+        },
+        "MACARRÃO": {
+            # Ajustado de "Massas" para "Papapasta" que é o nome real da coluna no Excel
+            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
+            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
+        },
+        "LA CHEF": {
+            "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
+            "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5269", "ipi": 0.0},
+            "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
+        },
+        "CEREAL": {
+            # Corrigido: Removido o ponto inicial da coluna e corrigida a aba_st para "ST CEREAL"
+            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
+            # Corrigido: Removido o ponto inicial da coluna
+            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
+        },
+        "BISCOTTI": {
+            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5375", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5351", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5368", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5597", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
+        },
         "SOPINHA": {
-
-            # IMPORTANTE:
-            # SOPINHAS NÃO POSSUEM ST NA TABELA VAREJO 0 PR
-            # POR ISSO aba_st = None
-
-            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {
-                "coluna": "Sopinha Papapá",
-                "aba_st": None,
-                "un_cx": 6,
-                "cod": "5610",
-                "ipi": 0.0
-            },
-
-            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {
-                "coluna": "Sopinha Papapá",
-                "aba_st": None,
-                "un_cx": 6,
-                "cod": "5634",
-                "ipi": 0.0
-            },
-
-            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {
-                "coluna": "Sopinha Papapá",
-                "aba_st": None,
-                "un_cx": 6,
-                "cod": "5627",
-                "ipi": 0.0
-            },
-
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {
-                "coluna": "Sopinha Papapá",
-                "aba_st": None,
-                "un_cx": 6,
-                "cod": "5603",
-                "ipi": 0.0
-            },
+            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Sopinha Papapá", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5610", "ipi": 0.0},
+            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Sopinha Papapá", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5634", "ipi": 0.0},
+            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Sopinha Papapá", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5627", "ipi": 0.0},
+            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Sopinha Papapá", "aba_st": "ST SOPINHA", "un_cx": 6, "cod": "5603", "ipi": 0.0},
+        }
+    },
+    "ERA UMA VEZ": {
+        "SALGADINHOS": {
+            # Corrigido: un_cx ajustado para 16 conforme aba Tabelas do Excel
+            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5670", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5671", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 16, "cod": "5673", "ipi": 0.0},
+        },
+        "BISCOITO RECHEADO": {
+            # Corrigido: un_cx ajustado para 14 conforme aba Tabelas do Excel
+            "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 14, "cod": "5677", "ipi": 0.0},
+            "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 14, "cod": "5678", "ipi": 0.0},
+        },
+        "SUCOS": {
+            "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5680", "ipi": 0.0},
+            "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5681", "ipi": 0.0},
+            "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5682", "ipi": 0.0},
+            "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5683", "ipi": 0.0},
+        },
+        "ACHOCOLATADO": {
+            "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "aba_st": None, "un_cx": 27, "cod": "5310", "ipi": 0.0},
+        }
+    },
+    "PUERICULTURA": {
+        "TALHERES": {
+            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.15},
+            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.15},
+            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.15},
+        },
+        "BABADORES": {
+            "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5733", "ipi": 0.0},
+            "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5740", "ipi": 0.0},
+            "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.0},
+        },
+        "BOWLS": {
+            # Corrigido: Alterado para "Puer. Bolw" espelhando o erro de digitação do Excel para dar match correto
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.0},
+        },
+        "PRATINHOS": {
+            "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.0},
+            "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5689", "ipi": 0.0},
+            "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5696", "ipi": 0.0},
         }
     }
 }
 
-################################################################################
-# --- STREAMLIT ---
-################################################################################
-
 if aba_selecionada == "🏠 Home":
-
     st.write("Bem-vindo ao Playbook")
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
-
     st.header("🛒 Simulador de Pedidos")
-
+    
     total_pedido = 0.0
+    df_precos = None
 
-    ############################################################################
-    # --- FUNÇÕES AUXILIARES ---
-    ############################################################################
-
-    def limpar_numero(valor):
-
-        if pd.isna(valor):
-            return 0.0
-
-        if isinstance(valor, str):
-
-            valor = (
-                valor.replace("R$", "")
-                .replace(".", "")
-                .replace(",", ".")
-                .strip()
-            )
-
-        try:
-            return float(valor)
-        except:
-            return 0.0
-
-
+    # --- FUNÇÕES DE APOIO ---
     def formatar_cnpj(cnpj):
-
         cnpj = "".join(filter(str.isdigit, cnpj))
-
         if len(cnpj) == 14:
             return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
-
         return cnpj
-
 
     @st.cache_data
     def carregar_dados_completos(nome_tabela):
-
         arquivo = mapa_tabelas.get(nome_tabela)
-
         if not arquivo:
             return None, {}
-
         try:
-
-            # =========================
-            # PREÇOS
-            # =========================
-            df_p = pd.read_excel(
-                arquivo,
-                sheet_name="PREÇOS",
-                header=1
-            )
-
-            df_p.columns = df_p.columns.astype(str).str.strip()
-
-            if "Estado" in df_p.columns:
-                df_p["Estado"] = (
-                    df_p["Estado"]
-                    .astype(str)
-                    .str.strip()
-                    .str.upper()
-                )
-
-            # =========================
-            # ST
-            # =========================
+            # Carrega a aba padrão de preços
+            df_p = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
+            df_p.columns = df_p.columns.str.strip()
+            if 'Estado' in df_p.columns:
+                df_p['Estado'] = df_p['Estado'].astype(str).str.strip()
+            
+            # Carrega dinamicamente todas as abas de ST presentes no arquivo
             st_dict = {}
-
             xl = pd.ExcelFile(arquivo)
-
             for sheet in xl.sheet_names:
-
-                if sheet.startswith("ST"):
-
-                    df_st = pd.read_excel(
-                        xl,
-                        sheet_name=sheet
-                    )
-
-                    df_st.columns = (
-                        df_st.columns
-                        .astype(str)
-                        .str.strip()
-                    )
-
-                    if "Estado" in df_st.columns:
-
-                        df_st["Estado"] = (
-                            df_st["Estado"]
-                            .astype(str)
-                            .str.strip()
-                            .str.upper()
-                        )
-
-                    st_dict[sheet.strip()] = df_st
-
+                if sheet.startswith("ST "):
+                    df_st = pd.read_excel(xl, sheet_name=sheet)
+                    df_st.columns = df_st.columns.str.strip()
+                    if 'Estado' in df_st.columns:
+                        df_st['Estado'] = df_st['Estado'].astype(str).str.strip()
+                    st_dict[sheet] = df_st
             return df_p, st_dict
-
         except Exception as e:
-
-            st.error(f"Erro ao carregar tabela: {e}")
-
+            st.error(f"Erro ao carregar arquivo de tabelas/ST: {e}")
             return None, {}
 
-
-    ############################################################################
-    # --- DADOS CLIENTE ---
-    ############################################################################
-
-    st.subheader("Dados do Cliente")
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-
+    # --- SEÇÃO: DADOS DO CLIENTE ---
+    st.subheader("Dados do Cliente e Pagamento")
+    c_cnpj, c_pag, c_regime = st.columns(3)
+    
+    with c_cnpj:
         cnpj_digitado = st.text_input(
-            "CNPJ",
-            placeholder="Digite apenas números"
+            "CNPJ do Cliente:", 
+            placeholder="Digite apenas números",
+            key="cnpj_input"
         )
-
         cnpj_cliente = formatar_cnpj(cnpj_digitado)
+        if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
+            st.caption(":red[CNPJ incompleto]")
+        elif cnpj_digitado:
+            st.caption(f":green[Formatado: {cnpj_cliente}]")
 
-        if cnpj_digitado:
-            st.caption(cnpj_cliente)
+    with c_pag:
+        opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
+        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
 
-    with c2:
-
-        forma_pagamento = st.selectbox(
-            "Pagamento",
-            [
-                "",
-                "PIX",
-                "Boleto 1x - 30 dias",
-                "Boleto 2x - 30/45 dias",
-                "Boleto 3x - 30/45/60 dias",
-            ]
-        )
-
-    with c3:
-
-        regime_simples = st.selectbox(
-            "Regime SIMPLES?",
-            ["NÃO", "SIM"]
-        )
+    with c_regime:
+        regime_simples = st.selectbox("Regime SIMPLES?", ["NÃO", "SIM"], index=0)
 
     st.divider()
 
-    ############################################################################
-    # --- TABELA / ESTADO ---
-    ############################################################################
+    # --- SEÇÃO: SELEÇÃO DE TABELA E ESTADO ---
+    c1, c2 = st.columns(2)
+    with c1:
+        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
+    with c2:
+        lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
+        estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        tabela_sel = st.selectbox(
-            "Tabela",
-            list(mapa_tabelas.keys())
-        )
-
-    with col2:
-
-        estado_sel = st.selectbox(
-            "UF",
-            [
-                "Selecione o Estado",
-                "AC","AL","AM","AP","BA","CE","DF","ES","GO",
-                "MA","MG","MS","MT","PA","PB","PE","PI","PR",
-                "RJ","RN","RO","RR","RS","SC","SE","SP","TO"
-            ]
-        )
-
-    ############################################################################
-    # --- PROCESSAMENTO ---
-    ############################################################################
-
-    if (
-        tabela_sel != "Selecione uma tabela"
-        and estado_sel != "Selecione o Estado"
-    ):
-
+    # --- LÓGICA PRINCIPAL ---
+    if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
+        
         df_precos, dicionario_st = carregar_dados_completos(tabela_sel)
 
         if df_precos is not None:
-
             st.subheader("Itens do Pedido")
-
-            for categoria, subcategorias in categorias_produtos.items():
-
-                st.markdown(f"## {categoria}")
-
-                for subcategoria, produtos in subcategorias.items():
-
-                    with st.expander(subcategoria, expanded=True):
-
-                        for nome_produto, config in produtos.items():
-
-                            col_prod, col_un, col_qtd, col_sub = st.columns([4,1,1,1])
-
-                            ############################################################################
-                            # PREÇO BASE
-                            ############################################################################
-
-                            preco_unit = 0.0
-
+            
+            for cat_principal, subcategorias in categorias_produtos.items():
+                st.markdown(f"### {cat_principal}")
+                
+                for sub_cat, produtos in subcategorias.items():
+                    with st.expander(sub_cat, expanded=True):
+                        for nome_exibicao, config in produtos.items():
+                            col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
+                            
+                            # 1. Obter Preço Unitário Base
                             try:
-
-                                linha_estado = df_precos[
-                                    df_precos["Estado"] == estado_sel
-                                ]
-
-                                if not linha_estado.empty:
-
-                                    preco_unit = limpar_numero(
-                                        linha_estado.iloc[0][config["coluna"]]
-                                    )
-
-                            except Exception as e:
+                                col_planilha = config["coluna"]
+                                linha_preco = df_precos[df_precos['Estado'] == estado_sel]
+                                preco_unit = float(linha_preco[col_planilha].values[0])
+                            except:
                                 preco_unit = 0.0
 
-                            ############################################################################
-                            # ST
-                            ############################################################################
+                            un_cx = config["un_cx"]
+                            valor_cx_base = preco_unit * un_cx
 
+                            # 2. Calcular ST (Substituição Tributária) Dinâmica por Aba
                             st_unitario_cx = 0.0
-
-                            aba_st = config.get("aba_st")
-
-                            if aba_st:
-
+                            aba_st_alvo = config["aba_st"]
+                            
+                            if aba_st_alvo and aba_st_alvo in dicionario_st:
                                 try:
-
-                                    if aba_st in dicionario_st:
-
-                                        df_st = dicionario_st[aba_st]
-
-                                        linha_st = df_st[
-                                            df_st["Estado"] == estado_sel
-                                        ]
-
-                                        if not linha_st.empty:
-
-                                            coluna_st = (
-                                                "ST Simples"
-                                                if regime_simples == "SIM"
-                                                else "ST Normal"
-                                            )
-
-                                            st_unitario_cx = limpar_numero(
-                                                linha_st.iloc[0][coluna_st]
-                                            )
-
+                                    df_st_aba = dicionario_st[aba_st_alvo]
+                                    linha_st = df_st_aba[df_st_aba['Estado'] == estado_sel]
+                                    coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+                                    st_unitario_cx = float(linha_st[coluna_st_tipo].values[0])
                                 except:
                                     st_unitario_cx = 0.0
 
-                            ############################################################################
-                            # IPI
-                            ############################################################################
-
-                            valor_cx_base = preco_unit * config["un_cx"]
-
+                            # 3. Calcular IPI Dinâmico
                             aliquota_ipi = config.get("ipi", 0.0)
+                            ipi_unitario_cx = valor_cx_base * aliquota_ipi
 
-                            ipi_unitario_cx = (
-                                valor_cx_base * aliquota_ipi
-                            )
-
-                            ############################################################################
-                            # TOTAL CAIXA
-                            ############################################################################
-
-                            valor_caixa_total = (
-                                valor_cx_base
-                                + st_unitario_cx
-                                + ipi_unitario_cx
-                            )
-
-                            ############################################################################
-                            # EXIBIÇÃO
-                            ############################################################################
+                            # 4. Valor Total do Caixa Formatado Comercial
+                            valor_caixa_total = valor_cx_base + st_unitario_cx + ipi_unitario_cx
 
                             with col_prod:
-
-                                st.write(f"**{nome_produto}**")
-
+                                st.write(f"**{nome_exibicao}**")
                                 st.caption(
-                                    f"Cod: {config['cod']} | "
-                                    f"Unit: R$ {preco_unit:,.2f} | "
-                                    f"ST/Cx: R$ {st_unitario_cx:,.2f} | "
-                                    f"IPI/Cx: R$ {ipi_unitario_cx:,.2f}"
+                                    f"Cod: {config['cod']} | Unit: R$ {preco_unit:,.2f} | "
+                                    f"ST/Cx: R$ {st_unitario_cx:,.2f} | IPI/Cx: R$ {ipi_unitario_cx:,.2f}"
                                 )
-
+                            
                             with col_un:
-
-                                st.write(f"{config['un_cx']} un/cx")
-
-                                st.caption(
-                                    f"R$ {valor_caixa_total:,.2f}/cx"
-                                )
-
+                                st.write(f"{un_cx} un/cx")
+                                st.caption(f"R$ {valor_caixa_total:,.2f}/cx")
+                                
                             with col_qtd:
-
-                                qtd = st.number_input(
-                                    "Qtd",
-                                    min_value=0,
-                                    step=1,
-                                    key=f"qtd_{nome_produto}",
-                                    label_visibility="collapsed"
-                                )
-
+                                qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
+                                
                             with col_sub:
-
-                                subtotal = valor_caixa_total * qtd
-
+                                subtotal = valor_caixa_total * qtd_cx
                                 total_pedido += subtotal
-
                                 st.write(f"R$ {subtotal:,.2f}")
 
-            ############################################################################
-            # TOTAL
-            ############################################################################
-
+            # --- RESUMO FINAL COM DESCONTO ---
             st.divider()
-
-            col_total_1, col_total_2 = st.columns([2,1])
-
+            
+            col_total_1, col_total_2 = st.columns([2, 1])
+            
             with col_total_2:
-
-                perc_desconto = st.number_input(
-                    "Desconto (%)",
-                    min_value=0.0,
-                    max_value=100.0,
-                    value=0.0,
-                    step=0.5
-                )
-
-                valor_desconto = (
-                    total_pedido * (perc_desconto / 100)
-                )
-
-                total_liquido = total_pedido - valor_desconto
+                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5)
+                valor_desconto = total_pedido * (perc_desconto / 100)
+                total_com_desconto = total_pedido - valor_desconto
 
             with col_total_1:
-
-                st.metric(
-                    "Total Bruto",
-                    f"R$ {total_pedido:,.2f}"
-                )
-
-                st.metric(
-                    "Total Líquido",
-                    f"R$ {total_liquido:,.2f}"
-                )
-
-            if total_liquido >= 800:
-
+                st.metric("Total Bruto (com ST/IPI)", f"R$ {total_pedido:,.2f}")
+                if perc_desconto > 0:
+                    st.metric("Total Líquido", f"R$ {total_com_desconto:,.2f}", delta=f"- R$ {valor_desconto:,.2f}")
+                else:
+                    st.write(f"**Total Líquido: R$ {total_pedido:,.2f}**")
+            
+            if total_com_desconto >= 800:
                 st.success("✅ Pedido acima do valor mínimo!")
+            elif total_pedido > 0:
+                st.warning(f"Faltam R$ {800 - total_com_desconto:,.2f} para o mínimo.")
 
-            elif total_liquido > 0:
-
-                falta = 800 - total_liquido
-
-                st.warning(
-                    f"Faltam R$ {falta:,.2f} para o pedido mínimo."
-                )
             ############################################################################
             # GERADOR DE PDF
             ############################################################################
