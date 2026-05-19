@@ -2203,5 +2203,11 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
 
-elif aba_selecionada == "🛒 Simulador de Pedidos":
+elif (
+    aba_selecionada == "🛒 Simulador de Pedidos"
+    and (
+        locals().get("tabela_sel") == "Selecione uma tabela"
+        or locals().get("estado_sel") == "Selecione o Estado"
+    )
+):
     st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
