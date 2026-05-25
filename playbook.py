@@ -1689,12 +1689,12 @@ import os
 
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-05"
+VERSAO_TABELAS = "2026-05-25-06"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
     "ESPECIAL": "ESPECIAL/0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325ER_PC reajuste abril26.xlsx",
+    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1737,7 +1737,7 @@ def carregar_dados_completos_por_arquivo(arquivo, versao_cache):
     _ = versao_cache
 
     if not arquivo:
-        return None, {}
+        return None, {}, None
 
     try:
         caminho_arquivo = localizar_arquivo_tabela(arquivo)
@@ -1747,6 +1747,11 @@ def carregar_dados_completos_por_arquivo(arquivo, versao_cache):
 
         if "Estado" in df_p.columns:
             df_p["Estado"] = df_p["Estado"].astype(str).str.strip()
+
+        try:
+            df_tabelas = pd.read_excel(caminho_arquivo, sheet_name="Tabelas", header=None)
+        except:
+            df_tabelas = None
 
         st_dict = {}
         xl = pd.ExcelFile(caminho_arquivo)
@@ -1761,11 +1766,11 @@ def carregar_dados_completos_por_arquivo(arquivo, versao_cache):
 
                 st_dict[sheet] = df_st
 
-        return df_p, st_dict
+        return df_p, st_dict, df_tabelas
 
     except Exception as e:
         st.error(f"Erro ao carregar arquivo de tabelas/ST: {e}")
-        return None, {}
+        return None, {}, None
 
 def moeda_br(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
@@ -1789,6 +1794,9 @@ def valor_float(valor):
     except:
         return 0.0
 
+def texto_normalizado(valor):
+    return str(valor).strip().lower()
+
 def buscar_valor_linha(df, estado, coluna):
     if df is None or coluna not in df.columns:
         return 0.0
@@ -1799,6 +1807,87 @@ def buscar_valor_linha(df, estado, coluna):
         return 0.0
 
     return valor_float(linha[coluna].values[0])
+
+def buscar_coluna_cabecalho(df_tabelas, linha_produto_idx, termos):
+    if df_tabelas is None:
+        return None
+
+    inicio = max(0, linha_produto_idx - 12)
+
+    for r in range(linha_produto_idx - 1, inicio - 1, -1):
+        for c in range(df_tabelas.shape[1]):
+            txt = texto_normalizado(df_tabelas.iat[r, c])
+            txt = txt.replace("\n", " ")
+
+            if all(termo in txt for termo in termos):
+                return c
+
+    return None
+
+def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
+    if df_tabelas is None:
+        return None
+
+    nome_busca = texto_normalizado(nome_produto)
+
+    for r in range(df_tabelas.shape[0]):
+        for c in range(df_tabelas.shape[1]):
+            descricao = texto_normalizado(df_tabelas.iat[r, c])
+
+            if descricao == nome_busca:
+                col_valor_unit = buscar_coluna_cabecalho(df_tabelas, r, ["valor", "unit"])
+                col_st_un = buscar_coluna_cabecalho(df_tabelas, r, ["substituição"])
+                col_ipi = buscar_coluna_cabecalho(df_tabelas, r, ["ipi"])
+
+                if col_st_un is None:
+                    col_st_un = buscar_coluna_cabecalho(df_tabelas, r, ["substituicao"])
+
+                if col_valor_unit is None:
+                    col_valor_unit = c + 6
+
+                preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit])
+                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un is not None else 0.0
+                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi is not None else 0.0
+
+                return {
+                    "preco_unit": preco_unit,
+                    "st_unit": st_unit,
+                    "ipi_unit": ipi_unit,
+                }
+
+    return None
+
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
+    col_planilha = config["coluna"]
+    un_cx = config["un_cx"]
+
+    if df_precos is not None and col_planilha in df_precos.columns:
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
+        valor_cx_base = preco_unit * un_cx
+
+        st_cx = 0.0
+        aba_st_alvo = config["aba_st"]
+
+        if aba_st_alvo and aba_st_alvo in dicionario_st:
+            coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+            st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
+
+        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+        valor_caixa_total = valor_cx_base + st_cx + ipi_cx
+
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+
+    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+
+    if item_tabelas:
+        preco_unit = item_tabelas["preco_unit"]
+        st_cx = item_tabelas["st_unit"] * un_cx
+        ipi_cx = item_tabelas["ipi_unit"] * un_cx
+        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+
+    return 0.0, 0.0, 0.0, 0.0
 
 categorias_produtos = {
     "PAPAPÁ": {
@@ -1878,9 +1967,9 @@ categorias_produtos = {
     },
     "PUERICULTURA": {
         "TALHERES": {
-            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.15},
-            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.15},
-            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.15},
+            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.0},
+            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.0},
+            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.0},
         },
         "BABADORES": {
             "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5733", "ipi": 0.0},
@@ -1908,6 +1997,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     total_pedido = 0.0
     df_precos = None
+    df_tabelas = None
     dicionario_st = {}
     total_com_desconto = 0.0
     valor_desconto = 0.0
@@ -1923,11 +2013,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     c_cnpj, c_pag, c_regime = st.columns(3)
 
     with c_cnpj:
-        cnpj_digitado = st.text_input(
-            "CNPJ do Cliente:",
-            placeholder="Digite apenas números",
-            key="cnpj_input"
-        )
+        cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números", key="cnpj_input")
         cnpj_cliente = formatar_cnpj(cnpj_digitado)
 
         if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
@@ -1936,16 +2022,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.caption(f":green[Formatado: {cnpj_cliente}]")
 
     with c_pag:
-        opcoes_pagamento = [
-            "",
-            "PIX",
-            "Boleto 1x - 30 dias",
-            "Boleto 2x - 30/45 dias",
-            "Boleto 3x - 30/45/60 dias",
-            "Boleto 1x - 45 dias",
-            "Boleto 2x - 45/60 dias",
-            "Boleto 3x - 40/50/60 dias"
-        ]
+        opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
 
     with c_regime:
@@ -1959,16 +2036,12 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
 
     with c2:
-        lista_estados = [
-            "Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF",
-            "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI",
-            "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"
-        ]
+        lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
         estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
 
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         arquivo_tabela = mapa_tabelas.get(tabela_sel)
-        df_precos, dicionario_st = carregar_dados_completos_por_arquivo(arquivo_tabela, VERSAO_TABELAS)
+        df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_arquivo(arquivo_tabela, VERSAO_TABELAS)
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -1981,24 +2054,17 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
 
-                            col_planilha = config["coluna"]
-                            preco_unit = buscar_valor_linha(df_precos, estado_sel, col_planilha)
-
                             un_cx = config["un_cx"]
-                            valor_cx_base = preco_unit * un_cx
 
-                            st_unitario_cx = 0.0
-                            aba_st_alvo = config["aba_st"]
-
-                            if aba_st_alvo and aba_st_alvo in dicionario_st:
-                                df_st_aba = dicionario_st[aba_st_alvo]
-                                coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-                                st_unitario_cx = buscar_valor_linha(df_st_aba, estado_sel, coluna_st_tipo)
-
-                            aliquota_ipi = config.get("ipi", 0.0)
-                            ipi_unitario_cx = valor_cx_base * aliquota_ipi
-
-                            valor_caixa_total = valor_cx_base + st_unitario_cx + ipi_unitario_cx
+                            preco_unit, st_unitario_cx, ipi_unitario_cx, valor_caixa_total = calcular_valores_produto(
+                                df_precos,
+                                df_tabelas,
+                                dicionario_st,
+                                estado_sel,
+                                regime_simples,
+                                nome_exibicao,
+                                config
+                            )
 
                             with col_prod:
                                 st.write(f"**{nome_exibicao}**")
@@ -2012,13 +2078,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 st.caption(f"{moeda_br(valor_caixa_total)}/cx")
 
                             with col_qtd:
-                                qtd_cx = st.number_input(
-                                    "Cx",
-                                    min_value=0,
-                                    step=1,
-                                    key=f"sim_qtd_{nome_exibicao}",
-                                    label_visibility="collapsed"
-                                )
+                                qtd_cx = st.number_input("Cx", min_value=0, step=1, key=f"sim_qtd_{nome_exibicao}", label_visibility="collapsed")
 
                             with col_sub:
                                 subtotal = valor_caixa_total * qtd_cx
@@ -2030,13 +2090,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             col_total_1, col_total_2 = st.columns([2, 1])
 
             with col_total_2:
-                perc_desconto = st.number_input(
-                    "Desconto (%)",
-                    min_value=0.0,
-                    max_value=100.0,
-                    value=0.0,
-                    step=0.5
-                )
+                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5)
                 valor_desconto = total_pedido * (perc_desconto / 100)
                 total_com_desconto = total_pedido - valor_desconto
 
@@ -2044,11 +2098,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.metric("Total Bruto (com ST/IPI)", moeda_br(total_pedido))
 
                 if perc_desconto > 0:
-                    st.metric(
-                        "Total Líquido",
-                        moeda_br(total_com_desconto),
-                        delta=f"- {moeda_br(valor_desconto)}"
-                    )
+                    st.metric("Total Líquido", moeda_br(total_com_desconto), delta=f"- {moeda_br(valor_desconto)}")
                 else:
                     st.write(f"**Total Líquido: {moeda_br(total_pedido)}**")
 
