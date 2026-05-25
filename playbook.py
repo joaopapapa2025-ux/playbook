@@ -1689,7 +1689,7 @@ import os
 
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-04"
+VERSAO_TABELAS = "2026-05-25-05"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1908,44 +1908,16 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     total_pedido = 0.0
     df_precos = None
+    dicionario_st = {}
+    total_com_desconto = 0.0
+    valor_desconto = 0.0
+    perc_desconto = 0.0
 
     def formatar_cnpj(cnpj):
         cnpj = "".join(filter(str.isdigit, cnpj))
         if len(cnpj) == 14:
             return f"{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}"
         return cnpj
-
-    @st.cache_data
-    def carregar_dados_completos(nome_tabela):
-        arquivo = mapa_tabelas.get(nome_tabela)
-        if not arquivo:
-            return None, {}
-
-        try:
-            df_p = pd.read_excel(arquivo, sheet_name="PREÇOS", header=1)
-            df_p.columns = df_p.columns.astype(str).str.strip()
-
-            if "Estado" in df_p.columns:
-                df_p["Estado"] = df_p["Estado"].astype(str).str.strip()
-
-            st_dict = {}
-            xl = pd.ExcelFile(arquivo)
-
-            for sheet in xl.sheet_names:
-                if sheet.startswith("ST "):
-                    df_st = pd.read_excel(xl, sheet_name=sheet)
-                    df_st.columns = df_st.columns.astype(str).str.strip()
-
-                    if "Estado" in df_st.columns:
-                        df_st["Estado"] = df_st["Estado"].astype(str).str.strip()
-
-                    st_dict[sheet] = df_st
-
-            return df_p, st_dict
-
-        except Exception as e:
-            st.error(f"Erro ao carregar arquivo de tabelas/ST: {e}")
-            return None, {}
 
     st.subheader("Dados do Cliente e Pagamento")
     c_cnpj, c_pag, c_regime = st.columns(3)
@@ -1995,8 +1967,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
 
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
-
-        df_precos, dicionario_st = carregar_dados_completos(tabela_sel)
+        arquivo_tabela = mapa_tabelas.get(tabela_sel)
+        df_precos, dicionario_st = carregar_dados_completos_por_arquivo(arquivo_tabela, VERSAO_TABELAS)
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -2084,6 +2056,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.success("✅ Pedido acima do valor mínimo!")
             elif total_pedido > 0:
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
+
+    else:
+        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
 
 ############################################################################
 # GERADOR DE PDF
