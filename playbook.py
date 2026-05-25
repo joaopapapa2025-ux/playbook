@@ -1689,12 +1689,12 @@ import os
 
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-11"
+VERSAO_TABELAS = "2026-05-25-13"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "ESPECIAL/0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
+    "ESPECIAL": "ESPECIAL/0325E_PC reajuste abril26 - Completa - NÃO USAR.xlsx",
+    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa -10% - NÃO USAR.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1904,9 +1904,20 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
 
     return None
 
-def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
+
+    if preferir_aba_tabelas:
+        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+
+        if item_tabelas:
+            preco_unit = item_tabelas["preco_unit"]
+            st_cx = item_tabelas["st_unit"] * un_cx
+            ipi_cx = item_tabelas["ipi_unit"] * un_cx
+            valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
+            return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     if df_precos is not None and col_planilha in df_precos.columns:
         preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
@@ -2091,8 +2102,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
-
-        st.caption(f"Tabela carregada: {caminho_tabela.name}")
+        preferir_aba_tabelas = tabela_sel in ["ESPECIAL", "ESPECIAL REDE (-10%)"]
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -2114,7 +2124,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 estado_sel,
                                 regime_simples,
                                 nome_exibicao,
-                                config
+                                config,
+                                preferir_aba_tabelas
                             )
 
                             with col_prod:
@@ -2202,7 +2213,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
             pdf.ln(5)
 
-            # Larguras ajustadas para caber código longo e manter a tabela respirando
             w_cod = 32
             w_prod = 68
             w_qtd_cx = 18
@@ -2212,7 +2222,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             altura_header = 10
             altura_linha = 6
 
-            # Cabeçalho da tabela
             pdf.set_fill_color(240, 240, 240)
             pdf.set_font("Arial", "B", 8)
 
@@ -2250,9 +2259,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 curr_y = pdf.get_y()
 
                 pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
-
                 pdf.multi_cell(w_prod, h_total / num_linhas, nome_p, 1, "L")
-
                 pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
 
                 pdf.cell(w_qtd_cx, h_total, str(item["qtd_cx"]), 1, 0, "C")
@@ -2260,7 +2267,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 pdf.cell(w_preco_unit, h_total, moeda_pdf(item["preco_unit_total"]), 1, 0, "C")
                 pdf.cell(w_subtotal, h_total, moeda_pdf(item["subtotal"]), 1, 1, "C")
 
-            # Totais
             pdf.ln(5)
             pdf.set_font("Arial", "B", 10)
             pdf.cell(160, 8, "Total Bruto:", 0, 0, "R")
@@ -2284,6 +2290,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             return pdf.output(dest="S").encode("latin-1")
 
         itens_para_pdf = []
+        preferir_aba_tabelas_pdf = locals().get("tabela_sel") in ["ESPECIAL", "ESPECIAL REDE (-10%)"]
 
         for cat_n, subcats in categorias_produtos.items():
             for sub_n, prods in subcats.items():
@@ -2292,16 +2299,16 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
                     if q_cx > 0:
                         try:
-                            p_u = buscar_valor_linha(df_precos, estado_sel, cfg["coluna"])
-                            v_cx_b = p_u * cfg["un_cx"]
-
-                            st_cx = 0.0
-                            if cfg["aba_st"] and cfg["aba_st"] in dicionario_st:
-                                col_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-                                st_cx = buscar_valor_linha(dicionario_st[cfg["aba_st"]], estado_sel, col_tipo)
-
-                            ipi_cx = v_cx_b * cfg.get("ipi", 0.0)
-                            cx_tot = v_cx_b + st_cx + ipi_cx
+                            p_u, st_cx, ipi_cx, cx_tot = calcular_valores_produto(
+                                df_precos,
+                                df_tabelas,
+                                dicionario_st,
+                                estado_sel,
+                                regime_simples,
+                                nome_ex,
+                                cfg,
+                                preferir_aba_tabelas_pdf
+                            )
 
                             qtd_itens = q_cx * cfg["un_cx"]
                             preco_unit_total = cx_tot / cfg["un_cx"] if cfg["un_cx"] else 0.0
