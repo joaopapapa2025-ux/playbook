@@ -729,7 +729,7 @@ Vamos garantir esse pedido ainda hoje?""", language=None)
 # --- MÓDULO 5: POLÍTICAS COMERCIAIS ---
 ################################################################################
 elif aba_selecionada == "📊 Políticas Comerciais":
-    st.header("📊 Políticas Comerciais")
+    st.header("📊 Políticas Comerciais - Inside Sales")
     
     # Destaques Rápidos
     c1, c2, c3, c4 = st.columns(4)
