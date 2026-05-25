@@ -1746,12 +1746,12 @@ def localizar_arquivo_tabela(arquivo):
 def carregar_dados_completos_por_caminho(caminho_arquivo):
     if not caminho_arquivo:
         return None, {}, None
-
+        
     if str(caminho_arquivo).startswith("MOCK_VIRTUAL_"):
         st.warning(f"⚠️ Arquivo físico não encontrado no servidor. Executando em modo de demonstração simulada.")
         df_mock = pd.DataFrame({"Estado": ["SP", "RJ", "MG", "PR", "SC", "RS", "BA", "GO", "DF"]})
-        colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos",
-                         "Papapasta", "La Chef", "P. Cereal 170g Sache sabores",
+        colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos", 
+                         "Papapasta", "La Chef", "P. Cereal 170g Sache sabores", 
                          "P. Cereal 170g Sache MULTI", "MULTI sache 500 g", "Biscotti", "Bowl",
                          "Salgadinhos", "Bisc. Recheados", "Sucos", "Achocolatado",
                          "Puer. Talheres", "Puer. Babador", "Puer. Bolw", "Puer. Pratinho"]
@@ -1871,46 +1871,10 @@ def buscar_coluna_por_header(df_tabelas, linha_header, termos_obrigatorios, term
 
     return None
 
-# --- CORRIGIDO: busca por código (col 3) em vez de nome ---
-def buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto=None):
-    """
-    Busca um produto na aba Tabelas.
-    Prioriza busca por código (col 3) quando cod_produto for fornecido —
-    muito mais confiável que comparação de nomes.
-    Mantém fallback por nome para compatibilidade com outras tabelas.
-
-    Colunas fixas da aba Tabelas:
-      col 11 = Valor Unit.
-      col 12 = Valor Caixa (sem ST/IPI)
-      col 13 = SUBSTITUIÇÃO TRIBUTÁRIA UN
-      col 14 = IPI
-      col 15 = Valor Caixa + ST
-    """
+def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
     if df_tabelas is None:
         return None
 
-    # Busca por código (rápida e exata)
-    if cod_produto is not None:
-        cod_str = str(cod_produto).strip()
-        for r in range(df_tabelas.shape[0]):
-            celula_cod = str(df_tabelas.iat[r, 3]).strip()
-            if celula_cod == cod_str:
-                preco_unit  = valor_float(df_tabelas.iat[r, 11])  # Valor Unit.
-                st_unit     = valor_float(df_tabelas.iat[r, 13])  # ST UN
-                ipi_unit    = valor_float(df_tabelas.iat[r, 14])  # IPI
-                valor_cx_st = valor_float(df_tabelas.iat[r, 15])  # Valor Caixa + ST
-
-                if preco_unit > 1000:
-                    preco_unit = 0.0
-
-                return {
-                    "preco_unit":  preco_unit,
-                    "st_unit":     st_unit,
-                    "ipi_unit":    ipi_unit,
-                    "valor_cx_st": valor_cx_st,
-                }
-
-    # Fallback: busca por nome normalizado (comportamento original)
     nome_busca = texto_normalizado(nome_produto)
 
     for r in range(df_tabelas.shape[0]):
@@ -1921,13 +1885,20 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto=None):
                 linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, r)
 
                 col_valor_unit = buscar_coluna_por_header(
-                    df_tabelas, linha_header, ["valor", "unit"], ["caixa", "total"]
+                    df_tabelas,
+                    linha_header,
+                    ["valor", "unit"],
+                    ["caixa", "total"]
                 )
                 col_st_un = buscar_coluna_por_header(
-                    df_tabelas, linha_header, ["substituicao", "tributaria"]
+                    df_tabelas,
+                    linha_header,
+                    ["substituicao", "tributaria"]
                 )
                 col_ipi = buscar_coluna_por_header(
-                    df_tabelas, linha_header, ["ipi"]
+                    df_tabelas,
+                    linha_header,
+                    ["ipi"]
                 )
 
                 if col_valor_unit is None:
@@ -1938,42 +1909,36 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto=None):
                     col_ipi = c + 13
 
                 preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
-                st_unit    = valor_float(df_tabelas.iat[r, col_st_un])      if col_st_un    < df_tabelas.shape[1] else 0.0
-                ipi_unit   = valor_float(df_tabelas.iat[r, col_ipi])        if col_ipi      < df_tabelas.shape[1] else 0.0
+                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
+                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
 
                 if preco_unit > 1000:
                     preco_unit = 0.0
 
                 return {
-                    "preco_unit":  preco_unit,
-                    "st_unit":     st_unit,
-                    "ipi_unit":    ipi_unit,
-                    "valor_cx_st": (preco_unit + st_unit + ipi_unit),
+                    "preco_unit": preco_unit,
+                    "st_unit": st_unit,
+                    "ipi_unit": ipi_unit,
                 }
-
     return None
 
-# --- CORRIGIDO: passa cod_produto para busca por código ---
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
     col_planilha = config["coluna"]
-    un_cx        = config["un_cx"]
-    cod_produto  = config.get("cod")
+    un_cx = config["un_cx"]
 
-    # Tabela ESPECIAL: usar aba Tabelas como fonte primária (por código).
-    # A aba Tabelas já traz Valor Unit., ST UN e IPI calculados corretamente.
     if preferir_aba_tabelas:
-        item = buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto)
+        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
-        if item:
-            preco_unit        = item["preco_unit"]
-            st_cx             = item["st_unit"] * un_cx
-            ipi_cx            = item["ipi_unit"] * un_cx
-            valor_caixa_total = item["valor_cx_st"] if item["valor_cx_st"] > 0 else (preco_unit + item["st_unit"] + item["ipi_unit"]) * un_cx
+        if item_tabelas:
+            preco_unit = item_tabelas["preco_unit"]
+            st_cx = item_tabelas["st_unit"] * un_cx
+            ipi_cx = item_tabelas["ipi_unit"] * un_cx
+            valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
             return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
-    # Outras tabelas: usar aba PREÇOS + abas ST
     if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit    = buscar_valor_linha(df_precos, estado, col_planilha)
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
         valor_cx_base = preco_unit * un_cx
 
         st_cx = 0.0
@@ -1983,18 +1948,19 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
             coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
             st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
 
-        ipi_cx            = valor_cx_base * config.get("ipi", 0.0)
+        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
+
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
-    # Último recurso: aba Tabelas por nome
-    item = buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto)
+    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
-    if item:
-        preco_unit        = item["preco_unit"]
-        st_cx             = item["st_unit"]  * un_cx
-        ipi_cx            = item["ipi_unit"] * un_cx
-        valor_caixa_total = item["valor_cx_st"] if item["valor_cx_st"] > 0 else (preco_unit + item["st_unit"] + item["ipi_unit"]) * un_cx
+    if item_tabelas:
+        preco_unit = item_tabelas["preco_unit"]
+        st_cx = item_tabelas["st_unit"] * un_cx
+        ipi_cx = item_tabelas["ipi_unit"] * un_cx
+        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     return 0.0, 0.0, 0.0, 0.0
@@ -2115,7 +2081,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     total_com_desconto = 0.0
     valor_desconto = 0.0
     perc_desconto = 0.0
-
+    
     itens_selecionados_para_pdf = []
 
     def formatar_cnpj(cnpj):
@@ -2203,7 +2169,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 subtotal = valor_caixa_total * qtd_cx
                                 total_pedido += subtotal
                                 st.write(moeda_br(subtotal))
-
+                                
                             if qtd_cx > 0:
                                 qtd_itens = qtd_cx * un_cx
                                 preco_unit_total = valor_caixa_total / un_cx if un_cx else 0.0
@@ -2324,10 +2290,10 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 curr_y = pdf.get_y()
 
                 pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
-
+                
                 # Renderiza o texto em bloco respeitando a quebra de linha
                 pdf.multi_cell(w_prod, altura_linha, nome_p, 1, "L")
-
+                
                 # Posiciona o cursor de volta ao lado para as próximas colunas do grid
                 pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
 
