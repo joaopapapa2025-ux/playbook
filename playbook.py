@@ -2382,5 +2382,3 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
-ENDOFFILE
-echo "Done: $(wc -l < /mnt/user-data/outputs/modulo10_COMPLETO.py) lines"
