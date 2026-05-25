@@ -1697,6 +1697,7 @@ from fpdf import FPDF
 VERSAO_TABELAS = "2026-05-25-13"
 
 mapa_tabelas = {
+
     "Selecione uma tabela": None,
     "ESPECIAL": "ESPECIAL/0325E_PC reajuste abril26 - Completa - NÃO USAR.xlsx",
     "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa -10% - NÃO USAR.xlsx",
