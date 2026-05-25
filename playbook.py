@@ -1938,9 +1938,17 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
             return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
-        valor_cx_base = preco_unit * un_cx
+    preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
+    valor_cx_base = preco_unit * un_cx
 
+    st.write("DEBUG")
+    st.write({
+        "produto": nome_produto,
+        "estado": estado,
+        "coluna_planilha": col_planilha,
+        "preco_unit_encontrado": preco_unit,
+        "arquivo_tabela": str(df_precos.head(1))
+    })
         st_cx = 0.0
         aba_st_alvo = config["aba_st"]
 
