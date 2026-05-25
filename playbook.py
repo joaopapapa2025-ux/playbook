@@ -1794,8 +1794,18 @@ def valor_float(valor):
     except:
         return 0.0
 
+VERSAO_TABELAS = "2026-05-25-07"
+
 def texto_normalizado(valor):
-    return str(valor).strip().lower()
+    import unicodedata
+
+    txt = str(valor).strip().lower()
+    txt = unicodedata.normalize("NFKD", txt)
+    txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
+    txt = txt.replace("\n", " ")
+    txt = " ".join(txt.split())
+
+    return txt
 
 def buscar_valor_linha(df, estado, coluna):
     if df is None or coluna not in df.columns:
@@ -1808,19 +1818,34 @@ def buscar_valor_linha(df, estado, coluna):
 
     return valor_float(linha[coluna].values[0])
 
-def buscar_coluna_cabecalho(df_tabelas, linha_produto_idx, termos):
+def buscar_linha_cabecalho_tabelas(df_tabelas, linha_produto_idx):
     if df_tabelas is None:
         return None
 
-    inicio = max(0, linha_produto_idx - 12)
+    inicio = max(0, linha_produto_idx - 30)
 
     for r in range(linha_produto_idx - 1, inicio - 1, -1):
-        for c in range(df_tabelas.shape[1]):
-            txt = texto_normalizado(df_tabelas.iat[r, c])
-            txt = txt.replace("\n", " ")
+        textos = [texto_normalizado(df_tabelas.iat[r, c]) for c in range(df_tabelas.shape[1])]
 
-            if all(termo in txt for termo in termos):
-                return c
+        tem_descricao = any("descricao" in txt for txt in textos)
+        tem_valor_unit = any("valor unit" in txt for txt in textos)
+
+        if tem_descricao and tem_valor_unit:
+            return r
+
+    return None
+
+def buscar_coluna_por_header(df_tabelas, linha_header, termos_obrigatorios, termos_proibidos=None):
+    if df_tabelas is None or linha_header is None:
+        return None
+
+    termos_proibidos = termos_proibidos or []
+
+    for c in range(df_tabelas.shape[1]):
+        txt = texto_normalizado(df_tabelas.iat[linha_header, c])
+
+        if all(termo in txt for termo in termos_obrigatorios) and not any(termo in txt for termo in termos_proibidos):
+            return c
 
     return None
 
@@ -1835,19 +1860,45 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
             descricao = texto_normalizado(df_tabelas.iat[r, c])
 
             if descricao == nome_busca:
-                col_valor_unit = buscar_coluna_cabecalho(df_tabelas, r, ["valor", "unit"])
-                col_st_un = buscar_coluna_cabecalho(df_tabelas, r, ["substituição"])
-                col_ipi = buscar_coluna_cabecalho(df_tabelas, r, ["ipi"])
+                linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, r)
+
+                col_valor_unit = buscar_coluna_por_header(
+                    df_tabelas,
+                    linha_header,
+                    ["valor", "unit"],
+                    ["caixa", "total"]
+                )
+
+                col_st_un = buscar_coluna_por_header(
+                    df_tabelas,
+                    linha_header,
+                    ["substituicao", "tributaria"]
+                )
+
+                col_ipi = buscar_coluna_por_header(
+                    df_tabelas,
+                    linha_header,
+                    ["ipi"]
+                )
+
+                # Fallback para o layout padrão da aba Tabelas:
+                # Produto | ... | PSC | NCM | EAN | DUN | Crédito | Valor Unit | Valor Caixa | ST UN | IPI
+                if col_valor_unit is None:
+                    col_valor_unit = c + 10
 
                 if col_st_un is None:
-                    col_st_un = buscar_coluna_cabecalho(df_tabelas, r, ["substituicao"])
+                    col_st_un = c + 12
 
-                if col_valor_unit is None:
-                    col_valor_unit = c + 6
+                if col_ipi is None:
+                    col_ipi = c + 13
 
-                preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit])
-                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un is not None else 0.0
-                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi is not None else 0.0
+                preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
+                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
+                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
+
+                # Proteção contra pegar NCM/EAN por engano
+                if preco_unit > 1000:
+                    preco_unit = 0.0
 
                 return {
                     "preco_unit": preco_unit,
@@ -1856,6 +1907,38 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                 }
 
     return None
+
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
+    col_planilha = config["coluna"]
+    un_cx = config["un_cx"]
+
+    if df_precos is not None and col_planilha in df_precos.columns:
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
+        valor_cx_base = preco_unit * un_cx
+
+        st_cx = 0.0
+        aba_st_alvo = config["aba_st"]
+
+        if aba_st_alvo and aba_st_alvo in dicionario_st:
+            coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+            st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
+
+        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+        valor_caixa_total = valor_cx_base + st_cx + ipi_cx
+
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+
+    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+
+    if item_tabelas:
+        preco_unit = item_tabelas["preco_unit"]
+        st_cx = item_tabelas["st_unit"] * un_cx
+        ipi_cx = item_tabelas["ipi_unit"] * un_cx
+        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+
+    return 0.0, 0.0, 0.0, 0.0
 
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
     col_planilha = config["coluna"]
