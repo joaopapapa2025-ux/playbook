@@ -2057,9 +2057,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
 
-    else:
-        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
-
 ############################################################################
 # GERADOR DE PDF
 ############################################################################
