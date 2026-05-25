@@ -1872,27 +1872,17 @@ def buscar_coluna_por_header(df_tabelas, linha_header, termos_obrigatorios, term
     return None
 
 def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
-
     if df_tabelas is None:
         return None
 
     nome_busca = texto_normalizado(nome_produto)
 
     for r in range(df_tabelas.shape[0]):
-
         for c in range(df_tabelas.shape[1]):
-
-            try:
-                descricao = texto_normalizado(df_tabelas.iat[r, c])
-            except:
-                continue
+            descricao = texto_normalizado(df_tabelas.iat[r, c])
 
             if descricao == nome_busca:
-
-                linha_header = buscar_linha_cabecalho_tabelas(
-                    df_tabelas,
-                    r
-                )
+                linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, r)
 
                 col_valor_unit = buscar_coluna_por_header(
                     df_tabelas,
@@ -1900,217 +1890,81 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                     ["valor", "unit"],
                     ["caixa", "total"]
                 )
-
                 col_st_un = buscar_coluna_por_header(
                     df_tabelas,
                     linha_header,
                     ["substituicao", "tributaria"]
                 )
-
                 col_ipi = buscar_coluna_por_header(
                     df_tabelas,
                     linha_header,
                     ["ipi"]
                 )
 
-                # FALLBACKS
                 if col_valor_unit is None:
                     col_valor_unit = c + 10
-
                 if col_st_un is None:
                     col_st_un = c + 12
-
                 if col_ipi is None:
                     col_ipi = c + 13
 
-                # SEGURANÇA DE ÍNDICE
-                preco_unit = 0.0
-                st_unit = 0.0
-                ipi_unit = 0.0
+                preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
+                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
+                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
 
-                try:
-                    if col_valor_unit < df_tabelas.shape[1]:
-                        preco_unit = valor_float(
-                            df_tabelas.iat[r, col_valor_unit]
-                        )
-                except:
-                    pass
-
-                try:
-                    if col_st_un < df_tabelas.shape[1]:
-                        st_unit = valor_float(
-                            df_tabelas.iat[r, col_st_un]
-                        )
-                except:
-                    pass
-
-                try:
-                    if col_ipi < df_tabelas.shape[1]:
-                        ipi_unit = valor_float(
-                            df_tabelas.iat[r, col_ipi]
-                        )
-                except:
-                    pass
-
-                # PROTEÇÃO CONTRA LEITURA ERRADA
                 if preco_unit > 1000:
                     preco_unit = 0.0
-
-                st.write("DEBUG ITEM TABELAS")
-                st.write({
-                    "produto": nome_produto,
-                    "linha": r,
-                    "coluna_encontrada": c,
-                    "col_valor_unit": col_valor_unit,
-                    "col_st_un": col_st_un,
-                    "col_ipi": col_ipi,
-                    "preco_unit": preco_unit,
-                    "st_unit": st_unit,
-                    "ipi_unit": ipi_unit
-                })
 
                 return {
                     "preco_unit": preco_unit,
                     "st_unit": st_unit,
-                    "ipi_unit": ipi_unit
+                    "ipi_unit": ipi_unit,
                 }
-
     return None
 
-
-def calcular_valores_produto(
-    df_precos,
-    df_tabelas,
-    dicionario_st,
-    estado,
-    regime_simples,
-    nome_produto,
-    config,
-    preferir_aba_tabelas=False
-):
-
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
 
-    ####################################################################
-    # 1) ESPECIAL = ABA TABELAS
-    ####################################################################
     if preferir_aba_tabelas:
-
-        item_tabelas = buscar_item_na_aba_tabelas(
-            df_tabelas,
-            nome_produto
-        )
+        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
         if item_tabelas:
+            preco_unit = item_tabelas["preco_unit"]
+            st_cx = item_tabelas["st_unit"] * un_cx
+            ipi_cx = item_tabelas["ipi_unit"] * un_cx
+            valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
 
-            preco_unit = valor_float(
-                item_tabelas.get("preco_unit", 0)
-            )
+            return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
-            st_unit = valor_float(
-                item_tabelas.get("st_unit", 0)
-            )
-
-            ipi_unit = valor_float(
-                item_tabelas.get("ipi_unit", 0)
-            )
-
-            st_cx = st_unit * un_cx
-            ipi_cx = ipi_unit * un_cx
-
-            valor_caixa_total = (
-                (preco_unit * un_cx)
-                + st_cx
-                + ipi_cx
-            )
-
-            st.write("DEBUG ESPECIAL")
-            st.write({
-                "produto": nome_produto,
-                "estado": estado,
-                "preco_unit": preco_unit,
-                "st_unit": st_unit,
-                "ipi_unit": ipi_unit,
-                "valor_caixa_total": valor_caixa_total
-            })
-
-            return (
-                preco_unit,
-                st_cx,
-                ipi_cx,
-                valor_caixa_total
-            )
-
-    ####################################################################
-    # 2) ABA PREÇOS
-    ####################################################################
-    if (
-        df_precos is not None
-        and col_planilha in df_precos.columns
-    ):
-
-        preco_unit = buscar_valor_linha(
-            df_precos,
-            estado,
-            col_planilha
-        )
-
+    if df_precos is not None and col_planilha in df_precos.columns:
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
         valor_cx_base = preco_unit * un_cx
 
         st_cx = 0.0
+        aba_st_alvo = config["aba_st"]
 
-        aba_st_alvo = config.get("aba_st")
-
-        if (
-            aba_st_alvo
-            and aba_st_alvo in dicionario_st
-        ):
-
-            coluna_st_tipo = (
-                "ST Simples"
-                if regime_simples == "SIM"
-                else "ST Normal"
-            )
-
-            st_cx = buscar_valor_linha(
-                dicionario_st[aba_st_alvo],
-                estado,
-                coluna_st_tipo
-            )
+        if aba_st_alvo and aba_st_alvo in dicionario_st:
+            coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+            st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+        valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
-        valor_caixa_total = (
-            valor_cx_base
-            + st_cx
-            + ipi_cx
-        )
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
-        st.write("DEBUG PREÇOS")
-        st.write({
-            "produto": nome_produto,
-            "estado": estado,
-            "coluna_planilha": col_planilha,
-            "preco_unit": preco_unit,
-            "un_cx": un_cx,
-            "valor_cx_base": valor_cx_base,
-            "st_cx": st_cx,
-            "ipi_cx": ipi_cx,
-            "valor_caixa_total": valor_caixa_total
-        })
+    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
-        return (
-            preco_unit,
-            st_cx,
-            ipi_cx,
-            valor_caixa_total
-        )
+    if item_tabelas:
+        preco_unit = item_tabelas["preco_unit"]
+        st_cx = item_tabelas["st_unit"] * un_cx
+        ipi_cx = item_tabelas["ipi_unit"] * un_cx
+        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
 
-    ####################################################################
-    # 3) FALLBACK
-    ####################################################################
+        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+
     return 0.0, 0.0, 0.0, 0.0
+
 categorias_produtos = {
     "PAPAPÁ": {
         "PAPINHA DE CARNE": {
