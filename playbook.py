@@ -1687,9 +1687,13 @@ import os
 # --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
 
+from pathlib import Path
+
+VERSAO_TABELAS = "2026-05-25-01"
+
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
+    "ESPECIAL": "ESPECIAL/0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
     "ESPECIAL REDE (-10%)": "0325ER_PC reajuste abril26.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1703,6 +1707,66 @@ mapa_tabelas = {
     "VAREJO V": "0325Vv_PC reajustes abril26 - Era uma Vez.xlsx",
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
+
+def localizar_arquivo_tabela(arquivo):
+    if not arquivo:
+        return None
+
+    pasta_app = Path(__file__).parent
+
+    caminhos_possiveis = [
+        pasta_app / arquivo,
+        pasta_app / "ESPECIAL" / Path(arquivo).name,
+        pasta_app / "tabelas" / arquivo,
+        pasta_app / "tabelas" / "ESPECIAL" / Path(arquivo).name,
+        Path(arquivo),
+    ]
+
+    for caminho in caminhos_possiveis:
+        if caminho.exists():
+            return caminho
+
+    # Fallback: procura pelo nome do arquivo dentro da pasta do app
+    encontrados = list(pasta_app.rglob(Path(arquivo).name))
+    if encontrados:
+        return encontrados[0]
+
+    return pasta_app / arquivo
+
+    @st.cache_data(ttl=300)
+def carregar_dados_completos(nome_tabela, versao_cache):
+    arquivo = mapa_tabelas.get(nome_tabela)
+
+    if not arquivo:
+        return None, {}
+
+    try:
+        caminho_arquivo = localizar_arquivo_tabela(arquivo)
+
+        df_p = pd.read_excel(caminho_arquivo, sheet_name="PREÇOS", header=1)
+        df_p.columns = df_p.columns.astype(str).str.strip()
+
+        if "Estado" in df_p.columns:
+            df_p["Estado"] = df_p["Estado"].astype(str).str.strip()
+
+        st_dict = {}
+        xl = pd.ExcelFile(caminho_arquivo)
+
+        for sheet in xl.sheet_names:
+            if sheet.startswith("ST "):
+                df_st = pd.read_excel(xl, sheet_name=sheet)
+                df_st.columns = df_st.columns.astype(str).str.strip()
+
+                if "Estado" in df_st.columns:
+                    df_st["Estado"] = df_st["Estado"].astype(str).str.strip()
+
+                st_dict[sheet] = df_st
+
+        return df_p, st_dict
+
+    except Exception as e:
+        st.error(f"Erro ao carregar arquivo de tabelas/ST: {e}")
+        return None, {}
 
 def moeda_br(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
