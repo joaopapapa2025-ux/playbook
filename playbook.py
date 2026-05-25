@@ -1683,13 +1683,9 @@ import pandas as pd
 from fpdf import FPDF
 import os
 
-################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
-################################################################################
-
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-06"
+VERSAO_TABELAS = "2026-05-25-09"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1720,27 +1716,26 @@ def localizar_arquivo_tabela(arquivo):
         pasta_app / "tabelas" / arquivo,
         pasta_app / "ESPECIAL" / nome_arquivo,
         pasta_app / "tabelas" / "ESPECIAL" / nome_arquivo,
+        pasta_app / nome_arquivo,
     ]
 
     for caminho in caminhos_possiveis:
         if caminho.exists():
-            return caminho
+            return caminho.resolve()
 
     encontrados = list(pasta_app.rglob(nome_arquivo))
     if encontrados:
-        return encontrados[0]
+        return encontrados[0].resolve()
 
     raise FileNotFoundError(f"Arquivo não encontrado: {arquivo}")
 
 @st.cache_data(ttl=300)
-def carregar_dados_completos_por_arquivo(arquivo, versao_cache):
+def carregar_dados_completos_por_caminho(caminho_arquivo_str, versao_cache, modificado_em):
     _ = versao_cache
-
-    if not arquivo:
-        return None, {}, None
+    _ = modificado_em
 
     try:
-        caminho_arquivo = localizar_arquivo_tabela(arquivo)
+        caminho_arquivo = Path(caminho_arquivo_str)
 
         df_p = pd.read_excel(caminho_arquivo, sheet_name="PREÇOS", header=1)
         df_p.columns = df_p.columns.astype(str).str.strip()
@@ -1787,14 +1782,17 @@ def valor_float(valor):
     if txt in ["", "-", "nan", "None"]:
         return 0.0
 
-    txt = txt.replace(".", "").replace(",", ".")
+    txt = txt.replace(" ", "")
+
+    if "," in txt and "." in txt:
+        txt = txt.replace(".", "").replace(",", ".")
+    elif "," in txt:
+        txt = txt.replace(",", ".")
 
     try:
         return float(txt)
     except:
         return 0.0
-
-VERSAO_TABELAS = "2026-05-25-07"
 
 def texto_normalizado(valor):
     import unicodedata
@@ -1868,27 +1866,21 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                     ["valor", "unit"],
                     ["caixa", "total"]
                 )
-
                 col_st_un = buscar_coluna_por_header(
                     df_tabelas,
                     linha_header,
                     ["substituicao", "tributaria"]
                 )
-
                 col_ipi = buscar_coluna_por_header(
                     df_tabelas,
                     linha_header,
                     ["ipi"]
                 )
 
-                # Fallback para o layout padrão da aba Tabelas:
-                # Produto | ... | PSC | NCM | EAN | DUN | Crédito | Valor Unit | Valor Caixa | ST UN | IPI
                 if col_valor_unit is None:
                     col_valor_unit = c + 10
-
                 if col_st_un is None:
                     col_st_un = c + 12
-
                 if col_ipi is None:
                     col_ipi = c + 13
 
@@ -1896,7 +1888,6 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                 st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
                 ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
 
-                # Proteção contra pegar NCM/EAN por engano
                 if preco_unit > 1000:
                     preco_unit = 0.0
 
@@ -1907,38 +1898,6 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                 }
 
     return None
-
-def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
-    col_planilha = config["coluna"]
-    un_cx = config["un_cx"]
-
-    if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
-        valor_cx_base = preco_unit * un_cx
-
-        st_cx = 0.0
-        aba_st_alvo = config["aba_st"]
-
-        if aba_st_alvo and aba_st_alvo in dicionario_st:
-            coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-            st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
-
-        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
-        valor_caixa_total = valor_cx_base + st_cx + ipi_cx
-
-        return preco_unit, st_cx, ipi_cx, valor_caixa_total
-
-    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
-
-    if item_tabelas:
-        preco_unit = item_tabelas["preco_unit"]
-        st_cx = item_tabelas["st_unit"] * un_cx
-        ipi_cx = item_tabelas["ipi_unit"] * un_cx
-        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-
-        return preco_unit, st_cx, ipi_cx, valor_caixa_total
-
-    return 0.0, 0.0, 0.0, 0.0
 
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
     col_planilha = config["coluna"]
@@ -2124,7 +2083,14 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         arquivo_tabela = mapa_tabelas.get(tabela_sel)
-        df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_arquivo(arquivo_tabela, VERSAO_TABELAS)
+        caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
+        modificado_em = caminho_tabela.stat().st_mtime
+
+        df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(
+            str(caminho_tabela),
+            VERSAO_TABELAS,
+            modificado_em
+        )
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
