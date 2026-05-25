@@ -2167,7 +2167,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
 
+############################################################################
 # GERADOR DE PDF
+############################################################################
 if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals() and total_pedido > 0:
     try:
         def texto_pdf(txt):
@@ -2275,4 +2277,37 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 pdf.set_text_color(0, 0, 0)
 
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(160, 10, texto_pdf("TOTAL L
+            pdf.cell(160, 10, texto_pdf("TOTAL LÍQUIDO:"), 0, 0, "R")
+            pdf.cell(30, 10, moeda_pdf(total_liq), 0, 1, "C")
+
+            pdf.ln(10)
+            pdf.set_font("Arial", "I", 8)
+            aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+            pdf.multi_cell(190, 5, txt=texto_pdf(aviso), align="C")
+
+            return pdf.output(dest="S").encode("latin-1")
+
+        pdf_bytes = gerar_pdf(
+            itens_selecionados_para_pdf,
+            total_pedido,
+            perc_desconto,
+            valor_desconto,
+            total_com_desconto,
+            estado_sel,
+            cnpj_cliente,
+            forma_pagamento
+        )
+
+        id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
+
+        st.download_button(
+            label="📄 Baixar Orçamento em PDF",
+            data=pdf_bytes,
+            file_name=f"Orcamento_{estado_sel}.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+            key=id_botao
+        )
+
+    except Exception as e:
+        st.error(f"Erro ao gerar PDF: {e}")
