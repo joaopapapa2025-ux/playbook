@@ -1698,8 +1698,8 @@ VERSAO_TABELAS = "2026-05-25-13"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
+    "ESPECIAL": "0325E_PC reajuste abril26 - Completa - NÃO USAR.xlsx",
+    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa - NÃO USAR -10%.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1741,20 +1741,15 @@ def localizar_arquivo_tabela(arquivo):
     if encontrados:
         return sorted(encontrados, key=lambda p: len(str(p)))[0]
 
-    # FALLBACK ATALHO: Se não achar o arquivo no servidor/repositório, evita crashar o app
-    # Retorna uma string identificadora para o carregador gerar dados fictícios de teste.
     return f"MOCK_VIRTUAL_{nome_arquivo}"
 
 def carregar_dados_completos_por_caminho(caminho_arquivo):
     if not caminho_arquivo:
         return None, {}, None
         
-    # Se caiu no modo de segurança (arquivo ausente físico)
     if str(caminho_arquivo).startswith("MOCK_VIRTUAL_"):
         st.warning(f"⚠️ Arquivo físico não encontrado no servidor. Executando em modo de demonstração simulada.")
-        # Cria dataframes mínimos para o app não quebrar visualmente
         df_mock = pd.DataFrame({"Estado": ["SP", "RJ", "MG", "PR", "SC", "RS", "BA", "GO", "DF"]})
-        # Cria colunas fictícias com preços padrão de 10.00 reais para teste
         colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos", 
                          "Papapasta", "La Chef", "P. Cereal 170g Sache sabores", 
                          "P. Cereal 170g Sache MULTI", "MULTI sache 500 g", "Biscotti", "Bowl",
@@ -1830,7 +1825,6 @@ def texto_normalizado(valor):
     txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
     txt = txt.replace("\n", " ")
     txt = " ".join(txt.split())
-
     return txt
 
 def buscar_valor_linha(df, estado, coluna):
@@ -1840,7 +1834,6 @@ def buscar_valor_linha(df, estado, coluna):
     linha = df[df["Estado"].astype(str).str.strip() == estado]
 
     if linha.empty:
-        # Fallback caso o estado não esteja na lista do Excel, traz o valor padrão do mock ou 5.0
         if df.shape[0] > 0 and coluna in df.columns:
             return valor_float(df[coluna].values[0])
         return 0.0
@@ -1927,7 +1920,6 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                     "st_unit": st_unit,
                     "ipi_unit": ipi_unit,
                 }
-
     return None
 
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
@@ -2073,7 +2065,6 @@ categorias_produtos = {
     }
 }
 
-# Inicializa aba_selecionada caso não venha definida no escopo global externo do seu script
 if "aba_selecionada" not in locals() and "aba_selecionada" not in globals():
     aba_selecionada = "🛒 Simulador de Pedidos"
 
@@ -2091,7 +2082,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     valor_desconto = 0.0
     perc_desconto = 0.0
     
-    # Estrutura para salvar com segurança o que foi selecionado na tela para o PDF
     itens_selecionados_para_pdf = []
 
     def formatar_cnpj(cnpj):
@@ -2180,7 +2170,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 total_pedido += subtotal
                                 st.write(moeda_br(subtotal))
                                 
-                            # Se o usuário inseriu quantidade, armazena imediatamente para o PDF
                             if qtd_cx > 0:
                                 qtd_itens = qtd_cx * un_cx
                                 preco_unit_total = valor_caixa_total / un_cx if un_cx else 0.0
@@ -2287,7 +2276,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
                 if pdf.get_y() + h_total > 275:
                     pdf.add_page()
-
                     pdf.set_fill_color(240, 240, 240)
                     pdf.set_font("Arial", "B", 8)
                     pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
@@ -2302,7 +2290,11 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 curr_y = pdf.get_y()
 
                 pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
-                pdf.multi_cell(w_prod, h_total / num_linhas, nome_p, 1, "L")
+                
+                # Renderiza o texto em bloco respeitando a quebra de linha
+                pdf.multi_cell(w_prod, altura_linha, nome_p, 1, "L")
+                
+                # Posiciona o cursor de volta ao lado para as próximas colunas do grid
                 pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
 
                 pdf.cell(w_qtd_cx, h_total, str(item["qtd_cx"]), 1, 0, "C")
@@ -2332,7 +2324,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
             return pdf.output(dest="S").encode("latin-1")
 
-        # Chama a função de gerar bytes do PDF usando os dados dinâmicos salvos direto da UI
         pdf_bytes = gerar_pdf(
             itens_selecionados_para_pdf,
             total_pedido,
@@ -2357,12 +2348,3 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
-
-elif (
-    aba_selecionada == "🛒 Simulador de Pedidos"
-    and (
-        locals().get("tabela_sel") == "Selecione uma tabela"
-        or locals().get("estado_sel") == "Selecione o Estado"
-    )
-):
-    st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
