@@ -1689,7 +1689,7 @@ import os
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26.xlsx",
+    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
     "ESPECIAL REDE (-10%)": "0325ER_PC reajuste abril26.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
