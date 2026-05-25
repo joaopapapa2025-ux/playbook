@@ -1689,7 +1689,7 @@ import os
 
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-01"
+VERSAO_TABELAS = "2026-05-25-02"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1716,8 +1716,8 @@ def localizar_arquivo_tabela(arquivo):
 
     caminhos_possiveis = [
         pasta_app / arquivo,
-        pasta_app / "ESPECIAL" / Path(arquivo).name,
         pasta_app / "tabelas" / arquivo,
+        pasta_app / "ESPECIAL" / Path(arquivo).name,
         pasta_app / "tabelas" / "ESPECIAL" / Path(arquivo).name,
         Path(arquivo),
     ]
@@ -1726,15 +1726,15 @@ def localizar_arquivo_tabela(arquivo):
         if caminho.exists():
             return caminho
 
-    # Fallback: procura pelo nome do arquivo dentro da pasta do app
     encontrados = list(pasta_app.rglob(Path(arquivo).name))
     if encontrados:
         return encontrados[0]
 
     return pasta_app / arquivo
 
-    @st.cache_data(ttl=300)
+@st.cache_data(ttl=300)
 def carregar_dados_completos(nome_tabela, versao_cache):
+    _ = versao_cache
     arquivo = mapa_tabelas.get(nome_tabela)
 
     if not arquivo:
@@ -1753,7 +1753,7 @@ def carregar_dados_completos(nome_tabela, versao_cache):
         xl = pd.ExcelFile(caminho_arquivo)
 
         for sheet in xl.sheet_names:
-            if sheet.startswith("ST "):
+            if str(sheet).startswith("ST "):
                 df_st = pd.read_excel(xl, sheet_name=sheet)
                 df_st.columns = df_st.columns.astype(str).str.strip()
 
@@ -1774,14 +1774,17 @@ def moeda_br(valor):
 def valor_float(valor):
     if pd.isna(valor):
         return 0.0
+
     if isinstance(valor, (int, float)):
         return float(valor)
 
     txt = str(valor).replace("R$", "").strip()
+
     if txt in ["", "-", "nan", "None"]:
         return 0.0
 
     txt = txt.replace(".", "").replace(",", ".")
+
     try:
         return float(txt)
     except:
@@ -1792,6 +1795,7 @@ def buscar_valor_linha(df, estado, coluna):
         return 0.0
 
     linha = df[df["Estado"].astype(str).str.strip() == estado]
+
     if linha.empty:
         return 0.0
 
