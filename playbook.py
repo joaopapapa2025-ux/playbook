@@ -444,12 +444,12 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
             "📄 Ata AGE 2025": "2025_07_08, Baby Roo, Ata AGE 2025, mudança sede e matriz, versão JUCEPAR, WSA, Registrada.pdf",
             "✅ CND - Federais": "- CND – Certidão Negativa de Débitos Federais 1.pdf",
             "🏙️ CND - Municipais": "CND MUNICIPAL - BABY ROO.pdf",
-            "👨‍🚒 Alvará Bombeiro": "BABY ROO - CVCB Bombeiro - venc 04.11.2026.pdf",
+            "👨‍🚒 Alvará Bombeiro - Venc 04/11/2026": "BABY ROO - CVCB Bombeiro - venc 04.11.2026.pdf",
             "💳 Cartão CNPJ": "CARTÃO CNPJ BABY ROO.pdf",
             "🏛️ Inscrição Municipal": "INSCRIÇÃO MUNICIPAL.pdf",
             "📑 Sintegra": "SINTEGRA PAPAPÁ.pdf",
             "💰 Comprovante Bancário": "COMPROVANTE BANCÁRIO (1).png",
-            "🏥 Licença sanitária": "Licença Sanitária_Baby Roo - Val 10.11.27.pdf"
+            "🏥 Licença sanitária - Venc 10/11/2027": "Licença Sanitária_Baby Roo - Val 10.11.27.pdf"
         }
         for label, path in arquivos_fiscais.items():
             try:
