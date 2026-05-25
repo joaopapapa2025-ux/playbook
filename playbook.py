@@ -1687,14 +1687,13 @@ import os
 # --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
 ################################################################################
 
-import streamlit as st
-import pandas as pd
-from fpdf import FPDF
 import os
 from pathlib import Path
 import unicodedata
+import pandas as pd
+import streamlit as st
+from fpdf import FPDF
 
-# Variáveis de versão e mapa de tabelas
 VERSAO_TABELAS = "2026-05-25-13"
 
 mapa_tabelas = {
@@ -1714,67 +1713,6 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
-# Definindo categorias de produtos
-categorias_produtos = {
-    "PAPAPÁ": {
-        "PAPINHA DE CARNE": {
-            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5313", "ipi": 0.0},
-            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
-        },
-        "YOGUZINHO": {
-            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5563", "ipi": 0.0},
-            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5570", "ipi": 0.0},
-        },
-        "PAPINHA DE FRUTA": {
-            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
-            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908736", "ipi": 0.0},
-            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908712", "ipi": 0.0},
-            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908750", "ipi": 0.0},
-            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "27898994908757", "ipi": 0.0},
-            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5306", "ipi": 0.0},
-        },
-        "PALITINHO": {
-            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5085", "ipi": 0.0},
-            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5078", "ipi": 0.0},
-            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5061", "ipi": 0.0},
-        },
-        "DENTIÇÃO": {
-            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8774", "ipi": 0.0},
-            "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
-        },
-        "MACARRÃO": {
-            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
-            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
-        },
-        "LA CHEF": {
-            "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
-            "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5269", "ipi": 0.0},
-            "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
-        },
-        "CEREAL": {
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P. Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
-        },
-        "BISCOTTI": {
-            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5375", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5351", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5368", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5597", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
-        },
-        "SOPINHA": {
-            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5610", "ipi": 0.0},
-            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5634", "ipi": 0.0},
-            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5627", "ipi": 0.0},
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5603", "ipi": 0.0},
-        }
-    },
-    # Adicione outras categorias aqui, como "ERA UMA VEZ" e "PUERICULTURA"
-}
-
-# Funções de carregamento e manipulação de dados
 def localizar_arquivo_tabela(arquivo):
     if not arquivo:
         return None
@@ -1808,12 +1746,12 @@ def localizar_arquivo_tabela(arquivo):
 def carregar_dados_completos_por_caminho(caminho_arquivo):
     if not caminho_arquivo:
         return None, {}, None
-        
+
     if str(caminho_arquivo).startswith("MOCK_VIRTUAL_"):
         st.warning(f"⚠️ Arquivo físico não encontrado no servidor. Executando em modo de demonstração simulada.")
         df_mock = pd.DataFrame({"Estado": ["SP", "RJ", "MG", "PR", "SC", "RS", "BA", "GO", "DF"]})
-        colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos", 
-                         "Papapasta", "La Chef", "P. Cereal 170g Sache sabores", 
+        colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos",
+                         "Papapasta", "La Chef", "P. Cereal 170g Sache sabores",
                          "P. Cereal 170g Sache MULTI", "MULTI sache 500 g", "Biscotti", "Bowl",
                          "Salgadinhos", "Bisc. Recheados", "Sucos", "Achocolatado",
                          "Puer. Talheres", "Puer. Babador", "Puer. Bolw", "Puer. Pratinho"]
@@ -1933,10 +1871,46 @@ def buscar_coluna_por_header(df_tabelas, linha_header, termos_obrigatorios, term
 
     return None
 
-def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
+# --- CORRIGIDO: busca por código (col 3) em vez de nome ---
+def buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto=None):
+    """
+    Busca um produto na aba Tabelas.
+    Prioriza busca por código (col 3) quando cod_produto for fornecido —
+    muito mais confiável que comparação de nomes.
+    Mantém fallback por nome para compatibilidade com outras tabelas.
+
+    Colunas fixas da aba Tabelas:
+      col 11 = Valor Unit.
+      col 12 = Valor Caixa (sem ST/IPI)
+      col 13 = SUBSTITUIÇÃO TRIBUTÁRIA UN
+      col 14 = IPI
+      col 15 = Valor Caixa + ST
+    """
     if df_tabelas is None:
         return None
 
+    # Busca por código (rápida e exata)
+    if cod_produto is not None:
+        cod_str = str(cod_produto).strip()
+        for r in range(df_tabelas.shape[0]):
+            celula_cod = str(df_tabelas.iat[r, 3]).strip()
+            if celula_cod == cod_str:
+                preco_unit  = valor_float(df_tabelas.iat[r, 11])  # Valor Unit.
+                st_unit     = valor_float(df_tabelas.iat[r, 13])  # ST UN
+                ipi_unit    = valor_float(df_tabelas.iat[r, 14])  # IPI
+                valor_cx_st = valor_float(df_tabelas.iat[r, 15])  # Valor Caixa + ST
+
+                if preco_unit > 1000:
+                    preco_unit = 0.0
+
+                return {
+                    "preco_unit":  preco_unit,
+                    "st_unit":     st_unit,
+                    "ipi_unit":    ipi_unit,
+                    "valor_cx_st": valor_cx_st,
+                }
+
+    # Fallback: busca por nome normalizado (comportamento original)
     nome_busca = texto_normalizado(nome_produto)
 
     for r in range(df_tabelas.shape[0]):
@@ -1947,20 +1921,13 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                 linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, r)
 
                 col_valor_unit = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["valor", "unit"],
-                    ["caixa", "total"]
+                    df_tabelas, linha_header, ["valor", "unit"], ["caixa", "total"]
                 )
                 col_st_un = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["substituicao", "tributaria"]
+                    df_tabelas, linha_header, ["substituicao", "tributaria"]
                 )
                 col_ipi = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["ipi"]
+                    df_tabelas, linha_header, ["ipi"]
                 )
 
                 if col_valor_unit is None:
@@ -1971,36 +1938,42 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                     col_ipi = c + 13
 
                 preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
-                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
-                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
+                st_unit    = valor_float(df_tabelas.iat[r, col_st_un])      if col_st_un    < df_tabelas.shape[1] else 0.0
+                ipi_unit   = valor_float(df_tabelas.iat[r, col_ipi])        if col_ipi      < df_tabelas.shape[1] else 0.0
 
                 if preco_unit > 1000:
                     preco_unit = 0.0
 
                 return {
-                    "preco_unit": preco_unit,
-                    "st_unit": st_unit,
-                    "ipi_unit": ipi_unit,
+                    "preco_unit":  preco_unit,
+                    "st_unit":     st_unit,
+                    "ipi_unit":    ipi_unit,
+                    "valor_cx_st": (preco_unit + st_unit + ipi_unit),
                 }
+
     return None
 
+# --- CORRIGIDO: passa cod_produto para busca por código ---
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
     col_planilha = config["coluna"]
-    un_cx = config["un_cx"]
+    un_cx        = config["un_cx"]
+    cod_produto  = config.get("cod")
 
+    # Tabela ESPECIAL: usar aba Tabelas como fonte primária (por código).
+    # A aba Tabelas já traz Valor Unit., ST UN e IPI calculados corretamente.
     if preferir_aba_tabelas:
-        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+        item = buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto)
 
-        if item_tabelas:
-            preco_unit = item_tabelas["preco_unit"]
-            st_cx = item_tabelas["st_unit"] * un_cx
-            ipi_cx = item_tabelas["ipi_unit"] * un_cx
-            valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-
+        if item:
+            preco_unit        = item["preco_unit"]
+            st_cx             = item["st_unit"] * un_cx
+            ipi_cx            = item["ipi_unit"] * un_cx
+            valor_caixa_total = item["valor_cx_st"] if item["valor_cx_st"] > 0 else (preco_unit + item["st_unit"] + item["ipi_unit"]) * un_cx
             return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
+    # Outras tabelas: usar aba PREÇOS + abas ST
     if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
+        preco_unit    = buscar_valor_linha(df_precos, estado, col_planilha)
         valor_cx_base = preco_unit * un_cx
 
         st_cx = 0.0
@@ -2010,24 +1983,122 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
             coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
             st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
 
-        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+        ipi_cx            = valor_cx_base * config.get("ipi", 0.0)
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
-
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
-    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+    # Último recurso: aba Tabelas por nome
+    item = buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto)
 
-    if item_tabelas:
-        preco_unit = item_tabelas["preco_unit"]
-        st_cx = item_tabelas["st_unit"] * un_cx
-        ipi_cx = item_tabelas["ipi_unit"] * un_cx
-        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-
+    if item:
+        preco_unit        = item["preco_unit"]
+        st_cx             = item["st_unit"]  * un_cx
+        ipi_cx            = item["ipi_unit"] * un_cx
+        valor_caixa_total = item["valor_cx_st"] if item["valor_cx_st"] > 0 else (preco_unit + item["st_unit"] + item["ipi_unit"]) * un_cx
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     return 0.0, 0.0, 0.0, 0.0
 
-# Streamlit interface
+categorias_produtos = {
+    "PAPAPÁ": {
+        "PAPINHA DE CARNE": {
+            "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5313", "ipi": 0.0},
+            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
+        },
+        "YOGUZINHO": {
+            "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5563", "ipi": 0.0},
+            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5570", "ipi": 0.0},
+        },
+        "PAPINHA DE FRUTA": {
+            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
+            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908736", "ipi": 0.0},
+            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908712", "ipi": 0.0},
+            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908750", "ipi": 0.0},
+            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "27898994908757", "ipi": 0.0},
+            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5306", "ipi": 0.0},
+        },
+        "PALITINHO": {
+            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5085", "ipi": 0.0},
+            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5078", "ipi": 0.0},
+            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5061", "ipi": 0.0},
+        },
+        "DENTIÇÃO": {
+            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8774", "ipi": 0.0},
+            "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
+        },
+        "MACARRÃO": {
+            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
+            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
+        },
+        "LA CHEF": {
+            "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
+            "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5269", "ipi": 0.0},
+            "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
+        },
+        "CEREAL": {
+            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P. Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
+            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
+        },
+        "BISCOTTI": {
+            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5375", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5351", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5368", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5597", "ipi": 0.0},
+            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
+        },
+        "SOPINHA": {
+            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5610", "ipi": 0.0},
+            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5634", "ipi": 0.0},
+            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5627", "ipi": 0.0},
+            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5603", "ipi": 0.0},
+        }
+    },
+    "ERA UMA VEZ": {
+        "SALGADINHOS": {
+            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5670", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5671", "ipi": 0.0},
+            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5673", "ipi": 0.0},
+        },
+        "BISCOITO RECHEADO": {
+            "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 8, "cod": "5677", "ipi": 0.0},
+            "Biscoito Recheado de Morango Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 8, "cod": "5678", "ipi": 0.0},
+        },
+        "SUCOS": {
+            "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5680", "ipi": 0.0},
+            "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5681", "ipi": 0.0},
+            "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5682", "ipi": 0.0},
+            "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5683", "ipi": 0.0},
+        },
+        "ACHOCOLATADO": {
+            "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "aba_st": None, "un_cx": 27, "cod": "5310", "ipi": 0.0},
+        }
+    },
+    "PUERICULTURA": {
+        "TALHERES": {
+            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.0},
+            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.0},
+            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.0},
+        },
+        "BABADORES": {
+            "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5733", "ipi": 0.0},
+            "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5740", "ipi": 0.0},
+            "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.0},
+        },
+        "BOWLS": {
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.0},
+        },
+        "PRATINHOS": {
+            "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.0},
+            "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5689", "ipi": 0.0},
+            "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5696", "ipi": 0.0},
+        }
+    }
+}
+
 if "aba_selecionada" not in locals() and "aba_selecionada" not in globals():
     aba_selecionada = "🛒 Simulador de Pedidos"
 
@@ -2044,7 +2115,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     total_com_desconto = 0.0
     valor_desconto = 0.0
     perc_desconto = 0.0
-    
+
     itens_selecionados_para_pdf = []
 
     def formatar_cnpj(cnpj):
@@ -2132,7 +2203,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 subtotal = valor_caixa_total * qtd_cx
                                 total_pedido += subtotal
                                 st.write(moeda_br(subtotal))
-                                
+
                             if qtd_cx > 0:
                                 qtd_itens = qtd_cx * un_cx
                                 preco_unit_total = valor_caixa_total / un_cx if un_cx else 0.0
@@ -2253,10 +2324,10 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 curr_y = pdf.get_y()
 
                 pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
-                
+
                 # Renderiza o texto em bloco respeitando a quebra de linha
                 pdf.multi_cell(w_prod, altura_linha, nome_p, 1, "L")
-                
+
                 # Posiciona o cursor de volta ao lado para as próximas colunas do grid
                 pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
 
@@ -2311,3 +2382,5 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
+ENDOFFILE
+echo "Done: $(wc -l < /mnt/user-data/outputs/modulo10_COMPLETO.py) lines"
