@@ -1683,9 +1683,13 @@ import pandas as pd
 from fpdf import FPDF
 import os
 
+################################################################################
+# --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
+################################################################################
+
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-09"
+VERSAO_TABELAS = "2026-05-25-11"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1714,28 +1718,29 @@ def localizar_arquivo_tabela(arquivo):
     caminhos_possiveis = [
         pasta_app / arquivo,
         pasta_app / "tabelas" / arquivo,
+        pasta_app / nome_arquivo,
         pasta_app / "ESPECIAL" / nome_arquivo,
         pasta_app / "tabelas" / "ESPECIAL" / nome_arquivo,
-        pasta_app / nome_arquivo,
     ]
 
     for caminho in caminhos_possiveis:
         if caminho.exists():
             return caminho.resolve()
 
-    encontrados = list(pasta_app.rglob(nome_arquivo))
+    encontrados = [
+        caminho.resolve()
+        for caminho in pasta_app.rglob(nome_arquivo)
+        if caminho.is_file()
+    ]
+
     if encontrados:
-        return encontrados[0].resolve()
+        return sorted(encontrados, key=lambda p: len(str(p)))[0]
 
     raise FileNotFoundError(f"Arquivo não encontrado: {arquivo}")
 
-@st.cache_data(ttl=300)
-def carregar_dados_completos_por_caminho(caminho_arquivo_str, versao_cache, modificado_em):
-    _ = versao_cache
-    _ = modificado_em
-
+def carregar_dados_completos_por_caminho(caminho_arquivo):
     try:
-        caminho_arquivo = Path(caminho_arquivo_str)
+        caminho_arquivo = Path(caminho_arquivo)
 
         df_p = pd.read_excel(caminho_arquivo, sheet_name="PREÇOS", header=1)
         df_p.columns = df_p.columns.astype(str).str.strip()
@@ -2084,13 +2089,10 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         arquivo_tabela = mapa_tabelas.get(tabela_sel)
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
-        modificado_em = caminho_tabela.stat().st_mtime
 
-        df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(
-            str(caminho_tabela),
-            VERSAO_TABELAS,
-            modificado_em
-        )
+        df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
+
+        st.caption(f"Tabela carregada: {caminho_tabela.name}")
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
