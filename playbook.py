@@ -1689,7 +1689,7 @@ import os
 
 from pathlib import Path
 
-VERSAO_TABELAS = "2026-05-25-02"
+VERSAO_TABELAS = "2026-05-25-04"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1713,29 +1713,28 @@ def localizar_arquivo_tabela(arquivo):
         return None
 
     pasta_app = Path(__file__).parent
+    nome_arquivo = Path(arquivo).name
 
     caminhos_possiveis = [
         pasta_app / arquivo,
         pasta_app / "tabelas" / arquivo,
-        pasta_app / "ESPECIAL" / Path(arquivo).name,
-        pasta_app / "tabelas" / "ESPECIAL" / Path(arquivo).name,
-        Path(arquivo),
+        pasta_app / "ESPECIAL" / nome_arquivo,
+        pasta_app / "tabelas" / "ESPECIAL" / nome_arquivo,
     ]
 
     for caminho in caminhos_possiveis:
         if caminho.exists():
             return caminho
 
-    encontrados = list(pasta_app.rglob(Path(arquivo).name))
+    encontrados = list(pasta_app.rglob(nome_arquivo))
     if encontrados:
         return encontrados[0]
 
-    return pasta_app / arquivo
+    raise FileNotFoundError(f"Arquivo não encontrado: {arquivo}")
 
 @st.cache_data(ttl=300)
-def carregar_dados_completos(nome_tabela, versao_cache):
+def carregar_dados_completos_por_arquivo(arquivo, versao_cache):
     _ = versao_cache
-    arquivo = mapa_tabelas.get(nome_tabela)
 
     if not arquivo:
         return None, {}
