@@ -2153,6 +2153,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela, tabela_sel)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
+        fator_preco = 0.90 if tabela_sel == "ESPECIAL REDE (-10%)" else 1.0
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -2173,7 +2174,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 estado_sel,
                                 regime_simples,
                                 nome_exibicao,
-                                config
+                                config,
+                                fator_preco
                             )
 
                             with col_prod:
