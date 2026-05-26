@@ -2074,6 +2074,21 @@ if aba_selecionada == "🏠 Home":
 elif aba_selecionada == "🛒 Simulador de Pedidos":
     st.header("🛒 Simulador de Pedidos")
 
+with col_limpar:
+    st.write("")
+    if st.button("Limpar", use_container_width=True, key="btn_limpar_simulador"):
+        for chave in list(st.session_state.keys()):
+            if chave.startswith("sim_qtd_"):
+                st.session_state[chave] = 0
+
+        st.session_state["cnpj_input"] = ""
+        st.session_state["sim_forma_pagamento"] = ""
+        st.session_state["sim_regime"] = "NÃO"
+        st.session_state["sim_tabela"] = "Selecione uma tabela"
+        st.session_state["sim_estado"] = "Selecione o Estado"
+        st.session_state["sim_desconto"] = 0.0
+        st.rerun()
+
     total_pedido = 0.0
     df_precos = None
     df_tabelas = None
