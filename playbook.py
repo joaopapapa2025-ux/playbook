@@ -66,7 +66,7 @@ def carregar_do_banco():
 import streamlit as st
 from datetime import date
 
-CODIGO_ACESSO = "amamosnossosclientes"
+CODIGO_ACESSO = "maquinadevendas"
 token_hoje = f"access_{date.today().strftime('%Y%m%d')}" # Gera algo como 'access_20260331'
 
 # 1. Tenta ler o token de acesso da URL
