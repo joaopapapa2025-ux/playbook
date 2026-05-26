@@ -2149,6 +2149,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.session_state["sim_tabela"] = "Selecione uma tabela"
             st.session_state["sim_estado"] = "Selecione o Estado"
             st.session_state["sim_desconto"] = 0.0
+            st.session_state["sim_observacoes"] = ""
             st.rerun()
 
     total_pedido = 0.0
