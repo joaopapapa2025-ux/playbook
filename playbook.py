@@ -2278,8 +2278,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     key="sim_observacoes"
                 )
 
-    valor_desconto = total_pedido * (perc_desconto / 100)
-    total_com_desconto = total_pedido - valor_desconto
+            valor_desconto = total_pedido * (perc_desconto / 100)
+            total_com_desconto = total_pedido - valor_desconto
 
             with col_total_1:
                 st.metric("Total Bruto (com ST/IPI)", moeda_br(total_pedido))
