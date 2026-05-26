@@ -2328,7 +2328,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
             pdf.set_font("Arial", size=7)
 
-        def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
+        def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto, observacoes):
             pdf = FPDF()
             pdf.set_auto_page_break(auto=True, margin=15)
             pdf.add_page()
@@ -2419,12 +2419,21 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             pdf.cell(160, 10, texto_pdf("TOTAL LÍQUIDO:"), 0, 0, "R")
             pdf.cell(30, 10, moeda_pdf(total_liq), 0, 1, "C")
 
+            if observacoes and str(observacoes).strip():
+                pdf.ln(6)
+                pdf.set_font("Arial", "B", 9)
+                pdf.cell(190, 6, texto_pdf("Observações:"), 0, 1, "L")
+                pdf.set_font("Arial", size=8)
+                pdf.multi_cell(190, 5, txt=texto_pdf(observacoes), border=1, align="L")
+
             pdf.ln(10)
             pdf.set_font("Arial", "I", 8)
             aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
             pdf.multi_cell(190, 5, txt=texto_pdf(aviso), align="C")
 
             return pdf.output(dest="S").encode("latin-1")
+
+        observacoes_pedido = st.session_state.get("sim_observacoes", "")
 
         pdf_bytes = gerar_pdf(
             itens_selecionados_para_pdf,
@@ -2434,7 +2443,8 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             total_com_desconto,
             estado_sel,
             cnpj_cliente,
-            forma_pagamento
+            forma_pagamento,
+            observacoes_pedido
         )
 
         id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
