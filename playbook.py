@@ -1694,12 +1694,12 @@ import pandas as pd
 import streamlit as st
 from fpdf import FPDF
 
-VERSAO_TABELAS = "2026-05-26-01"
+VERSAO_TABELAS = "2026-05-26-02"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26 - Completa - NÃO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa -10% - NÃO USAR.xlsx",
+    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
+    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1718,6 +1718,7 @@ def texto_normalizado(valor):
     txt = unicodedata.normalize("NFKD", txt)
     txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
     txt = txt.replace("\n", " ")
+    txt = txt.replace("-", " ")
     txt = " ".join(txt.split())
     return txt
 
@@ -1745,19 +1746,21 @@ def localizar_arquivo_tabela(arquivo):
 
     equivalentes = []
     for caminho in todos_arquivos:
-        nome_candidato = texto_normalizado(caminho.name)
-        if nome_candidato == nome_norm:
+        if texto_normalizado(caminho.name) == nome_norm:
             equivalentes.append(caminho.resolve())
 
     if equivalentes:
         return sorted(equivalentes, key=lambda p: len(str(p)))[0]
 
-    # Fallback para nomes antigos sem acento/hífen, sem derrubar o app.
-    palavras = [p for p in nome_norm.replace(".xlsx", "").split(" ") if p not in ["-", "nao", "não"]]
+    palavras = [
+        p for p in nome_norm.replace(".xlsx", "").split()
+        if p not in ["nao", "não", "usar"]
+    ]
+
     candidatos = []
     for caminho in todos_arquivos:
         nome_candidato = texto_normalizado(caminho.name)
-        if all(palavra in nome_candidato for palavra in palavras[:4]):
+        if all(palavra in nome_candidato for palavra in palavras[:5]):
             if ("10%" in nome_norm and "10%" in nome_candidato) or ("10%" not in nome_norm and "10%" not in nome_candidato):
                 candidatos.append(caminho.resolve())
 
@@ -1850,7 +1853,6 @@ def buscar_linha_cabecalho_tabelas(df_tabelas, linha_produto_idx):
 
     for r in range(linha_produto_idx - 1, inicio - 1, -1):
         textos = [texto_normalizado(df_tabelas.iat[r, c]) for c in range(df_tabelas.shape[1])]
-
         tem_descricao = any("descricao" in txt for txt in textos)
         tem_valor_unit = any("valor unit" in txt for txt in textos)
 
@@ -1925,19 +1927,9 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
 
     return None
 
-def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
-
-    if preferir_aba_tabelas:
-        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
-
-        if item_tabelas:
-            preco_unit = item_tabelas["preco_unit"]
-            st_cx = item_tabelas["st_unit"] * un_cx
-            ipi_cx = item_tabelas["ipi_unit"] * un_cx
-            valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-            return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     if df_precos is not None and col_planilha in df_precos.columns:
         preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
@@ -1952,6 +1944,7 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
+
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
@@ -1961,6 +1954,7 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
         st_cx = item_tabelas["st_unit"] * un_cx
         ipi_cx = item_tabelas["ipi_unit"] * un_cx
         valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     return 0.0, 0.0, 0.0, 0.0
@@ -2072,7 +2066,25 @@ if aba_selecionada == "🏠 Home":
     st.write("Bem-vindo ao Playbook")
 
 elif aba_selecionada == "🛒 Simulador de Pedidos":
-    st.header("🛒 Simulador de Pedidos")
+    col_titulo, col_limpar = st.columns([4, 1])
+
+    with col_titulo:
+        st.header("🛒 Simulador de Pedidos")
+
+    with col_limpar:
+        st.write("")
+        if st.button("Limpar", use_container_width=True, key="btn_limpar_simulador"):
+            for chave in list(st.session_state.keys()):
+                if chave.startswith("sim_qtd_"):
+                    st.session_state[chave] = 0
+
+            st.session_state["cnpj_input"] = ""
+            st.session_state["sim_forma_pagamento"] = ""
+            st.session_state["sim_regime"] = "NÃO"
+            st.session_state["sim_tabela"] = "Selecione uma tabela"
+            st.session_state["sim_estado"] = "Selecione o Estado"
+            st.session_state["sim_desconto"] = 0.0
+            st.rerun()
 
     total_pedido = 0.0
     df_precos = None
@@ -2103,28 +2115,27 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     with c_pag:
         opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
-        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0)
+        forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, key="sim_forma_pagamento")
 
     with c_regime:
-        regime_simples = st.selectbox("Regime SIMPLES?", ["NÃO", "SIM"], index=0)
+        regime_simples = st.selectbox("Regime SIMPLES?", ["NÃO", "SIM"], index=0, key="sim_regime")
 
     st.divider()
 
     c1, c2 = st.columns(2)
 
     with c1:
-        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0)
+        tabela_sel = st.selectbox("Selecione a Tabela:", list(mapa_tabelas.keys()), index=0, key="sim_tabela")
 
     with c2:
         lista_estados = ["Selecione o Estado", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"]
-        estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0)
+        estado_sel = st.selectbox("Selecione o Estado (UF):", lista_estados, index=0, key="sim_estado")
 
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         arquivo_tabela = mapa_tabelas.get(tabela_sel)
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
-        preferir_aba_tabelas = tabela_sel == "ESPECIAL REDE (-10%)"
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -2145,8 +2156,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 estado_sel,
                                 regime_simples,
                                 nome_exibicao,
-                                config,
-                                preferir_aba_tabelas
+                                config
                             )
 
                             with col_prod:
@@ -2185,7 +2195,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             col_total_1, col_total_2 = st.columns([2, 1])
 
             with col_total_2:
-                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5)
+                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5, key="sim_desconto")
                 valor_desconto = total_pedido * (perc_desconto / 100)
                 total_com_desconto = total_pedido - valor_desconto
 
