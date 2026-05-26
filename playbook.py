@@ -2421,8 +2421,8 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
             if observacoes and str(observacoes).strip():
                 obs_txt = texto_pdf(observacoes).strip()
-                linhas_obs = pdf.multi_cell(190, 5, obs_txt, split_only=True)
-                altura_obs = max(18, len(linhas_obs) * 5 + 10)
+                linhas_obs = pdf.multi_cell(186, 5, obs_txt, split_only=True)
+                altura_obs = max(12, len(linhas_obs) * 5 + 4)
 
                 # Se a caixa de observações + aviso não couber, começa nova página.
                 if pdf.get_y() + altura_obs + 25 > 275:
