@@ -1944,12 +1944,12 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
 
     return None
 
-def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config):
+def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, fator_preco=1.0):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
 
     if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha)
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_preco
         valor_cx_base = preco_unit * un_cx
 
         st_cx = 0.0
