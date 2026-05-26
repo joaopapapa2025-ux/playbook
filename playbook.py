@@ -60,6 +60,54 @@ def carregar_do_banco():
 # Quando você for salvar a nota, basta chamar:
 # salvar_no_banco(nova_entrada)
 
+# ==========================================
+# 🔐 PROTEÇÃO DE ACESSO (F5-PROOF + EXPIRAÇÃO DIÁRIA)
+# ==========================================
+import streamlit as st
+from datetime import date
+
+CODIGO_ACESSO = "amamosnossosclientes"
+token_hoje = f"access_{date.today().strftime('%Y%m%d')}" # Gera algo como 'access_20260331'
+
+# 1. Tenta ler o token de acesso da URL
+query_params = st.query_params
+acesso_valido = query_params.get("auth") == token_hoje
+
+# 2. Se o token não existir ou for de um dia passado, pede a senha
+if not acesso_valido:
+    st.title("🔐 Acesso Restrito - Papapá")
+    st.info(f"Validação necessária para o dia: {date.today().strftime('%d/%m/%Y')}")
+    
+    codigo_digitado = st.text_input(
+        "Digite o código de acesso",
+        type="password"
+    )
+
+    if st.button("Entrar"):
+        if codigo_digitado == CODIGO_ACESSO:
+            # Salva o token com a data de hoje na URL
+            st.query_params["auth"] = token_hoje
+            st.rerun()
+        else:
+            st.error("Código incorreto")
+
+    st.stop()
+
+# Botão opcional na barra lateral para limpar o acesso
+if st.sidebar.button("Sair (Limpar Sessão)"):
+    st.query_params.clear()
+    st.rerun()
+
+import streamlit as st
+from datetime import datetime, timedelta
+import pandas as pd
+
+import pandas as pd
+from datetime import datetime, timedelta
+from pandas.tseries.holiday import AbstractHolidayCalendar, Holiday
+import streamlit as st
+import streamlit.components.v1 as components
+
 ################################################################################
 # --- 1. CONFIGURAÇÕES DE ESTILO E PÁGINA ---
 ################################################################################
@@ -182,54 +230,6 @@ for i, label in enumerate(opcoes_menu):
 
 aba_selecionada = st.session_state.aba_atual
 st.divider()
-
-# ==========================================
-# 🔐 PROTEÇÃO DE ACESSO (F5-PROOF + EXPIRAÇÃO DIÁRIA)
-# ==========================================
-import streamlit as st
-from datetime import date
-
-CODIGO_ACESSO = "amamosnossosclientes"
-token_hoje = f"access_{date.today().strftime('%Y%m%d')}" # Gera algo como 'access_20260331'
-
-# 1. Tenta ler o token de acesso da URL
-query_params = st.query_params
-acesso_valido = query_params.get("auth") == token_hoje
-
-# 2. Se o token não existir ou for de um dia passado, pede a senha
-if not acesso_valido:
-    st.title("🔐 Acesso Restrito - Papapá")
-    st.info(f"Validação necessária para o dia: {date.today().strftime('%d/%m/%Y')}")
-    
-    codigo_digitado = st.text_input(
-        "Digite o código de acesso",
-        type="password"
-    )
-
-    if st.button("Entrar"):
-        if codigo_digitado == CODIGO_ACESSO:
-            # Salva o token com a data de hoje na URL
-            st.query_params["auth"] = token_hoje
-            st.rerun()
-        else:
-            st.error("Código incorreto")
-
-    st.stop()
-
-# Botão opcional na barra lateral para limpar o acesso
-if st.sidebar.button("Sair (Limpar Sessão)"):
-    st.query_params.clear()
-    st.rerun()
-
-import streamlit as st
-from datetime import datetime, timedelta
-import pandas as pd
-
-import pandas as pd
-from datetime import datetime, timedelta
-from pandas.tseries.holiday import AbstractHolidayCalendar, Holiday
-import streamlit as st
-import streamlit.components.v1 as components
     
 ################################################################################
 # --- MÓDULO 1: HOME (VISUALIZAÇÃO DA EQUIPE REFORMULADA) ---
