@@ -2262,9 +2262,24 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             col_total_1, col_total_2 = st.columns([2, 1])
 
             with col_total_2:
-                perc_desconto = st.number_input("Desconto (%)", min_value=0.0, max_value=100.0, value=0.0, step=0.5, key="sim_desconto")
-                valor_desconto = total_pedido * (perc_desconto / 100)
-                total_com_desconto = total_pedido - valor_desconto
+                perc_desconto = st.number_input(
+                    "Desconto (%)",
+                    min_value=0.0,
+                    max_value=100.0,
+                    value=0.0,
+                    step=0.5,
+                    key="sim_desconto"
+                )
+
+                observacoes_pedido = st.text_area(
+                    "Observações",
+                    placeholder="Inclua informações relevantes sobre o orçamento...",
+                    height=120,
+                    key="sim_observacoes"
+                )
+
+    valor_desconto = total_pedido * (perc_desconto / 100)
+    total_com_desconto = total_pedido - valor_desconto
 
             with col_total_1:
                 st.metric("Total Bruto (com ST/IPI)", moeda_br(total_pedido))
