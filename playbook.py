@@ -1722,13 +1722,27 @@ def texto_normalizado(valor):
     txt = " ".join(txt.split())
     return txt
 
-def localizar_arquivo_tabela(arquivo):
+def localizar_arquivo_tabela(arquivo, tabela_sel=None):
     if not arquivo:
         return None
 
     pasta_app = Path(__file__).parent
     nome_arquivo = Path(arquivo).name
     nome_norm = texto_normalizado(nome_arquivo)
+
+    exige_10 = tabela_sel == "ESPECIAL REDE (-10%)"
+    bloqueia_10 = tabela_sel == "ESPECIAL"
+
+    def arquivo_valido(caminho):
+        nome = texto_normalizado(caminho.name)
+
+        if exige_10 and "10%" not in nome:
+            return False
+
+        if bloqueia_10 and "10%" in nome:
+            return False
+
+        return True
 
     caminhos_possiveis = [
         pasta_app / arquivo,
@@ -1739,14 +1753,14 @@ def localizar_arquivo_tabela(arquivo):
     ]
 
     for caminho in caminhos_possiveis:
-        if caminho.exists():
+        if caminho.exists() and arquivo_valido(caminho):
             return caminho.resolve()
 
     todos_arquivos = [p for p in pasta_app.rglob("*.xlsx") if p.is_file()]
 
     equivalentes = []
     for caminho in todos_arquivos:
-        if texto_normalizado(caminho.name) == nome_norm:
+        if texto_normalizado(caminho.name) == nome_norm and arquivo_valido(caminho):
             equivalentes.append(caminho.resolve())
 
     if equivalentes:
@@ -1760,14 +1774,17 @@ def localizar_arquivo_tabela(arquivo):
     candidatos = []
     for caminho in todos_arquivos:
         nome_candidato = texto_normalizado(caminho.name)
+
+        if not arquivo_valido(caminho):
+            continue
+
         if all(palavra in nome_candidato for palavra in palavras[:5]):
-            if ("10%" in nome_norm and "10%" in nome_candidato) or ("10%" not in nome_norm and "10%" not in nome_candidato):
-                candidatos.append(caminho.resolve())
+            candidatos.append(caminho.resolve())
 
     if candidatos:
         return sorted(candidatos, key=lambda p: len(str(p)))[0]
 
-    st.error(f"Arquivo de tabela não encontrado no servidor: {nome_arquivo}")
+    st.error(f"Arquivo correto não encontrado para {tabela_sel}: {nome_arquivo}")
     return None
 
 def carregar_dados_completos_por_caminho(caminho_arquivo):
