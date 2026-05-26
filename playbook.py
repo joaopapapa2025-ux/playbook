@@ -1694,12 +1694,12 @@ import pandas as pd
 import streamlit as st
 from fpdf import FPDF
 
-VERSAO_TABELAS = "2026-05-25-13"
+VERSAO_TABELAS = "2026-05-26-01"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
+    "ESPECIAL": "0325E_PC reajuste abril26 - Completa - NÃO USAR.xlsx",
+    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa -10% - NÃO USAR.xlsx",
     "FARMA 0": "0325F_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA V": "0325Fv_PC reajuste abril26 - Era uma vez.xlsx",
     "FARMA X": "0325Fx_PC reajuste abril26 - Era uma vez.xlsx",
@@ -1713,12 +1713,21 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
+def texto_normalizado(valor):
+    txt = str(valor).strip().lower()
+    txt = unicodedata.normalize("NFKD", txt)
+    txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
+    txt = txt.replace("\n", " ")
+    txt = " ".join(txt.split())
+    return txt
+
 def localizar_arquivo_tabela(arquivo):
     if not arquivo:
         return None
 
     pasta_app = Path(__file__).parent
     nome_arquivo = Path(arquivo).name
+    nome_norm = texto_normalizado(nome_arquivo)
 
     caminhos_possiveis = [
         pasta_app / arquivo,
@@ -1732,32 +1741,35 @@ def localizar_arquivo_tabela(arquivo):
         if caminho.exists():
             return caminho.resolve()
 
-    encontrados = [
-        caminho.resolve()
-        for caminho in pasta_app.rglob(nome_arquivo)
-        if caminho.is_file()
-    ]
+    todos_arquivos = [p for p in pasta_app.rglob("*.xlsx") if p.is_file()]
 
-    if encontrados:
-        return sorted(encontrados, key=lambda p: len(str(p)))[0]
+    equivalentes = []
+    for caminho in todos_arquivos:
+        nome_candidato = texto_normalizado(caminho.name)
+        if nome_candidato == nome_norm:
+            equivalentes.append(caminho.resolve())
 
-    return f"MOCK_VIRTUAL_{nome_arquivo}"
+    if equivalentes:
+        return sorted(equivalentes, key=lambda p: len(str(p)))[0]
+
+    # Fallback para nomes antigos sem acento/hífen, sem derrubar o app.
+    palavras = [p for p in nome_norm.replace(".xlsx", "").split(" ") if p not in ["-", "nao", "não"]]
+    candidatos = []
+    for caminho in todos_arquivos:
+        nome_candidato = texto_normalizado(caminho.name)
+        if all(palavra in nome_candidato for palavra in palavras[:4]):
+            if ("10%" in nome_norm and "10%" in nome_candidato) or ("10%" not in nome_norm and "10%" not in nome_candidato):
+                candidatos.append(caminho.resolve())
+
+    if candidatos:
+        return sorted(candidatos, key=lambda p: len(str(p)))[0]
+
+    st.error(f"Arquivo de tabela não encontrado no servidor: {nome_arquivo}")
+    return None
 
 def carregar_dados_completos_por_caminho(caminho_arquivo):
     if not caminho_arquivo:
         return None, {}, None
-        
-    if str(caminho_arquivo).startswith("MOCK_VIRTUAL_"):
-        st.warning(f"⚠️ Arquivo físico não encontrado no servidor. Executando em modo de demonstração simulada.")
-        df_mock = pd.DataFrame({"Estado": ["SP", "RJ", "MG", "PR", "SC", "RS", "BA", "GO", "DF"]})
-        colunas_teste = ["Pouch Carne", "Yoguzinho", "Papinhas", "Palitinhos", "Biscoitinhos", 
-                         "Papapasta", "La Chef", "P. Cereal 170g Sache sabores", 
-                         "P. Cereal 170g Sache MULTI", "MULTI sache 500 g", "Biscotti", "Bowl",
-                         "Salgadinhos", "Bisc. Recheados", "Sucos", "Achocolatado",
-                         "Puer. Talheres", "Puer. Babador", "Puer. Bolw", "Puer. Pratinho"]
-        for col in colunas_teste:
-            df_mock[col] = 10.00
-        return df_mock, {}, None
 
     try:
         caminho_arquivo = Path(caminho_arquivo)
@@ -1819,14 +1831,6 @@ def valor_float(valor):
     except:
         return 0.0
 
-def texto_normalizado(valor):
-    txt = str(valor).strip().lower()
-    txt = unicodedata.normalize("NFKD", txt)
-    txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
-    txt = txt.replace("\n", " ")
-    txt = " ".join(txt.split())
-    return txt
-
 def buscar_valor_linha(df, estado, coluna):
     if df is None or coluna not in df.columns:
         return 0.0
@@ -1834,8 +1838,6 @@ def buscar_valor_linha(df, estado, coluna):
     linha = df[df["Estado"].astype(str).str.strip() == estado]
 
     if linha.empty:
-        if df.shape[0] > 0 and coluna in df.columns:
-            return valor_float(df[coluna].values[0])
         return 0.0
 
     return valor_float(linha[coluna].values[0])
@@ -1920,6 +1922,7 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
                     "st_unit": st_unit,
                     "ipi_unit": ipi_unit,
                 }
+
     return None
 
 def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, preferir_aba_tabelas=False):
@@ -1934,7 +1937,6 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
             st_cx = item_tabelas["st_unit"] * un_cx
             ipi_cx = item_tabelas["ipi_unit"] * un_cx
             valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-
             return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     if df_precos is not None and col_planilha in df_precos.columns:
@@ -1950,7 +1952,6 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
-
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
@@ -1960,7 +1961,6 @@ def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regim
         st_cx = item_tabelas["st_unit"] * un_cx
         ipi_cx = item_tabelas["ipi_unit"] * un_cx
         valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
-
         return preco_unit, st_cx, ipi_cx, valor_caixa_total
 
     return 0.0, 0.0, 0.0, 0.0
@@ -2081,7 +2081,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     total_com_desconto = 0.0
     valor_desconto = 0.0
     perc_desconto = 0.0
-    
     itens_selecionados_para_pdf = []
 
     def formatar_cnpj(cnpj):
@@ -2125,7 +2124,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
-        preferir_aba_tabelas = tabela_sel in ["ESPECIAL", "ESPECIAL REDE (-10%)"]
+        preferir_aba_tabelas = tabela_sel == "ESPECIAL REDE (-10%)"
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
@@ -2137,7 +2136,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     with st.expander(sub_cat, expanded=True):
                         for nome_exibicao, config in produtos.items():
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
-
                             un_cx = config["un_cx"]
 
                             preco_unit, st_unitario_cx, ipi_unitario_cx, valor_caixa_total = calcular_valores_produto(
@@ -2169,7 +2167,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 subtotal = valor_caixa_total * qtd_cx
                                 total_pedido += subtotal
                                 st.write(moeda_br(subtotal))
-                                
+
                             if qtd_cx > 0:
                                 qtd_itens = qtd_cx * un_cx
                                 preco_unit_total = valor_caixa_total / un_cx if un_cx else 0.0
@@ -2204,6 +2202,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             elif total_pedido > 0:
                 st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
 
+    else:
+        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
+
 ############################################################################
 # GERADOR DE PDF
 ############################################################################
@@ -2214,6 +2215,25 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
         def moeda_pdf(valor):
             return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+        def desenhar_cabecalho_tabela(pdf):
+            w_cod = 32
+            w_prod = 68
+            w_qtd_cx = 18
+            w_qtd_itens = 22
+            w_preco_unit = 25
+            w_subtotal = 25
+            altura_header = 10
+
+            pdf.set_fill_color(240, 240, 240)
+            pdf.set_font("Arial", "B", 8)
+            pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
+            pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
+            pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
+            pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
+            pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
+            pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
+            pdf.set_font("Arial", size=7)
 
         def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto):
             pdf = FPDF()
@@ -2251,56 +2271,45 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             w_qtd_itens = 22
             w_preco_unit = 25
             w_subtotal = 25
-            altura_header = 10
-            altura_linha = 6
+            altura_linha = 5
 
-            pdf.set_fill_color(240, 240, 240)
-            pdf.set_font("Arial", "B", 8)
-
-            pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
-            pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
-            pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
-            pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
-            pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
-            pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
-
-            pdf.set_font("Arial", size=7)
+            desenhar_cabecalho_tabela(pdf)
 
             for item in dados_pedido:
                 nome_p = texto_pdf(item["nome"])
                 codigo = texto_pdf(item["codigo"])
 
-                linhas_produto = pdf.multi_cell(w_prod, altura_linha, nome_p, split_only=True)
+                linhas_produto = pdf.multi_cell(w_prod - 2, altura_linha, nome_p, split_only=True)
                 num_linhas = max(1, len(linhas_produto))
-                h_total = max(10, num_linhas * altura_linha)
+                h_total = max(10, num_linhas * altura_linha + 4)
 
                 if pdf.get_y() + h_total > 275:
                     pdf.add_page()
-                    pdf.set_fill_color(240, 240, 240)
-                    pdf.set_font("Arial", "B", 8)
-                    pdf.cell(w_cod, altura_header, "Cod.", 1, 0, "C", True)
-                    pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
-                    pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
-                    pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
-                    pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
-                    pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
-                    pdf.set_font("Arial", size=7)
+                    desenhar_cabecalho_tabela(pdf)
 
-                curr_x = pdf.get_x()
-                curr_y = pdf.get_y()
+                x = pdf.get_x()
+                y = pdf.get_y()
 
-                pdf.cell(w_cod, h_total, codigo, 1, 0, "C")
-                
-                # Renderiza o texto em bloco respeitando a quebra de linha
-                pdf.multi_cell(w_prod, altura_linha, nome_p, 1, "L")
-                
-                # Posiciona o cursor de volta ao lado para as próximas colunas do grid
-                pdf.set_xy(curr_x + w_cod + w_prod, curr_y)
+                pdf.rect(x, y, w_cod, h_total)
+                pdf.rect(x + w_cod, y, w_prod, h_total)
+                pdf.rect(x + w_cod + w_prod, y, w_qtd_cx, h_total)
+                pdf.rect(x + w_cod + w_prod + w_qtd_cx, y, w_qtd_itens, h_total)
+                pdf.rect(x + w_cod + w_prod + w_qtd_cx + w_qtd_itens, y, w_preco_unit, h_total)
+                pdf.rect(x + w_cod + w_prod + w_qtd_cx + w_qtd_itens + w_preco_unit, y, w_subtotal, h_total)
 
-                pdf.cell(w_qtd_cx, h_total, str(item["qtd_cx"]), 1, 0, "C")
-                pdf.cell(w_qtd_itens, h_total, str(item["qtd_itens"]), 1, 0, "C")
-                pdf.cell(w_preco_unit, h_total, moeda_pdf(item["preco_unit_total"]), 1, 0, "C")
-                pdf.cell(w_subtotal, h_total, moeda_pdf(item["subtotal"]), 1, 1, "C")
+                pdf.set_xy(x, y + 2)
+                pdf.cell(w_cod, h_total - 4, codigo, 0, 0, "C")
+
+                pdf.set_xy(x + w_cod + 1, y + 2)
+                pdf.multi_cell(w_prod - 2, altura_linha, nome_p, 0, "L")
+
+                pdf.set_xy(x + w_cod + w_prod, y + 2)
+                pdf.cell(w_qtd_cx, h_total - 4, str(item["qtd_cx"]), 0, 0, "C")
+                pdf.cell(w_qtd_itens, h_total - 4, str(item["qtd_itens"]), 0, 0, "C")
+                pdf.cell(w_preco_unit, h_total - 4, moeda_pdf(item["preco_unit_total"]), 0, 0, "C")
+                pdf.cell(w_subtotal, h_total - 4, moeda_pdf(item["subtotal"]), 0, 0, "C")
+
+                pdf.set_xy(x, y + h_total)
 
             pdf.ln(5)
             pdf.set_font("Arial", "B", 10)
