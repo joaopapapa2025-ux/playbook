@@ -2420,11 +2420,28 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             pdf.cell(30, 10, moeda_pdf(total_liq), 0, 1, "C")
 
             if observacoes and str(observacoes).strip():
+                obs_txt = texto_pdf(observacoes).strip()
+                linhas_obs = pdf.multi_cell(190, 5, obs_txt, split_only=True)
+                altura_obs = max(18, len(linhas_obs) * 5 + 10)
+
+                # Se a caixa de observações + aviso não couber, começa nova página.
+                if pdf.get_y() + altura_obs + 25 > 275:
+                    pdf.add_page()
+
                 pdf.ln(6)
                 pdf.set_font("Arial", "B", 9)
                 pdf.cell(190, 6, texto_pdf("Observações:"), 0, 1, "L")
+
+                x_obs = pdf.get_x()
+                y_obs = pdf.get_y()
+
+                pdf.rect(x_obs, y_obs, 190, altura_obs)
+                pdf.set_xy(x_obs + 2, y_obs + 2)
+
                 pdf.set_font("Arial", size=8)
-                pdf.multi_cell(190, 5, txt=texto_pdf(observacoes), border=1, align="L")
+                pdf.multi_cell(186, 5, txt=obs_txt, border=0, align="L")
+
+                pdf.set_xy(x_obs, y_obs + altura_obs)
 
             pdf.ln(10)
             pdf.set_font("Arial", "I", 8)
