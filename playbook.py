@@ -2150,7 +2150,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
     if tabela_sel != "Selecione uma tabela" and estado_sel != "Selecione o Estado":
         arquivo_tabela = mapa_tabelas.get(tabela_sel)
-        caminho_tabela = localizar_arquivo_tabela(arquivo_tabela)
+        caminho_tabela = localizar_arquivo_tabela(arquivo_tabela, tabela_sel)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
 
