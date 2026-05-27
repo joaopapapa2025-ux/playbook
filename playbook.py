@@ -870,7 +870,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     with col_info2:
         st.subheader("💳 Modalidades de Pagamento - Inside Sales")
 
-        st.warning("⚠️ **Pagamento apenas via PIX no ato do pedido** para: CNPJs com protestos no [CENPROT](https://www.pesquisaprotesto.com.br/) ou menos de 1 ano de abertura.")
+        st.warning("⚠️ **Pagamento apenas via PIX no ato do pedido** para: CNPJs com protestos no [CENPROT](https://www.pesquisaprotesto.com.br/) ou menos de 1 ano de abertura, consulte aqui [SINTEGRA](http://www.sintegra.gov.br/)..")
         
         st.markdown("""
             <style>
