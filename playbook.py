@@ -2289,13 +2289,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     key="sim_observacoes"
                 )
 
-                st.text_area(
-                    "Modelo para copiar",
-                    value=modelo_observacoes,
-                    height=180,
-                    key="sim_modelo_observacoes",
-                    disabled=True
-                )
+                st.caption("Modelo para copiar")
+                st.code(modelo_observacoes, language=None)
 
             valor_desconto = total_pedido * (perc_desconto / 100)
             total_com_desconto = total_pedido - valor_desconto
