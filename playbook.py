@@ -869,6 +869,10 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
     with col_info2:
         st.subheader("💳 Modalidades de Pagamento - Inside Sales")
+
+        st.success("CNPJs com menos de 1 ano: pagamento apenas via PIX no ato do pedido")
+
+        st.success("CNPJs com protestos no CENPROT: pagamento apenas via PIX no ato do pedido")
         
         st.markdown("""
             <style>
@@ -895,7 +899,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </div>
             """, unsafe_allow_html=True)
             
-        st.success("**Pagamento:** Pix ou Boleto")
+        st.success("**Pagamento:** PIX ou Boleto")
 
         st.markdown("### 🏦 Dados Bancários Oficiais (Para envio)")
         col_b1, col_b2 = st.columns(2)
