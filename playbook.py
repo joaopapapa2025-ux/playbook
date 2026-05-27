@@ -2289,9 +2289,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     key="sim_observacoes"
                 )
 
-                st.caption("Modelo para copiar")
-                st.code(modelo_observacoes, language=None)
-
             valor_desconto = total_pedido * (perc_desconto / 100)
             total_com_desconto = total_pedido - valor_desconto
 
@@ -2302,6 +2299,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     st.metric("Total Líquido", moeda_br(total_com_desconto), delta=f"- {moeda_br(valor_desconto)}")
                 else:
                     st.write(f"**Total Líquido: {moeda_br(total_pedido)}**")
+
+                st.caption("Modelo para copiar nas observações")
+                st.code(modelo_observacoes, language=None)
 
             if total_com_desconto >= 800:
                 st.success("✅ Pedido acima do valor mínimo!")
