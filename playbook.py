@@ -1621,7 +1621,7 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📝 Cadastros - Inside Sales")
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
             st.caption("Novo cadastro e atualização de clientes")
@@ -1629,8 +1629,12 @@ elif aba_selecionada == "🔗 Links Úteis":
             st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
             st.caption("Acompanhamento da realização dos cadastros")
         with col3:
-            st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
-            st.caption("Acompanhamento da realização dos cadastros")
+            st.link_button("🔍 Consultar CENPROT", "https://www.pesquisaprotesto.com.br/", use_container_width=True)
+            st.caption("Verificar protestos de CNPJs antes do pedido")
+        with col4:
+            st.link_button("🌐 Consultar SINTEGRA", "http://www.sintegra.gov.br/", use_container_width=True)
+            st.caption("Verificar a situação cadastral e IE do CNPJ")
+            
         
 
     st.markdown("---")
