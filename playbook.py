@@ -2285,7 +2285,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 observacoes_pedido = st.text_area(
                     "Observações",
                     placeholder="Inclua informações relevantes sobre o orçamento...",
-                    height=240,
+                    height=360,
                     key="sim_observacoes"
                 )
 
