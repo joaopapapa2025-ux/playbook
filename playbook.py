@@ -2274,6 +2274,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
                 modelo_observacoes = (
                     "• CNPJ:\n"
+                    "• Estado:\n"
                     "• Inscrição Estadual (IE):\n"
                     "• Telefone financeiro:\n"
                     "• Telefone compras:\n"
