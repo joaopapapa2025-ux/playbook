@@ -870,7 +870,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
     with col_info2:
         st.subheader("💳 Modalidades de Pagamento - Inside Sales")
 
-        st.warning("⚠️ **Pagamento apenas via PIX no ato do pedido** para: CNPJs com protestos no CENPROT ou ativos há menos de um ano.")
+        st.warning("⚠️ **Pagamento apenas via PIX no ato do pedido** para: CNPJs com protestos no [CENPROT](https://www.pesquisaprotesto.com.br/) ou menos de 1 ano de abertura.")
         
         st.markdown("""
             <style>
@@ -1621,13 +1621,17 @@ elif aba_selecionada == "🔗 Links Úteis":
 
     with st.container():
         st.subheader("📝 Cadastros - Inside Sales")
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.link_button("📄 Forms Cadastro", "https://forms.office.com/pages/responsepage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQ0xpHiomcxDhUissuWVgb9UMVU4UzNNWkc1REM3Vlk0SzVQMlZLSU5BWS4u&route=shorturl", use_container_width=True)
             st.caption("Novo cadastro e atualização de clientes")
         with col2:
             st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
             st.caption("Acompanhamento da realização dos cadastros")
+        with col3:
+            st.link_button("👀 Acompanhar Cadastros", "https://papapacombr-my.sharepoint.com/:x:/g/personal/cadastros_papapa_com_br/IQDkMQgW0iAgTqw7aetudCfXAeVaoV7m17dbUSH7QNGzkv0?e=hQu864", use_container_width=True)
+            st.caption("Acompanhamento da realização dos cadastros")
+        
 
     st.markdown("---")
 
