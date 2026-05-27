@@ -2272,11 +2272,29 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     key="sim_desconto"
                 )
 
+                modelo_observacoes = (
+                    "• CNPJ:\n"
+                    "• Inscrição Estadual (IE):\n"
+                    "• Telefone financeiro:\n"
+                    "• Telefone compras:\n"
+                    "• E-mail financeiro:\n"
+                    "• E-mail compras:\n"
+                    "• Dados bancários e chave PIX:"
+                )
+                
                 observacoes_pedido = st.text_area(
                     "Observações",
                     placeholder="Inclua informações relevantes sobre o orçamento...",
                     height=120,
                     key="sim_observacoes"
+                )
+
+                st.text_area(
+                    "Modelo para copiar",
+                    value=modelo_observacoes,
+                    height=180,
+                    key="sim_modelo_observacoes",
+                    disabled=True
                 )
 
             valor_desconto = total_pedido * (perc_desconto / 100)
