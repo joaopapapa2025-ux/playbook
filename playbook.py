@@ -872,8 +872,8 @@ elif aba_selecionada == "📊 Políticas Comerciais":
 
         st.warning("""
         ⚠️ **Pagamento apenas via PIX no ato do pedido para:**
-        * **CNPJs com protestos:** consulte no [CENPROT](https://www.pesquisaprotesto.com.br/)
-        * **CNPJs com menos de 1 ano de abertura:** consulte no [SINTEGRA](http://www.sintegra.gov.br/)
+        * **CNPJs com protestos:** consulte no [CENPROT](https://www.pesquisaprotesto.com.br/).
+        * **CNPJs com menos de 1 ano de abertura:** consulte no [SINTEGRA](http://www.sintegra.gov.br/).
         """)
         
         st.markdown("""
