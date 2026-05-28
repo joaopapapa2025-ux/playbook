@@ -2051,16 +2051,23 @@ def calcular_valores_produto(
     df_base = df_precos
     st_base = dicionario_st
 
-    if (
+    usa_auxiliar = (
         df_precos_aux is not None
         and coluna_usa_auxiliar_era_uma_vez(col_planilha)
         and col_planilha in df_precos_aux.columns
-    ):
+    )
+
+    if usa_auxiliar:
         df_base = df_precos_aux
         st_base = dicionario_st_aux or {}
 
+    fator_do_produto = fator_preco
+
+    if fator_preco != 1.0 and not produto_recebe_desconto_rede(config):
+        fator_do_produto = 1.0
+
     if df_base is not None and col_planilha in df_base.columns:
-        preco_unit = buscar_valor_linha(df_base, estado, col_planilha) * fator_preco
+        preco_unit = buscar_valor_linha(df_base, estado, col_planilha) * fator_do_produto
         valor_cx_base = preco_unit * un_cx
 
         st_unitario = 0.0
@@ -2072,7 +2079,6 @@ def calcular_valores_produto(
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
 
-        # ST é por unidade; por isso entra multiplicado pela quantidade da caixa.
         st_cx = st_unitario * un_cx
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
@@ -2081,7 +2087,7 @@ def calcular_valores_produto(
     item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
     if item_tabelas:
-        preco_unit = item_tabelas["preco_unit"] * fator_preco
+        preco_unit = item_tabelas["preco_unit"] * fator_do_produto
         st_unitario = item_tabelas["st_unit"]
         ipi_unitario = item_tabelas["ipi_unit"]
 
