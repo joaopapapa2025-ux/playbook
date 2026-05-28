@@ -1756,7 +1756,7 @@ import pandas as pd
 import streamlit as st
 from fpdf import FPDF
 
-VERSAO_TABELAS = "2026-05-28-01"
+VERSAO_TABELAS = "2026-05-28-02"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -2033,6 +2033,11 @@ def coluna_usa_auxiliar_era_uma_vez(coluna):
         "Puer. Pratinho",
     ]
 
+def produto_recebe_desconto_rede(config):
+    # Na ESPECIAL REDE (-10%), o desconto de 10% vale apenas para PAPAPÁ.
+    # ERA UMA VEZ e PUERICULTURA não recebem esse desconto.
+    return not coluna_usa_auxiliar_era_uma_vez(config["coluna"])
+
 def calcular_valores_produto(
     df_precos,
     df_tabelas,
@@ -2079,6 +2084,7 @@ def calcular_valores_produto(
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
 
+        # ST é por unidade; por isso entra multiplicado pela quantidade da caixa.
         st_cx = st_unitario * un_cx
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
