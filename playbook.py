@@ -1756,14 +1756,14 @@ import pandas as pd
 import streamlit as st
 from fpdf import FPDF
 
-VERSAO_TABELAS = "2026-05-26-02"
+VERSAO_TABELAS = "2026-05-28-01"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
     "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
     "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
     "FARMA 0": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
-    "FARMA V": "0325FARMA + EPECIAL_v_PC Era uma vez.xlsx",
+    "FARMA V": "0325FARMA + ESPECIAL_v_PC Era uma vez.xlsx",
     "FARMA X": "0325FARMA + ESPECIAL_x_PC Era uma vez.xlsx",
     "CASH AND CARRY 0": "0325C_PC reajuste abril26 - Era uma Vez.xlsx",
     "CASH AND CARRY V": "0325Cv_PC reajuste abril26 - Era uma Vez.xlsx",
@@ -1784,7 +1784,7 @@ def texto_normalizado(valor):
     txt = " ".join(txt.split())
     return txt
 
-def localizar_arquivo_tabela(arquivo, tabela_sel=None):
+def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
     if not arquivo:
         return None
 
@@ -1846,7 +1846,22 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None):
     if candidatos:
         return sorted(candidatos, key=lambda p: len(str(p)))[0]
 
-    st.error(f"Arquivo correto não encontrado para {tabela_sel}: {nome_arquivo}")
+    if mostrar_erro:
+        st.error(f"Arquivo correto não encontrado para {tabela_sel}: {nome_arquivo}")
+
+    return None
+
+def localizar_arquivo_auxiliar_era_uma_vez():
+    nomes_possiveis = [
+        "0325FARMA + ESPECIAL_PC Era uma vez - NÃO USAR.xlsx",
+        "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
+    ]
+
+    for nome in nomes_possiveis:
+        caminho = localizar_arquivo_tabela(nome, mostrar_erro=False)
+        if caminho:
+            return caminho
+
     return None
 
 def carregar_dados_completos_por_caminho(caminho_arquivo):
@@ -2006,35 +2021,74 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
 
     return None
 
-def calcular_valores_produto(df_precos, df_tabelas, dicionario_st, estado, regime_simples, nome_produto, config, fator_preco=1.0):
+def coluna_usa_auxiliar_era_uma_vez(coluna):
+    return coluna in [
+        "Salgadinhos",
+        "Bisc. Recheados",
+        "Sucos",
+        "Achocolatado",
+        "Puer. Talheres",
+        "Puer. Babador",
+        "Puer. Bolw",
+        "Puer. Pratinho",
+    ]
+
+def calcular_valores_produto(
+    df_precos,
+    df_tabelas,
+    dicionario_st,
+    estado,
+    regime_simples,
+    nome_produto,
+    config,
+    fator_preco=1.0,
+    df_precos_aux=None,
+    dicionario_st_aux=None
+):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
 
-    if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_preco
+    df_base = df_precos
+    st_base = dicionario_st
+
+    if (
+        df_precos_aux is not None
+        and coluna_usa_auxiliar_era_uma_vez(col_planilha)
+        and col_planilha in df_precos_aux.columns
+    ):
+        df_base = df_precos_aux
+        st_base = dicionario_st_aux or {}
+
+    if df_base is not None and col_planilha in df_base.columns:
+        preco_unit = buscar_valor_linha(df_base, estado, col_planilha) * fator_preco
         valor_cx_base = preco_unit * un_cx
 
-        st_cx = 0.0
+        st_unitario = 0.0
         aba_st_alvo = config["aba_st"]
 
-        if aba_st_alvo and aba_st_alvo in dicionario_st:
+        if aba_st_alvo and aba_st_alvo in st_base:
             coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-            st_cx = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
+            st_unitario = buscar_valor_linha(st_base[aba_st_alvo], estado, coluna_st_tipo)
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+
+        # ST é por unidade; por isso entra multiplicado pela quantidade da caixa.
+        st_cx = st_unitario * un_cx
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
-        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+        return preco_unit, st_unitario, ipi_cx, valor_caixa_total
 
     item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
     if item_tabelas:
-        preco_unit = item_tabelas["preco_unit"]
-        st_cx = item_tabelas["st_unit"] * un_cx
-        ipi_cx = item_tabelas["ipi_unit"] * un_cx
-        valor_caixa_total = (preco_unit + item_tabelas["st_unit"] + item_tabelas["ipi_unit"]) * un_cx
+        preco_unit = item_tabelas["preco_unit"] * fator_preco
+        st_unitario = item_tabelas["st_unit"]
+        ipi_unitario = item_tabelas["ipi_unit"]
 
-        return preco_unit, st_cx, ipi_cx, valor_caixa_total
+        ipi_cx = ipi_unitario * un_cx
+        valor_caixa_total = (preco_unit + st_unitario + ipi_unitario) * un_cx
+
+        return preco_unit, st_unitario, ipi_cx, valor_caixa_total
 
     return 0.0, 0.0, 0.0, 0.0
 
@@ -2116,24 +2170,24 @@ categorias_produtos = {
     },
     "PUERICULTURA": {
         "TALHERES": {
-            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.0},
-            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.0},
-            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.0},
+            "Kit De Talheres Infantil - Azul": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5641", "ipi": 0.065},
+            "Kit De Talheres Infantil - Verde": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5658", "ipi": 0.065},
+            "Kit De Talheres Infantil - Rosa": {"coluna": "Puer. Talheres", "aba_st": None, "un_cx": 1, "cod": "5665", "ipi": 0.065},
         },
         "BABADORES": {
-            "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5733", "ipi": 0.0},
-            "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5740", "ipi": 0.0},
-            "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.0},
+            "Babador Infantil Com Bolso - Azul": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5733", "ipi": 0.065},
+            "Babador Infantil Com Bolso - Verde": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5740", "ipi": 0.065},
+            "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.065},
         },
         "BOWLS": {
-            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.0},
-            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.0},
-            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.0},
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.065},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.065},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.065},
         },
         "PRATINHOS": {
-            "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.0},
-            "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5689", "ipi": 0.0},
-            "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5696", "ipi": 0.0},
+            "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.065},
+            "Pratinho Infantil Com Ventosa - Verde": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5689", "ipi": 0.065},
+            "Pratinho Infantil Com Ventosa - Rosa": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5696", "ipi": 0.065},
         }
     }
 }
@@ -2170,6 +2224,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     df_precos = None
     df_tabelas = None
     dicionario_st = {}
+    df_precos_aux = None
+    dicionario_st_aux = {}
     total_com_desconto = 0.0
     valor_desconto = 0.0
     perc_desconto = 0.0
@@ -2216,6 +2272,13 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         caminho_tabela = localizar_arquivo_tabela(arquivo_tabela, tabela_sel)
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
+
+        if tabela_sel in ["ESPECIAL", "ESPECIAL REDE (-10%)"]:
+            caminho_aux = localizar_arquivo_auxiliar_era_uma_vez()
+
+            if caminho_aux:
+                df_precos_aux, dicionario_st_aux, _ = carregar_dados_completos_por_caminho(caminho_aux)
+
         fator_preco = 0.90 if tabela_sel == "ESPECIAL REDE (-10%)" else 1.0
 
         if df_precos is not None:
@@ -2230,7 +2293,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                             col_prod, col_un, col_qtd, col_sub = st.columns([3, 1, 1, 2])
                             un_cx = config["un_cx"]
 
-                            preco_unit, st_unitario_cx, ipi_unitario_cx, valor_caixa_total = calcular_valores_produto(
+                            preco_unit, st_unitario, ipi_unitario_cx, valor_caixa_total = calcular_valores_produto(
                                 df_precos,
                                 df_tabelas,
                                 dicionario_st,
@@ -2238,14 +2301,16 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 regime_simples,
                                 nome_exibicao,
                                 config,
-                                fator_preco
+                                fator_preco,
+                                df_precos_aux,
+                                dicionario_st_aux
                             )
 
                             with col_prod:
                                 st.write(f"**{nome_exibicao}**")
                                 st.caption(
                                     f"Cod: {config['cod']} | Unit: {moeda_br(preco_unit)} | "
-                                    f"ST/Cx: {moeda_br(st_unitario_cx)} | IPI/Cx: {moeda_br(ipi_unitario_cx)}"
+                                    f"ST/Un: {moeda_br(st_unitario)} | IPI/Cx: {moeda_br(ipi_unitario_cx)}"
                                 )
 
                             with col_un:
@@ -2296,7 +2361,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     "• E-mail compras:\n"
                     "• Dados bancários e chave PIX:"
                 )
-                
+
                 observacoes_pedido = st.text_area(
                     "Observações",
                     placeholder="Inclua informações relevantes sobre o orçamento...",
