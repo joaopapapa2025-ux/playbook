@@ -883,7 +883,7 @@ elif aba_selecionada == "📊 Políticas Comerciais":
             </style>
         """, unsafe_allow_html=True)
 
-        with st.expander("Prazos: Sul e Sudeste", expanded=True):
+        with st.expander("Prazos: Sul, SP e RJ", expanded=True):
             st.markdown("""
             <div class="pagamento-texto">
             • <b>Até R$ 1.000:</b> <span class="highlight">30 dias da data do faturamento</span><br>
