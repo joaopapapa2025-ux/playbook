@@ -450,9 +450,8 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
         st.subheader("📁 Materiais de Venda")
         arquivos_venda = {
             "📖 Catálogo Digital (PDF)": "catalogo-papapa-digital.pdf",
-            "💰 Tabela de Preços - Geral (Excel)": "Tabela de preços Papapá 0226 v2.xlsx",
-            "🕸️ Tabela de Preços - Rede (Excel)": "Tabela de preços Papapá 0325ER v2 A (1).xlsx",
-            "🌿 Tabela de Preços - Mundo Verde (Excel)": "Tabela de preços Papapá 0625 Mundo Verde.xlsx",
+            "💰 Tabela de Preços - Padrão (Excel)": "0626E - Tabela de Preços - Papapá 2.0.xlsx",
+            "🕸️ Tabela de Preços - Rede (Excel)": "0626ER - Tabela de Preços Rede - Papapá 2.0.xlsx",
             "ℹ️ Ficha Técnica de Produtos": "Informações todos os produtos Papapá.pdf",
             "🍎 Guia de Produtos": "https://drive.google.com/file/d/1ulatv5WYZZJYubylJ_SfWoPsdbOVFgHR/view?usp=sharing",
             "📄 Fichas comerciais dos produtos": "https://papapacombr.sharepoint.com/sites/Papapa-Fileserver/Documentos%20Compartilhados/Forms/AllItems.aspx?id=%2Fsites%2FPapapa%2DFileserver%2FDocumentos%20Compartilhados%2FComercial%2F0%20%2D%20COMERCIAL%2F10%20%2D%20Ficha%20cadastral%20de%20produtos%2FFicha%20comercial%20de%20produto&viewid=49270ad9%2D7603%2D4cc9%2Dbc50%2Dbb5ddf155cf9&p=true&ct=1776971104130&or=Teams%2DHL&LOF=1"
