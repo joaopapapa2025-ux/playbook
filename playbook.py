@@ -2204,6 +2204,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
             st.session_state["cnpj_input"] = ""
             st.session_state["sim_forma_pagamento"] = ""
             st.session_state["sim_regime"] = "NÃO"
+            st.session_state["sim_vendedor"] = ""
             st.session_state["sim_tabela"] = "Selecione uma tabela"
             st.session_state["sim_estado"] = "Selecione o Estado"
             st.session_state["sim_desconto"] = 0.0
