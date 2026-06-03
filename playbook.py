@@ -1755,7 +1755,7 @@ import pandas as pd
 import streamlit as st
 from fpdf import FPDF
 
-VERSAO_TABELAS = "2026-05-28-02"
+VERSAO_TABELAS = "2026-06-03-01"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
@@ -1780,8 +1780,16 @@ def texto_normalizado(valor):
     txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
     txt = txt.replace("\n", " ")
     txt = txt.replace("-", " ")
+    txt = txt.replace("_", " ")
+    txt = txt.replace("(", " ")
+    txt = txt.replace(")", " ")
+    txt = txt.replace("%", " ")
     txt = " ".join(txt.split())
     return txt
+
+def nome_indica_especial_rede_10(nome_arquivo):
+    nome = texto_normalizado(nome_arquivo)
+    return "especial" in nome and "rede" in nome and "10" in nome
 
 def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
     if not arquivo:
@@ -1791,26 +1799,27 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
     nome_arquivo = Path(arquivo).name
     nome_norm = texto_normalizado(nome_arquivo)
 
-    exige_10 = tabela_sel == "ESPECIAL REDE (-10%)"
-    bloqueia_10 = tabela_sel == "ESPECIAL"
+    exige_rede_10 = tabela_sel == "ESPECIAL REDE (-10%)"
+    bloqueia_rede_10 = tabela_sel == "ESPECIAL"
 
     def arquivo_valido(caminho):
-        nome = texto_normalizado(caminho.name)
-
-        if exige_10 and "10%" not in nome:
+        if exige_rede_10 and not nome_indica_especial_rede_10(caminho.name):
             return False
 
-        if bloqueia_10 and "10%" in nome:
+        if bloqueia_rede_10 and nome_indica_especial_rede_10(caminho.name):
             return False
 
         return True
 
     caminhos_possiveis = [
         pasta_app / arquivo,
-        pasta_app / "tabelas" / arquivo,
         pasta_app / nome_arquivo,
+        pasta_app / "tabelas" / arquivo,
+        pasta_app / "tabelas" / nome_arquivo,
         pasta_app / "ESPECIAL" / nome_arquivo,
         pasta_app / "tabelas" / "ESPECIAL" / nome_arquivo,
+        pasta_app / "data" / nome_arquivo,
+        pasta_app / "dados" / nome_arquivo,
     ]
 
     for caminho in caminhos_possiveis:
@@ -1828,7 +1837,7 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
         return sorted(equivalentes, key=lambda p: len(str(p)))[0]
 
     palavras = [
-        p for p in nome_norm.replace(".xlsx", "").split()
+        p for p in nome_norm.replace("xlsx", "").split()
         if p not in ["nao", "não", "usar"]
     ]
 
@@ -1850,18 +1859,6 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
 
     return None
 
-def localizar_arquivo_auxiliar_era_uma_vez():
-    nomes_possiveis = [
-        "ESPECIAL_reajuste abril26 - Era uma vez.xlsx",
-    ]
-
-    for nome in nomes_possiveis:
-        caminho = localizar_arquivo_tabela(nome, mostrar_erro=False)
-        if caminho:
-            return caminho
-
-    return None
-
 def carregar_dados_completos_por_caminho(caminho_arquivo):
     if not caminho_arquivo:
         return None, {}, None
@@ -1877,7 +1874,7 @@ def carregar_dados_completos_por_caminho(caminho_arquivo):
 
         try:
             df_tabelas = pd.read_excel(caminho_arquivo, sheet_name="Tabelas", header=None)
-        except:
+        except Exception:
             df_tabelas = None
 
         st_dict = {}
@@ -1923,11 +1920,11 @@ def valor_float(valor):
 
     try:
         return float(txt)
-    except:
+    except Exception:
         return 0.0
 
 def buscar_valor_linha(df, estado, coluna):
-    if df is None or coluna not in df.columns:
+    if df is None or coluna not in df.columns or "Estado" not in df.columns:
         return 0.0
 
     linha = df[df["Estado"].astype(str).str.strip() == estado]
@@ -2019,7 +2016,7 @@ def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
 
     return None
 
-def coluna_usa_auxiliar_era_uma_vez(coluna):
+def coluna_nova_linha(coluna):
     return coluna in [
         "Salgadinhos",
         "Bisc. Recheados",
@@ -2034,7 +2031,7 @@ def coluna_usa_auxiliar_era_uma_vez(coluna):
 def produto_recebe_desconto_rede(config):
     # Na ESPECIAL REDE (-10%), o desconto de 10% vale apenas para PAPAPÁ.
     # ERA UMA VEZ e PUERICULTURA não recebem esse desconto.
-    return not coluna_usa_auxiliar_era_uma_vez(config["coluna"])
+    return not coluna_nova_linha(config["coluna"])
 
 def calcular_valores_produto(
     df_precos,
@@ -2044,45 +2041,28 @@ def calcular_valores_produto(
     regime_simples,
     nome_produto,
     config,
-    fator_preco=1.0,
-    df_precos_aux=None,
-    dicionario_st_aux=None
+    fator_preco=1.0
 ):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
-
-    df_base = df_precos
-    st_base = dicionario_st
-
-    usa_auxiliar = (
-        df_precos_aux is not None
-        and coluna_usa_auxiliar_era_uma_vez(col_planilha)
-        and col_planilha in df_precos_aux.columns
-    )
-
-    if usa_auxiliar:
-        df_base = df_precos_aux
-        st_base = dicionario_st_aux or {}
 
     fator_do_produto = fator_preco
 
     if fator_preco != 1.0 and not produto_recebe_desconto_rede(config):
         fator_do_produto = 1.0
 
-    if df_base is not None and col_planilha in df_base.columns:
-        preco_unit = buscar_valor_linha(df_base, estado, col_planilha) * fator_do_produto
+    if df_precos is not None and col_planilha in df_precos.columns:
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_do_produto
         valor_cx_base = preco_unit * un_cx
 
         st_unitario = 0.0
         aba_st_alvo = config["aba_st"]
 
-        if aba_st_alvo and aba_st_alvo in st_base:
+        if aba_st_alvo and aba_st_alvo in dicionario_st:
             coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-            st_unitario = buscar_valor_linha(st_base[aba_st_alvo], estado, coluna_st_tipo)
+            st_unitario = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
 
         ipi_cx = valor_cx_base * config.get("ipi", 0.0)
-
-        # ST é por unidade; por isso entra multiplicado pela quantidade da caixa.
         st_cx = st_unitario * un_cx
         valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
@@ -2234,8 +2214,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     df_precos = None
     df_tabelas = None
     dicionario_st = {}
-    df_precos_aux = None
-    dicionario_st_aux = {}
     total_com_desconto = 0.0
     valor_desconto = 0.0
     perc_desconto = 0.0
@@ -2283,12 +2261,6 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
 
-        if tabela_sel in ["ESPECIAL", "ESPECIAL REDE (-10%)"]:
-            caminho_aux = localizar_arquivo_auxiliar_era_uma_vez()
-
-            if caminho_aux:
-                df_precos_aux, dicionario_st_aux, _ = carregar_dados_completos_por_caminho(caminho_aux)
-
         fator_preco = 0.90 if tabela_sel == "ESPECIAL REDE (-10%)" else 1.0
 
         if df_precos is not None:
@@ -2311,9 +2283,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 regime_simples,
                                 nome_exibicao,
                                 config,
-                                fator_preco,
-                                df_precos_aux,
-                                dicionario_st_aux
+                                fator_preco
                             )
 
                             with col_prod:
