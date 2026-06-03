@@ -2406,7 +2406,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
             pdf.set_font("Arial", size=7)
 
-        def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto, observacoes):
+        def gerar_pdf(dados_pedido, total_bruto, desconto_p, desconto_v, total_liq, estado, cnpj, pagto, vendedor, observacoes):
             pdf = FPDF()
             pdf.set_auto_page_break(auto=True, margin=15)
             pdf.add_page()
@@ -2433,6 +2433,9 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
             if pagto and str(pagto).strip():
                 pdf.cell(190, 7, txt=texto_pdf(f"Forma de Pagamento: {pagto}"), ln=True)
+
+            if vendedor and str(vendedor).strip():
+                pdf.cell(190, 7, txt=texto_pdf(f"Vendedor: {vendedor}"), ln=True)
 
             pdf.ln(5)
 
@@ -2502,7 +2505,6 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 linhas_obs = pdf.multi_cell(186, 5, obs_txt, split_only=True)
                 altura_obs = max(12, len(linhas_obs) * 5 + 4)
 
-                # Se a caixa de observações + aviso não couber, começa nova página.
                 if pdf.get_y() + altura_obs + 25 > 275:
                     pdf.add_page()
 
@@ -2529,6 +2531,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             return pdf.output(dest="S").encode("latin-1")
 
         observacoes_pedido = st.session_state.get("sim_observacoes", "")
+        vendedor_pdf = st.session_state.get("sim_vendedor", "")
 
         pdf_bytes = gerar_pdf(
             itens_selecionados_para_pdf,
@@ -2539,10 +2542,11 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             estado_sel,
             cnpj_cliente,
             forma_pagamento,
+            vendedor_pdf,
             observacoes_pedido
         )
 
-        id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}"
+        id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}_{vendedor_pdf}"
 
         st.download_button(
             label="📄 Baixar Orçamento em PDF",
