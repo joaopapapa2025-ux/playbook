@@ -2344,7 +2344,9 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                     "• Telefone compras:\n"
                     "• E-mail financeiro:\n"
                     "• E-mail compras:\n"
-                    "• Dados bancários e chave PIX:"
+                    "• Dados bancários e chave PIX:\n"
+                    "• Tem protesto no Cenprot:\n"
+                    "• Data de abertura do CNPJ:"
                 )
 
                 observacoes_pedido = st.text_area(
