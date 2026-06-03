@@ -1759,8 +1759,8 @@ VERSAO_TABELAS = "2026-05-28-02"
 
 mapa_tabelas = {
     "Selecione uma tabela": None,
-    "ESPECIAL": "0325E_PC reajuste abril26 - Completa NAO USAR.xlsx",
-    "ESPECIAL REDE (-10%)": "0325E_PC reajuste abril26 - Completa NAO USAR -10%.xlsx",
+    "ESPECIAL": "ESPECIAL_reajuste abril26 - Era uma vez.xlsx",
+    "ESPECIAL REDE (-10%)": "ESPECIAL REDE (-10)_reajuste abril26 - Era uma vez.xlsx",
     "FARMA 0": "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
     "FARMA V": "0325FARMA + ESPECIAL_v_PC Era uma vez.xlsx",
     "FARMA X": "0325FARMA + ESPECIAL_x_PC Era uma vez.xlsx",
