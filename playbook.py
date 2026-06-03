@@ -1852,8 +1852,8 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
 
 def localizar_arquivo_auxiliar_era_uma_vez():
     nomes_possiveis = [
-        "0325FARMA + ESPECIAL_PC Era uma vez - NÃO USAR.xlsx",
-        "0325FARMA + ESPECIAL_PC Era uma vez.xlsx",
+        "ESPECIAL_reajuste abril26 - Era uma vez.xlsx,
+        "ESPECIAL_reajuste abril26 - Era uma vez.xlsx",
     ]
 
     for nome in nomes_possiveis:
