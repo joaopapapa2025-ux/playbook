@@ -2226,7 +2226,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         return cnpj
 
     st.subheader("Dados do Cliente e Pagamento")
-    c_cnpj, c_pag, c_regime = st.columns(3)
+    c_cnpj, c_pag, c_vendedor, c_regime = st.columns(4)
 
     with c_cnpj:
         cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números", key="cnpj_input")
@@ -2240,6 +2240,10 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     with c_pag:
         opcoes_pagamento = ["", "PIX", "Boleto 1x - 30 dias", "Boleto 2x - 30/45 dias", "Boleto 3x - 30/45/60 dias", "Boleto 1x - 45 dias", "Boleto 2x - 45/60 dias", "Boleto 3x - 40/50/60 dias"]
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, key="sim_forma_pagamento")
+
+    with c_vendedor:
+        opcoes_vendedor = ["", "Ana", "Pedro", "João Paulo", "Rodrigo"]
+        vendedor_sel = st.selectbox("Vendedor:", opcoes_vendedor, index=0, key="sim_vendedor")
 
     with c_regime:
         regime_simples = st.selectbox("Regime SIMPLES?", ["NÃO", "SIM"], index=0, key="sim_regime")
