@@ -2170,9 +2170,9 @@ categorias_produtos = {
             "Babador Infantil Com Bolso - Rosa": {"coluna": "Puer. Babador", "aba_st": None, "un_cx": 1, "cod": "5757", "ipi": 0.065},
         },
         "BOWLS": {
-            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.065},
-            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.065},
-            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bolw", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.065},
+            "Bowl Infantil Com Ventosa - Azul": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5702", "ipi": 0.065},
+            "Bowl Infantil Com Ventosa - Verde": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5719", "ipi": 0.065},
+            "Bowl Infantil Com Ventosa - Rosa": {"coluna": "Puer. Bowl", "aba_st": None, "un_cx": 1, "cod": "5726", "ipi": 0.065},
         },
         "PRATINHOS": {
             "Pratinho Infantil Com Ventosa - Azul": {"coluna": "Puer. Pratinho", "aba_st": None, "un_cx": 1, "cod": "5675", "ipi": 0.065},
