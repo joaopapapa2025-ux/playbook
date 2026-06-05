@@ -1745,7 +1745,7 @@ from fpdf import FPDF
 import os
 
 ################################################################################
-# --- MÓDULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÇÕES) ---
+# --- MÃ“DULO 10: SIMULADOR DE PEDIDOS (CONFIGURAÃ‡Ã•ES) ---
 ################################################################################
 
 import os
@@ -1838,7 +1838,7 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
 
     palavras = [
         p for p in nome_norm.replace("xlsx", "").split()
-        if p not in ["nao", "não", "usar"]
+        if p not in ["nao", "nÃ£o", "usar"]
     ]
 
     candidatos = []
@@ -1855,7 +1855,7 @@ def localizar_arquivo_tabela(arquivo, tabela_sel=None, mostrar_erro=True):
         return sorted(candidatos, key=lambda p: len(str(p)))[0]
 
     if mostrar_erro:
-        st.error(f"Arquivo correto não encontrado para {tabela_sel}: {nome_arquivo}")
+        st.error(f"Arquivo correto nÃ£o encontrado para {tabela_sel}: {nome_arquivo}")
 
     return None
 
@@ -1866,7 +1866,7 @@ def carregar_dados_completos_por_caminho(caminho_arquivo):
     try:
         caminho_arquivo = Path(caminho_arquivo)
 
-        df_p = pd.read_excel(caminho_arquivo, sheet_name="PREÇOS", header=1)
+        df_p = pd.read_excel(caminho_arquivo, sheet_name="PREÃ‡OS", header=1)
         df_p.columns = df_p.columns.astype(str).str.strip()
 
         if "Estado" in df_p.columns:
@@ -1923,8 +1923,33 @@ def valor_float(valor):
     except Exception:
         return 0.0
 
+def resolver_coluna_precos(df, coluna):
+    if df is None or coluna is None:
+        return None
+
+    if coluna in df.columns:
+        return coluna
+
+    coluna_norm = texto_normalizado(coluna)
+
+    aliases = {
+        "puer. bowl": ["puer. bolw"],
+        "puer. bolw": ["puer. bowl"],
+    }
+
+    nomes_aceitos = {coluna_norm}
+    nomes_aceitos.update(aliases.get(coluna_norm, []))
+
+    for coluna_df in df.columns:
+        if texto_normalizado(coluna_df) in nomes_aceitos:
+            return coluna_df
+
+    return None
+
 def buscar_valor_linha(df, estado, coluna):
-    if df is None or coluna not in df.columns or "Estado" not in df.columns:
+    coluna_resolvida = resolver_coluna_precos(df, coluna)
+
+    if df is None or coluna_resolvida is None or "Estado" not in df.columns:
         return 0.0
 
     linha = df[df["Estado"].astype(str).str.strip() == estado]
@@ -1932,7 +1957,7 @@ def buscar_valor_linha(df, estado, coluna):
     if linha.empty:
         return 0.0
 
-    return valor_float(linha[coluna].values[0])
+    return valor_float(linha[coluna_resolvida].values[0])
 
 def buscar_linha_cabecalho_tabelas(df_tabelas, linha_produto_idx):
     if df_tabelas is None:
@@ -2025,12 +2050,13 @@ def coluna_nova_linha(coluna):
         "Puer. Talheres",
         "Puer. Babador",
         "Puer. Bolw",
+        "Puer. Bowl",
         "Puer. Pratinho",
     ]
 
 def produto_recebe_desconto_rede(config):
-    # Na ESPECIAL REDE (-10%), o desconto de 10% vale apenas para PAPAPÁ.
-    # ERA UMA VEZ e PUERICULTURA não recebem esse desconto.
+    # Na ESPECIAL REDE (-10%), o desconto de 10% vale apenas para PAPAPÃ.
+    # ERA UMA VEZ e PUERICULTURA nÃ£o recebem esse desconto.
     return not coluna_nova_linha(config["coluna"])
 
 def calcular_valores_produto(
@@ -2051,8 +2077,10 @@ def calcular_valores_produto(
     if fator_preco != 1.0 and not produto_recebe_desconto_rede(config):
         fator_do_produto = 1.0
 
-    if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_do_produto
+    col_planilha_resolvida = resolver_coluna_precos(df_precos, col_planilha)
+
+    if df_precos is not None and col_planilha_resolvida is not None:
+        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha_resolvida) * fator_do_produto
         valor_cx_base = preco_unit * un_cx
 
         st_unitario = 0.0
@@ -2083,66 +2111,66 @@ def calcular_valores_produto(
     return 0.0, 0.0, 0.0, 0.0
 
 categorias_produtos = {
-    "PAPAPÁ": {
+    "PAPAPÃ": {
         "PAPINHA DE CARNE": {
             "Papinha Papapa Carne Arroz Legumes 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5313", "ipi": 0.0},
-            "Papinha Papapa Frango Grão Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
+            "Papinha Papapa Frango GrÃ£o Vegetais 120g": {"coluna": "Pouch Carne", "aba_st": None, "un_cx": 12, "cod": "5320", "ipi": 0.0},
         },
         "YOGUZINHO": {
             "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5566", "ipi": 0.0},
             "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5570", "ipi": 0.0},
         },
         "PAPINHA DE FRUTA": {
-            "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
-            "Papinha Papapá Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908736", "ipi": 0.0},
-            "Papinha Papapá Org Manga 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908712", "ipi": 0.0},
-            "Papinha Papapá Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908750", "ipi": 0.0},
-            "Papinha Papapá Org Maçã B. Doce Cenoura 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "27898994908757", "ipi": 0.0},
-            "Papinha Papapá Org Morango Maçã 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5306", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org MaÃ§Ã£ Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org Banana Mirtilo Quinoa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908736", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org Manga 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908712", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org Pera Espinafre Abobrinha 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908750", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org MaÃ§Ã£ B. Doce Cenoura 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "27898994908757", "ipi": 0.0},
+            "Papinha PapapÃ¡ Org Morango MaÃ§Ã£ 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5306", "ipi": 0.0},
         },
         "PALITINHO": {
-            "Biscoito inf Papapá org. Beterraba 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5085", "ipi": 0.0},
-            "Biscoito inf Papapá org. Cenoura 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5078", "ipi": 0.0},
-            "Biscoito inf Papapá org. Tomate/Manjericão 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5061", "ipi": 0.0},
+            "Biscoito inf PapapÃ¡ org. Beterraba 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5085", "ipi": 0.0},
+            "Biscoito inf PapapÃ¡ org. Cenoura 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5078", "ipi": 0.0},
+            "Biscoito inf PapapÃ¡ org. Tomate/ManjericÃ£o 20g": {"coluna": "Palitinhos", "aba_st": "ST PALITINHOS", "un_cx": 16, "cod": "5061", "ipi": 0.0},
         },
-        "DENTIÇÃO": {
-            "Biscoito Inf Papapá dent. Maçã e Abóbora 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8774", "ipi": 0.0},
-            "Biscoito Inf Papapá dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
+        "DENTIÃ‡ÃƒO": {
+            "Biscoito Inf PapapÃ¡ dent. MaÃ§Ã£ e AbÃ³bora 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8774", "ipi": 0.0},
+            "Biscoito Inf PapapÃ¡ dent Vegetais 36g": {"coluna": "Biscoitinhos", "aba_st": "ST BISCOITINHOS", "un_cx": 12, "cod": "8767", "ipi": 0.0},
         },
-        "MACARRÃO": {
-            "Macarrao Inf Papapá m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
-            "Macarrao Inf Papapá m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
+        "MACARRÃƒO": {
+            "Macarrao Inf PapapÃ¡ m. Elbow Quinoa 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5290", "ipi": 0.0},
+            "Macarrao Inf PapapÃ¡ m. Fusilli Vegetais 200g": {"coluna": "Papapasta", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "5283", "ipi": 0.0},
         },
         "LA CHEF": {
-            "Sopinha Papapá org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
-            "Risotinho Papapá org Arroz quinoa frango 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5269", "ipi": 0.0},
-            "Caseirinho Papapá org Arroz feijão carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
+            "Sopinha PapapÃ¡ org Lentinha Carne Legumes 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5276", "ipi": 0.0},
+            "Risotinho PapapÃ¡ org Arroz quinoa frango 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5269", "ipi": 0.0},
+            "Caseirinho PapapÃ¡ org Arroz feijÃ£o carne leg. 180g": {"coluna": "La Chef", "aba_st": "ST PAPAPASTA", "un_cx": 6, "cod": "5252", "ipi": 0.0},
         },
         "CEREAL": {
-            "Cereal Infantil Papapá Aveia - Morango e Beterraba sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Banana e Ameixa sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 170g": {"coluna": "P. Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
-            "Cereal Infantil Papapá Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
+            "Cereal Infantil PapapÃ¡ Aveia - Morango e Beterraba sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5402", "ipi": 0.0},
+            "Cereal Infantil PapapÃ¡ Aveia - Banana e Ameixa sache 170g": {"coluna": "P. Cereal 170g Sache sabores", "aba_st": "ST CEREAL SABOR POUCH 170", "un_cx": 12, "cod": "5419", "ipi": 0.0},
+            "Cereal Infantil PapapÃ¡ Aveia - Multicereais sache 170g": {"coluna": "P. Cereal 170g Sache MULTI", "aba_st": "ST MULTI 170 POUCH", "un_cx": 12, "cod": "5429", "ipi": 0.0},
+            "Cereal Infantil PapapÃ¡ Aveia - Multicereais sache 500g": {"coluna": "MULTI sache 500 g", "aba_st": "ST MULTI 500 POUCH", "un_cx": 12, "cod": "5399", "ipi": 0.0},
         },
         "BISCOTTI": {
-            "Biscoito Infantil Papapá Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5375", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Maçã e Canela 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5351", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5368", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti Goiaba 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5597", "ipi": 0.0},
-            "Biscoito Infantil Papapá Biscotti com Maracujá e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
+            "Biscoito Infantil PapapÃ¡ Biscotti com Laranja e Cenoura 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5375", "ipi": 0.0},
+            "Biscoito Infantil PapapÃ¡ Biscotti com MaÃ§Ã£ e Canela 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5351", "ipi": 0.0},
+            "Biscoito Infantil PapapÃ¡ Biscotti com Banana e Cacau 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5368", "ipi": 0.0},
+            "Biscoito Infantil PapapÃ¡ Biscotti Goiaba 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5597", "ipi": 0.0},
+            "Biscoito Infantil PapapÃ¡ Biscotti com MaracujÃ¡ e Camomila 60g": {"coluna": "Biscotti", "aba_st": "ST BISCOTTI", "un_cx": 12, "cod": "5580", "ipi": 0.0},
         },
         "SOPINHA": {
-            "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5610", "ipi": 0.0},
-            "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5634", "ipi": 0.0},
-            "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5627", "ipi": 0.0},
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5603", "ipi": 0.0},
+            "Sopinha PapapÃ¡ Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5610", "ipi": 0.0},
+            "Sopinha PapapÃ¡ Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5634", "ipi": 0.0},
+            "Sopinha PapapÃ¡ Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5627", "ipi": 0.0},
+            "Sopinha PapapÃ¡ FeijÃ£o Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5603", "ipi": 0.0},
         }
     },
     "ERA UMA VEZ": {
         "SALGADINHOS": {
-            "Salgadinho Integral Orgânico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5670", "ipi": 0.0},
-            "Salgadinho Integral Orgânico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5671", "ipi": 0.0},
-            "Salgadinho Integral Orgânico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5673", "ipi": 0.0},
+            "Salgadinho Integral OrgÃ¢nico Queijo Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5670", "ipi": 0.0},
+            "Salgadinho Integral OrgÃ¢nico Cebola & Salsa Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5671", "ipi": 0.0},
+            "Salgadinho Integral OrgÃ¢nico Churrasco Papapa Era Uma Vez 40g": {"coluna": "Salgadinhos", "aba_st": "ST EXTRUSADOS", "un_cx": 18, "cod": "5673", "ipi": 0.0},
         },
         "BISCOITO RECHEADO": {
             "Biscoito Recheado de Frutas Amarelas Papapa Era Uma Vez 30g": {"coluna": "Bisc. Recheados", "aba_st": "ST RECHEADOS", "un_cx": 8, "cod": "5677", "ipi": 0.0},
@@ -2152,10 +2180,10 @@ categorias_produtos = {
             "Bebida de Laranja Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5680", "ipi": 0.0},
             "Bebida de Uva Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5681", "ipi": 0.0},
             "Bebida de Morango Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5682", "ipi": 0.0},
-            "Bebida de Maçã Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5683", "ipi": 0.0},
+            "Bebida de MaÃ§Ã£ Papapa Era Uma Vez 200ml": {"coluna": "Sucos", "aba_st": None, "un_cx": 27, "cod": "5683", "ipi": 0.0},
         },
         "ACHOCOLATADO": {
-            "Bebida Láctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "aba_st": None, "un_cx": 27, "cod": "5310", "ipi": 0.0},
+            "Bebida LÃ¡ctea UHT Chocolate Papapa Era Uma Vez 200ml": {"coluna": "Achocolatado", "aba_st": None, "un_cx": 27, "cod": "5310", "ipi": 0.0},
         }
     },
     "PUERICULTURA": {
@@ -2183,16 +2211,16 @@ categorias_produtos = {
 }
 
 if "aba_selecionada" not in locals() and "aba_selecionada" not in globals():
-    aba_selecionada = "🛒 Simulador de Pedidos"
+    aba_selecionada = "ðŸ›’ Simulador de Pedidos"
 
-if aba_selecionada == "🏠 Home":
+if aba_selecionada == "ðŸ  Home":
     st.write("Bem-vindo ao Playbook")
 
-elif aba_selecionada == "🛒 Simulador de Pedidos":
+elif aba_selecionada == "ðŸ›’ Simulador de Pedidos":
     col_titulo, col_limpar = st.columns([4, 1])
 
     with col_titulo:
-        st.header("🛒 Simulador de Pedidos")
+        st.header("ðŸ›’ Simulador de Pedidos")
 
     with col_limpar:
         st.write("")
@@ -2203,7 +2231,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
 
             st.session_state["cnpj_input"] = ""
             st.session_state["sim_forma_pagamento"] = ""
-            st.session_state["sim_regime"] = "NÃO"
+            st.session_state["sim_regime"] = "NÃƒO"
             st.session_state["sim_vendedor"] = ""
             st.session_state["sim_tabela"] = "Selecione uma tabela"
             st.session_state["sim_estado"] = "Selecione o Estado"
@@ -2230,7 +2258,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
     c_cnpj, c_pag, c_vendedor, c_regime = st.columns(4)
 
     with c_cnpj:
-        cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas números", key="cnpj_input")
+        cnpj_digitado = st.text_input("CNPJ do Cliente:", placeholder="Digite apenas nÃºmeros", key="cnpj_input")
         cnpj_cliente = formatar_cnpj(cnpj_digitado)
 
         if cnpj_digitado and len("".join(filter(str.isdigit, cnpj_digitado))) != 14:
@@ -2243,11 +2271,11 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         forma_pagamento = st.selectbox("Forma de Pagamento:", opcoes_pagamento, index=0, key="sim_forma_pagamento")
 
     with c_vendedor:
-        opcoes_vendedor = ["", "Ana", "Pedro", "João Paulo", "Rodrigo"]
+        opcoes_vendedor = ["", "Ana", "Pedro", "JoÃ£o Paulo", "Rodrigo"]
         vendedor_sel = st.selectbox("Vendedor:", opcoes_vendedor, index=0, key="sim_vendedor")
 
     with c_regime:
-        regime_simples = st.selectbox("Regime SIMPLES?", ["NÃO", "SIM"], index=0, key="sim_regime")
+        regime_simples = st.selectbox("Regime SIMPLES?", ["NÃƒO", "SIM"], index=0, key="sim_regime")
 
     st.divider()
 
@@ -2337,21 +2365,21 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 )
 
                 modelo_observacoes = (
-                    "• CNPJ:\n"
-                    "• Estado:\n"
-                    "• Inscrição Estadual (IE):\n"
-                    "• Telefone financeiro:\n"
-                    "• Telefone compras:\n"
-                    "• E-mail financeiro:\n"
-                    "• E-mail compras:\n"
-                    "• Dados bancários e chave PIX:\n"
-                    "• Tem protesto no Cenprot:\n"
-                    "• Data de abertura do CNPJ:"
+                    "â€¢ CNPJ:\n"
+                    "â€¢ Estado:\n"
+                    "â€¢ InscriÃ§Ã£o Estadual (IE):\n"
+                    "â€¢ Telefone financeiro:\n"
+                    "â€¢ Telefone compras:\n"
+                    "â€¢ E-mail financeiro:\n"
+                    "â€¢ E-mail compras:\n"
+                    "â€¢ Dados bancÃ¡rios e chave PIX:\n"
+                    "â€¢ Tem protesto no Cenprot:\n"
+                    "â€¢ Data de abertura do CNPJ:"
                 )
 
                 observacoes_pedido = st.text_area(
-                    "Observações",
-                    placeholder="Inclua informações relevantes sobre o orçamento...",
+                    "ObservaÃ§Ãµes",
+                    placeholder="Inclua informaÃ§Ãµes relevantes sobre o orÃ§amento...",
                     height=375,
                     key="sim_observacoes"
                 )
@@ -2363,25 +2391,25 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                 st.metric("Total Bruto (com ST/IPI)", moeda_br(total_pedido))
 
                 if perc_desconto > 0:
-                    st.metric("Total Líquido", moeda_br(total_com_desconto), delta=f"- {moeda_br(valor_desconto)}")
+                    st.metric("Total LÃ­quido", moeda_br(total_com_desconto), delta=f"- {moeda_br(valor_desconto)}")
                 else:
-                    st.write(f"**Total Líquido: {moeda_br(total_pedido)}**")
+                    st.write(f"**Total LÃ­quido: {moeda_br(total_pedido)}**")
 
-                st.caption("Modelo para copiar nas observações")
+                st.caption("Modelo para copiar nas observaÃ§Ãµes")
                 st.code(modelo_observacoes, language=None)
 
             if total_com_desconto >= 800:
-                st.success("✅ Pedido acima do valor mínimo!")
+                st.success("âœ… Pedido acima do valor mÃ­nimo!")
             elif total_pedido > 0:
-                st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mínimo.")
+                st.warning(f"Faltam {moeda_br(800 - total_com_desconto)} para o mÃ­nimo.")
 
     else:
-        st.info("💡 Por favor, selecione a **Tabela de Preços** e o **Estado** acima para visualizar os produtos.")
+        st.info("ðŸ’¡ Por favor, selecione a **Tabela de PreÃ§os** e o **Estado** acima para visualizar os produtos.")
 
 ############################################################################
 # GERADOR DE PDF
 ############################################################################
-if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals() and total_pedido > 0:
+if aba_selecionada == "ðŸ›’ Simulador de Pedidos" and "total_pedido" in locals() and total_pedido > 0:
     try:
         def texto_pdf(txt):
             return str(txt).encode("latin-1", "ignore").decode("latin-1")
@@ -2404,7 +2432,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
             pdf.cell(w_prod, altura_header, "Produto", 1, 0, "C", True)
             pdf.cell(w_qtd_cx, altura_header, "Qtd Cx", 1, 0, "C", True)
             pdf.cell(w_qtd_itens, altura_header, "Qtd Itens", 1, 0, "C", True)
-            pdf.cell(w_preco_unit, altura_header, texto_pdf("Preço Unit"), 1, 0, "C", True)
+            pdf.cell(w_preco_unit, altura_header, texto_pdf("PreÃ§o Unit"), 1, 0, "C", True)
             pdf.cell(w_subtotal, altura_header, "Subtotal", 1, 1, "C", True)
             pdf.set_font("Arial", size=7)
 
@@ -2421,7 +2449,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 pdf.ln(10)
 
             pdf.set_font("Arial", "B", 16)
-            pdf.cell(190, 10, txt=texto_pdf("Orçamento de Pedido - Papapá - Era Uma Vez"), ln=True, align="C")
+            pdf.cell(190, 10, txt=texto_pdf("OrÃ§amento de Pedido - PapapÃ¡ - Era Uma Vez"), ln=True, align="C")
             pdf.ln(5)
 
             pdf.set_font("Arial", size=10)
@@ -2499,7 +2527,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
                 pdf.set_text_color(0, 0, 0)
 
             pdf.set_font("Arial", "B", 12)
-            pdf.cell(160, 10, texto_pdf("TOTAL LÍQUIDO:"), 0, 0, "R")
+            pdf.cell(160, 10, texto_pdf("TOTAL LÃQUIDO:"), 0, 0, "R")
             pdf.cell(30, 10, moeda_pdf(total_liq), 0, 1, "C")
 
             if observacoes and str(observacoes).strip():
@@ -2512,7 +2540,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
                 pdf.ln(6)
                 pdf.set_font("Arial", "B", 9)
-                pdf.cell(190, 6, texto_pdf("Observações:"), 0, 1, "L")
+                pdf.cell(190, 6, texto_pdf("ObservaÃ§Ãµes:"), 0, 1, "L")
 
                 x_obs = pdf.get_x()
                 y_obs = pdf.get_y()
@@ -2527,7 +2555,7 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
 
             pdf.ln(10)
             pdf.set_font("Arial", "I", 8)
-            aviso = "*Este documento é apenas uma simulação de valores (orçamento) e não garante a reserva de estoque ou a efetivação do pedido comercial. Este informativo não possui validade fiscal."
+            aviso = "*Este documento Ã© apenas uma simulaÃ§Ã£o de valores (orÃ§amento) e nÃ£o garante a reserva de estoque ou a efetivaÃ§Ã£o do pedido comercial. Este informativo nÃ£o possui validade fiscal."
             pdf.multi_cell(190, 5, txt=texto_pdf(aviso), align="C")
 
             return pdf.output(dest="S").encode("latin-1")
@@ -2551,13 +2579,12 @@ if aba_selecionada == "🛒 Simulador de Pedidos" and "total_pedido" in locals()
         id_botao = f"btn_pdf_{estado_sel}_{total_com_desconto}_{perc_desconto}_{vendedor_pdf}"
 
         st.download_button(
-            label="📄 Baixar Orçamento em PDF",
+            label="ðŸ“„ Baixar OrÃ§amento em PDF",
             data=pdf_bytes,
             file_name=f"Orcamento_{estado_sel}.pdf",
             mime="application/pdf",
             use_container_width=True,
             key=id_botao
         )
-
     except Exception as e:
         st.error(f"Erro ao gerar PDF: {e}")
