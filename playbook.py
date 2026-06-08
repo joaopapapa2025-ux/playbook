@@ -353,7 +353,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
     # --- SETOR 0: DIRETOR COMERCIAL ---
     st.markdown('<div class="section-title">👔 Diretor Comercial</div>', unsafe_allow_html=True)
     diretor_comercial = [
-        {"nome": "Mariano", "cargo": "Diretor Comercial", "foto": "Mariano.jpeg", "classe": "", "telefone": "", "email": ""}
+        {"nome": "Mariano", "cargo": "Diretor Comercial", "foto": "Mariano.jpeg", "classe": "", "telefone": "(11) 99408-5130", "email": "mariano@papapa.com.br"}
     ]
     render_equipe(diretor_comercial)
 
