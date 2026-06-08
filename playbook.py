@@ -355,12 +355,19 @@ if aba_selecionada == "🏠 Home (Equipe)":
         {"nome": "Ana Christina Rodrigues", "cargo": "Analista - Key Accounts", "foto": "Ana.jpeg", "classe": "photo-ana", "telefone": "(41) 3797-6554", "email": "comercial3@papapa.com.br"},
         {"nome": "Pedro Henrique Born", "cargo": "Analista - Crescimento", "foto": "Pedro.jpeg", "classe": "", "telefone": "(41) 3797-6885", "email": "comercial5@papapa.com.br"},
         {"nome": "Joao Paulo Ferreira Alves", "cargo": "Analista - Desenvolvimento", "foto": "João Paulo.jpeg", "classe": "", "telefone": "(41) 99247-4213", "email": "comercial2@papapa.com.br"},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
+        {"nome": "Rodrigo Sarlo", "cargo": "Estagiário - Operação", "foto": "rodrigo.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"}
     ]
     render_equipe(inside_sales)
 
     st.markdown("---")
+
+    st.markdown('<div class="section-title">🤝 Pós-vendas</div>', unsafe_allow_html=True)
+    pos_vendas = [
+        {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Operação", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Operação", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
+    ]
+    render_equipe(pos_vendas)
 
     # --- SETOR 2: ADM VENDAS ---
     st.markdown('<div class="section-title">📊 Administração de Vendas</div>', unsafe_allow_html=True)
