@@ -349,6 +349,16 @@ if aba_selecionada == "🏠 Home (Equipe)":
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
+                        
+    # --- SETOR 0: DIRETOR COMERCIAL ---
+    st.markdown('<div class="section-title">👔 Diretor Comercial</div>', unsafe_allow_html=True)
+    diretor_comercial = [
+        {"nome": "Mariano", "cargo": "Diretor Comercial", "foto": "Mariano.jpeg", "classe": "", "telefone": "", "email": ""}
+    ]
+    render_equipe(diretor_comercial)
+
+st.markdown("---")
+
 
     # --- SETOR 1: INSIDE SALES ---
     st.markdown('<div class="section-title">⚡ Inside Sales</div>', unsafe_allow_html=True)
