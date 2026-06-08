@@ -357,7 +357,7 @@ if aba_selecionada == "🏠 Home (Equipe)":
     ]
     render_equipe(diretor_comercial)
 
-st.markdown("---")
+    st.markdown("---")
 
 
     # --- SETOR 1: INSIDE SALES ---
