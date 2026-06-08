@@ -309,7 +309,8 @@ if aba_selecionada == "🏠 Home (Equipe)":
         """, unsafe_allow_html=True)
 
     wa_icon_url = "https://cdn-icons-png.flaticon.com/512/733/733585.png"
-    url_avatar_padrao = "https://www.w3schools.com/howto/img_avatar.png"
+    url_avatar_masculino = "https://www.w3schools.com/howto/img_avatar.png"
+    url_avatar_feminino = "https://www.w3schools.com/howto/img_avatar2.png"
 
     # FUNÇÃO INTERNA PARA RENDERIZAR CARDS
     def render_equipe(lista_membros):
@@ -322,7 +323,8 @@ if aba_selecionada == "🏠 Home (Equipe)":
                     link_wa = f"https://web.whatsapp.com/send?phone=55{num_limpo}"
                     
                     # Lógica da Foto com Fallback seguro
-                    estilo = f"background-image: url('{url_avatar_padrao}');"
+                    avatar_padrao = m.get("avatar", url_avatar_masculino)
+                    estilo = f"background-image: url('{avatar_padrao}');"
                     
                     if Path(m['foto']).exists():
                         try:
@@ -364,8 +366,8 @@ if aba_selecionada == "🏠 Home (Equipe)":
     st.markdown('<div class="section-title">🤝 CS/Pós-vendas</div>', unsafe_allow_html=True)
     pos_vendas = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
-        {"nome": "Tassiani Tussolini", "cargo": "Analista - CS", "foto": "Tassiani.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "atendimento@papapa.com.br"},
-        {"nome": "Gesianne Farias", "cargo": "Analista - CS", "foto": "Gesianne.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "sac@papapa.com.br"},
+        {"nome": "Tassiani Tussolini", "cargo": "Analista - CS", "foto": "Tassiani.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "atendimento@papapa.com.br", "avatar": url_avatar_feminino},
+        {"nome": "Gesianne Farias", "cargo": "Analista - CS", "foto": "Gesianne.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "sac@papapa.com.br", "avatar": url_avatar_feminino},
         {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Pós-venda", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
         {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Pós-venda", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
     ]
