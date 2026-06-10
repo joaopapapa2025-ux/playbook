@@ -2113,7 +2113,7 @@ categorias_produtos = {
         },
         "YOGUZINHO": {
             "Papinha Papapa Iogurte Frutas Amarelas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5566", "ipi": 0.0},
-            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5570", "ipi": 0.0},
+            "Papinha Papapa Iogurte Frutas Vermelhas e Banana 100g": {"coluna": "Yoguzinho", "aba_st": "ST PAPAPASTA", "un_cx": 16, "cod": "5573", "ipi": 0.0},
         },
         "PAPINHA DE FRUTA": {
             "Papinha Papapá Org Maçã Ameixa 100g": {"coluna": "Papinhas", "aba_st": "ST PAPAPASTA", "un_cx": 12, "cod": "17898994908729", "ipi": 0.0},
