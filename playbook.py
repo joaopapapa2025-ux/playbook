@@ -2327,7 +2327,8 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
                                 regime_simples,
                                 nome_exibicao,
                                 config,
-                                fator_preco
+                                fator_preco,
+                                preferir_aba_tabelas
                             )
 
                             with col_prod:
