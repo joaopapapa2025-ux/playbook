@@ -2070,55 +2070,41 @@ def calcular_valores_produto(
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
 
-    def calcular_por_aba_tabelas():
+    preco_unit = 0.0
+
+    if preferir_aba_tabelas:
         item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
 
         if item_tabelas:
-            # Para ESPECIAL e ESPECIAL REDE, a aba Tabelas ja traz o valor correto.
-            # Nao aplica fator 0.90 aqui, senao desconta duas vezes.
+            # ESPECIAL e ESPECIAL REDE: usa o valor unitario da aba Tabelas.
+            # A ST nao vem daqui, porque ST muda conforme o estado selecionado.
             preco_unit = item_tabelas["preco_unit"]
-            st_unitario = item_tabelas["st_unit"]
-            ipi_unitario = item_tabelas["ipi_unit"]
 
-            ipi_cx = ipi_unitario * un_cx
-            valor_caixa_total = (preco_unit + st_unitario + ipi_unitario) * un_cx
+    if preco_unit == 0.0:
+        fator_do_produto = fator_preco
 
-            return preco_unit, st_unitario, ipi_cx, valor_caixa_total
+        if fator_preco != 1.0 and not produto_recebe_desconto_rede(config):
+            fator_do_produto = 1.0
 
-        return None
+        if df_precos is not None and col_planilha in df_precos.columns:
+            preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_do_produto
 
-    if preferir_aba_tabelas:
-        valores_tabelas = calcular_por_aba_tabelas()
-        if valores_tabelas:
-            return valores_tabelas
+    if preco_unit == 0.0:
+        return 0.0, 0.0, 0.0, 0.0
 
-    fator_do_produto = fator_preco
+    st_unitario = 0.0
+    aba_st_alvo = config["aba_st"]
 
-    if fator_preco != 1.0 and not produto_recebe_desconto_rede(config):
-        fator_do_produto = 1.0
+    if aba_st_alvo and aba_st_alvo in dicionario_st:
+        coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
+        st_unitario = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
 
-    if df_precos is not None and col_planilha in df_precos.columns:
-        preco_unit = buscar_valor_linha(df_precos, estado, col_planilha) * fator_do_produto
-        valor_cx_base = preco_unit * un_cx
+    valor_cx_base = preco_unit * un_cx
+    ipi_cx = valor_cx_base * config.get("ipi", 0.0)
+    st_cx = st_unitario * un_cx
+    valor_caixa_total = valor_cx_base + st_cx + ipi_cx
 
-        st_unitario = 0.0
-        aba_st_alvo = config["aba_st"]
-
-        if aba_st_alvo and aba_st_alvo in dicionario_st:
-            coluna_st_tipo = "ST Simples" if regime_simples == "SIM" else "ST Normal"
-            st_unitario = buscar_valor_linha(dicionario_st[aba_st_alvo], estado, coluna_st_tipo)
-
-        ipi_cx = valor_cx_base * config.get("ipi", 0.0)
-        st_cx = st_unitario * un_cx
-        valor_caixa_total = valor_cx_base + st_cx + ipi_cx
-
-        return preco_unit, st_unitario, ipi_cx, valor_caixa_total
-
-    valores_tabelas = calcular_por_aba_tabelas()
-    if valores_tabelas:
-        return valores_tabelas
-
-    return 0.0, 0.0, 0.0, 0.0
+    return preco_unit, st_unitario, ipi_cx, valor_caixa_total
 
 categorias_produtos = {
     "PAPAPÁ": {
