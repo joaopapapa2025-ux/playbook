@@ -2064,10 +2064,33 @@ def calcular_valores_produto(
     regime_simples,
     nome_produto,
     config,
-    fator_preco=1.0
+    fator_preco=1.0,
+    preferir_aba_tabelas=False
 ):
     col_planilha = config["coluna"]
     un_cx = config["un_cx"]
+
+    def calcular_por_aba_tabelas():
+        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+
+        if item_tabelas:
+            # Para ESPECIAL e ESPECIAL REDE, a aba Tabelas ja traz o valor correto.
+            # Nao aplica fator 0.90 aqui, senao desconta duas vezes.
+            preco_unit = item_tabelas["preco_unit"]
+            st_unitario = item_tabelas["st_unit"]
+            ipi_unitario = item_tabelas["ipi_unit"]
+
+            ipi_cx = ipi_unitario * un_cx
+            valor_caixa_total = (preco_unit + st_unitario + ipi_unitario) * un_cx
+
+            return preco_unit, st_unitario, ipi_cx, valor_caixa_total
+
+        return None
+
+    if preferir_aba_tabelas:
+        valores_tabelas = calcular_por_aba_tabelas()
+        if valores_tabelas:
+            return valores_tabelas
 
     fator_do_produto = fator_preco
 
@@ -2091,17 +2114,9 @@ def calcular_valores_produto(
 
         return preco_unit, st_unitario, ipi_cx, valor_caixa_total
 
-    item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
-
-    if item_tabelas:
-        preco_unit = item_tabelas["preco_unit"] * fator_do_produto
-        st_unitario = item_tabelas["st_unit"]
-        ipi_unitario = item_tabelas["ipi_unit"]
-
-        ipi_cx = ipi_unitario * un_cx
-        valor_caixa_total = (preco_unit + st_unitario + ipi_unitario) * un_cx
-
-        return preco_unit, st_unitario, ipi_cx, valor_caixa_total
+    valores_tabelas = calcular_por_aba_tabelas()
+    if valores_tabelas:
+        return valores_tabelas
 
     return 0.0, 0.0, 0.0, 0.0
 
@@ -2290,6 +2305,7 @@ elif aba_selecionada == "🛒 Simulador de Pedidos":
         df_precos, dicionario_st, df_tabelas = carregar_dados_completos_por_caminho(caminho_tabela)
 
         fator_preco = 0.90 if tabela_sel == "ESPECIAL REDE (-10%)" else 1.0
+        preferir_aba_tabelas = tabela_sel in ["ESPECIAL", "ESPECIAL REDE (-10%)"]
 
         if df_precos is not None:
             st.subheader("Itens do Pedido")
