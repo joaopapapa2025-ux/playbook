@@ -2158,7 +2158,7 @@ categorias_produtos = {
             "Sopinha Papapá Frango Arroz Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5610", "ipi": 0.0},
             "Sopinha Papapá Carne Macarrao Legumes 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5634", "ipi": 0.0},
             "Sopinha Papapá Carne Mandioq Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5627", "ipi": 0.0},
-            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5603", "ipi": 0.0},
+            "Sopinha Papapá Feijão Carne Leg 240g (2x 120g)": {"coluna": "Bowl", "aba_st": None, "un_cx": 6, "cod": "5606", "ipi": 0.0},
         }
     },
     "ERA UMA VEZ": {
