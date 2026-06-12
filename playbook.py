@@ -472,7 +472,7 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
     with col1:
         st.subheader("📁 Materiais de Venda")
         arquivos_venda = {
-            "📖 Catálogo Digital Papapá (PDF)": "catalogo-papapa-digital-2026_compressed (1).pdf",
+            "📖 Catálogo Digital Papapá 2026 (PDF)": "catalogo-papapa-digital-2026_compressed (1).pdf",
             "🏰 Catálogo Digital Era Uma Vez (PDF)": "catalogo-era-uma-vez-digital.pdf",
             "💰 Tabela de Preços - Padrão (Excel)": "0626E - Tabela de Preços - Papapá 3.0.xlsx",
             "🕸️ Tabela de Preços - Rede (Excel)": "0626ER - Tabela de Preços Rede - Papapá 3.0.xlsx",
