@@ -495,7 +495,6 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
     with col2:
         st.subheader("📋 Guias e Processos")
         arquivos_proc = {
-            "🎯 Estrutura de Operação e Metas": "Estrutura de Operação e Metas - Inside Sales.pdf",
             "📦 Guia de Recebimento de Mercadorias": "GUIA DE RECEBIMENTO DE MERCADORIAS.pdf",
             "🔄 Orientações para emissão de NFD": "Orientações para emissão da Nota Fiscal de Devolução (1) (3).pdf",
             "📝 Templates (PDF)": "Templates IS 2026.docx (2).pdf",
