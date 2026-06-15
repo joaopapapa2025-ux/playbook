@@ -550,7 +550,8 @@ elif aba_selecionada == "📄 Biblioteca de Arquivos":
                 <tr><td><b>Pedro</b></td><td>554137976885</td></tr>
                 <tr><td><b>Ana</b></td><td>5541999029246</td></tr>
                 <tr><td><b>João Paulo</b></td><td>5541992474213</td></tr>
-                <tr><td><b>Thiago</b></td><td>5541985027025</td></tr>
+                <tr><td><b>Rodrigo</b></td><td>5541985027025</td></tr>
+                <tr><td><b>Thiago</b></td><td>5541988573623</td></tr>
                 <tr><td><b>Bernardo</b></td><td>5541996503745</td></tr>
             </table>
         </div>
