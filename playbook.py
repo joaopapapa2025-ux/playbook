@@ -376,10 +376,10 @@ if aba_selecionada == "🏠 Home (Equipe)":
     st.markdown('<div class="section-title">🤝 CS/Pós-vendas</div>', unsafe_allow_html=True)
     pos_vendas = [
         {"nome": "João Vitor Tadra", "cargo": "Coordenador", "foto": "João Vitor.jpeg", "classe": "photo-joao-vitor", "telefone": "(41) 98495-9492", "email": "comercial1@papapa.com.br"},
-        {"nome": "Tassiani Tussolini", "cargo": "Analista - CS", "foto": "Tassiani.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "atendimento@papapa.com.br", "avatar": url_avatar_feminino},
-        {"nome": "Gesianne Farias", "cargo": "Analista - CS", "foto": "Gesianne.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "sac@papapa.com.br", "avatar": url_avatar_feminino},
-        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Pós-venda", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98502-7025", "email": "comercial4@papapa.com.br"},
-        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Pós-venda", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "comercial6@papapa.com.br"}
+        {"nome": "Tassiani Tussolini", "cargo": "Analista - CS", "foto": "Tassiani.jpeg", "classe": "", "telefone": "-", "email": "atendimento@papapa.com.br", "avatar": url_avatar_feminino},
+        {"nome": "Gesianne Farias", "cargo": "Analista - CS", "foto": "Gesianne.jpeg", "classe": "", "telefone": "-", "email": "sac@papapa.com.br", "avatar": url_avatar_feminino},
+        {"nome": "Thiago Martins Cabral", "cargo": "Estagiário - Pós-venda", "foto": "Thiago.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "posvendas1@papapa.com.br"},
+        {"nome": "Bernardo Oliveira Dallegrave", "cargo": "Estagiário - Pós-venda", "foto": "Bernardo.jpeg", "classe": "", "telefone": "(41) 98470-3249", "email": "posvendas2@papapa.com.br"}
     ]
     render_equipe(pos_vendas)
 
