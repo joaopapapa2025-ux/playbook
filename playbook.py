@@ -1798,18 +1798,45 @@ mapa_tabelas = {
     "VAREJO X": "0325Vx_PC reajuste abril26 - Era uma Vez.xlsx"
 }
 
+def corrigir_mojibake(valor):
+    """Corrige textos como 'PapapÃ¡' quando o arquivo foi salvo/lido com encoding errado."""
+    txt = "" if valor is None else str(valor)
+
+    try:
+        corrigido = txt.encode("latin1").decode("utf-8")
+    except UnicodeError:
+        return txt
+
+    sinais_mojibake = ("Ã", "Â", " ")
+    if any(sinal in txt for sinal in sinais_mojibake) and not any(
+        sinal in corrigido for sinal in sinais_mojibake
+    ):
+        return corrigido
+
+    return txt
+
+
 def texto_normalizado(valor):
-    txt = str(valor).strip().lower()
+    txt = corrigir_mojibake(valor).strip().lower()
     txt = unicodedata.normalize("NFKD", txt)
     txt = "".join(ch for ch in txt if not unicodedata.combining(ch))
-    txt = txt.replace("\n", " ")
-    txt = txt.replace("-", " ")
-    txt = txt.replace("_", " ")
-    txt = txt.replace("(", " ")
-    txt = txt.replace(")", " ")
-    txt = txt.replace("%", " ")
-    txt = " ".join(txt.split())
-    return txt
+
+    for char in ["\n", "-", "_", "(", ")", "%", ".", "/", "&"]:
+        txt = txt.replace(char, " ")
+
+    return " ".join(txt.split())
+
+
+def codigos_equivalentes(valor):
+    txt = "" if valor is None else str(valor)
+    somente_digitos = "".join(ch for ch in txt if ch.isdigit())
+    codigos = {somente_digitos} if somente_digitos else set()
+
+    # Alguns cadastros usam o codigo curto dentro de EAN/DUN.
+    if len(somente_digitos) >= 4:
+        codigos.add(somente_digitos[-4:])
+
+    return codigos
 
 def nome_indica_especial_rede_10(nome_arquivo):
     nome = texto_normalizado(nome_arquivo)
@@ -1988,57 +2015,76 @@ def buscar_coluna_por_header(df_tabelas, linha_header, termos_obrigatorios, term
 
     return None
 
-def buscar_item_na_aba_tabelas(df_tabelas, nome_produto):
+def buscar_item_na_aba_tabelas(df_tabelas, nome_produto, cod_produto=None):
     if df_tabelas is None:
         return None
 
     nome_busca = texto_normalizado(nome_produto)
+    codigos_busca = codigos_equivalentes(cod_produto)
+
+    linha_encontrada = None
 
     for r in range(df_tabelas.shape[0]):
-        for c in range(df_tabelas.shape[1]):
-            descricao = texto_normalizado(df_tabelas.iat[r, c])
+        valores_linha = [df_tabelas.iat[r, c] for c in range(df_tabelas.shape[1])]
+        textos_linha = [texto_normalizado(v) for v in valores_linha]
 
-            if descricao == nome_busca:
-                linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, r)
+        encontrou_nome = nome_busca and nome_busca in textos_linha
+        encontrou_codigo = bool(codigos_busca)
 
-                col_valor_unit = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["valor", "unit"],
-                    ["caixa", "total"]
-                )
-                col_st_un = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["substituicao", "tributaria"]
-                )
-                col_ipi = buscar_coluna_por_header(
-                    df_tabelas,
-                    linha_header,
-                    ["ipi"]
-                )
+        if encontrou_codigo:
+            codigos_linha = set()
+            for valor in valores_linha:
+                codigos_linha.update(codigos_equivalentes(valor))
+            encontrou_codigo = bool(codigos_busca.intersection(codigos_linha))
 
-                if col_valor_unit is None:
-                    col_valor_unit = c + 10
-                if col_st_un is None:
-                    col_st_un = c + 12
-                if col_ipi is None:
-                    col_ipi = c + 13
+        if encontrou_nome or encontrou_codigo:
+            linha_encontrada = r
+            break
 
-                preco_unit = valor_float(df_tabelas.iat[r, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
-                st_unit = valor_float(df_tabelas.iat[r, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
-                ipi_unit = valor_float(df_tabelas.iat[r, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
+    if linha_encontrada is None:
+        return None
 
-                if preco_unit > 1000:
-                    preco_unit = 0.0
+    linha_header = buscar_linha_cabecalho_tabelas(df_tabelas, linha_encontrada)
 
-                return {
-                    "preco_unit": preco_unit,
-                    "st_unit": st_unit,
-                    "ipi_unit": ipi_unit,
-                }
+    col_valor_unit = buscar_coluna_por_header(
+        df_tabelas,
+        linha_header,
+        ["valor", "unit"],
+        ["caixa", "total"]
+    )
+    col_st_un = buscar_coluna_por_header(
+        df_tabelas,
+        linha_header,
+        ["substituicao", "tributaria"]
+    )
+    col_ipi = buscar_coluna_por_header(
+        df_tabelas,
+        linha_header,
+        ["ipi"]
+    )
 
-    return None
+    # Fallback para o layout atual da aba Tabelas:
+    # B=Descricao, L=Valor Unit., N=ST, O=IPI.
+    if col_valor_unit is None:
+        col_valor_unit = 11
+    if col_st_un is None:
+        col_st_un = 13
+    if col_ipi is None:
+        col_ipi = 14
+
+    preco_unit = valor_float(df_tabelas.iat[linha_encontrada, col_valor_unit]) if col_valor_unit < df_tabelas.shape[1] else 0.0
+    st_unit = valor_float(df_tabelas.iat[linha_encontrada, col_st_un]) if col_st_un < df_tabelas.shape[1] else 0.0
+    ipi_unit = valor_float(df_tabelas.iat[linha_encontrada, col_ipi]) if col_ipi < df_tabelas.shape[1] else 0.0
+
+    # Se cair por engano em Valor Caixa, nao usar como valor unitario.
+    if preco_unit > 1000:
+        preco_unit = 0.0
+
+    return {
+        "preco_unit": preco_unit,
+        "st_unit": st_unit,
+        "ipi_unit": ipi_unit,
+    }
 
 def coluna_nova_linha(coluna):
     return coluna in [
@@ -2074,11 +2120,15 @@ def calcular_valores_produto(
     preco_unit = 0.0
 
     if preferir_aba_tabelas:
-        item_tabelas = buscar_item_na_aba_tabelas(df_tabelas, nome_produto)
+        item_tabelas = buscar_item_na_aba_tabelas(
+            df_tabelas,
+            nome_produto,
+            config.get("cod")
+        )
 
         if item_tabelas:
             # ESPECIAL e ESPECIAL REDE: usa o valor unitario da aba Tabelas.
-            # A ST nao vem daqui, porque ST muda conforme o estado selecionado.
+            # A planilha REDE ja traz os 10% corretos nos itens PAPAPA.
             preco_unit = item_tabelas["preco_unit"]
 
     if preco_unit == 0.0:
