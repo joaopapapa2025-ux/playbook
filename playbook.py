@@ -1638,7 +1638,7 @@ elif aba_selecionada == "🔗 Links Úteis":
             st.link_button("📦 Dibb (ERP)", "http://170.231.15.12:8080/web/view/app/ger/GER801V.php?term=3321245", use_container_width=True)
             st.caption("Consulta de pedidos e faturamento")
         with col_v2:
-            st.link_button("🚀 RD CRM (Pipeline)", "https://crm.rdstation.com/app/deals/pipeline", use_container_width=True)
+            st.link_button("🚀 Pipedrive (CRM)", "https://papapa.pipedrive.com/auth/login", use_container_width=True)
             st.caption("Gestão de funil e negociações")
         with col_v3:
             st.link_button("🤖 Vekta AI", "https://app.vektasales.com.br/chat", use_container_width=True)
