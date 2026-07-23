@@ -1700,6 +1700,8 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     st.subheader("🚚 Logística e Rastreamento")
+        st.link_button("📦 Lead Time da Operação", "https://leadtime-papapa.streamlit.app/", use_container_width=True)                                                           
+
     c1, c2 = st.columns(2)
     with c1:
         st.link_button("🚩 Solicitações Logísticas", "https://forms.office.com/Pages/ResponsePage.aspx?id=KcXm9q-wZUOFUmPbM0a-aQpGwsStRQZMoYBHJmx0xW1UMDhXRkQwSEQxU0cwUklNNVVGWTZFRUhVNS4u", use_container_width=True)
