@@ -1700,7 +1700,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     st.markdown("---")
 
     st.subheader("🚚 Logística e Rastreamento")
-        st.link_button("📦 Lead Time da Operação", "https://leadtime-papapa.streamlit.app/", use_container_width=True)                                                           
+    st.link_button("📦 Lead Time da Operação", "https://leadtime-papapa.streamlit.app/", use_container_width=True)                                                           
 
     c1, c2 = st.columns(2)
     with c1:
