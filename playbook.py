@@ -1548,7 +1548,7 @@ elif aba_selecionada == "📈 Impactos no resultado":
         with st.expander("📝 Abrir Formulário", expanded=True):
             c1, c2 = st.columns(2)
             with c1:
-                st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Bernardo", "Thiago"], index=None, key="imp_autor")
+                st.selectbox("Responsável:", ["João Tadra", "Ana", "Pedro", "João Paulo", "Rodrigo", "Bernardo", "Thiago"], index=None, key="imp_autor")
                 st.radio("Tipo do Impacto:", ["🟢 Positivo", "🔴 Negativo"], key="imp_tipo", horizontal=True)
             with c2:
                 st.text_input("NF / Pedido / CNPJ:", placeholder="Identificação...", key="imp_doc")
