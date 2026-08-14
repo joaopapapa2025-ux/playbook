@@ -1716,7 +1716,7 @@ elif aba_selecionada == "🔗 Links Úteis":
     with t1:
         st.markdown("**Translovato**")
         st.link_button("Rastrear Lovato", "https://www.translovato.com.br/portal/rastreamento", use_container_width=True)
-        st.code("User: BABY\nPass: Papapa@2026")
+        st.code("User: BABY\nPass: Miojo123@")
         
     with t2:
         st.markdown("**Tecmar**")
